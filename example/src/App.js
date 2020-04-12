@@ -1,10 +1,19 @@
-import React from 'react'
+import React from "react";
 
-import { ExampleComponent } from 'react-sim'
-import 'react-sim/dist/index.css'
+import {
+  // ExampleComponent,
+  Frame,
+  Model
+  // StatefulControls
+} from "react-sim";
+import "react-sim/dist/index.css";
 
 const App = () => {
-  return <ExampleComponent text="Create React Library Example 😄" />
-}
+  return (
+    <Model>
+      <Frame />
+    </Model>
+  );
+};
 
-export default App
+export default App;
