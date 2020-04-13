@@ -3,6 +3,8 @@ import { FlexColumn, FlexRow } from "./";
 
 export default class Play extends React.Component {
   static defaultProps = {
+    minValue: 0,
+    maxValue: 100,
     shouldDisplayLabel: true,
     shouldDisplayMaxValue: true,
     shouldDisplayMinValue: true,

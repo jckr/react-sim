@@ -13,7 +13,11 @@ import "react-sim/dist/index.css";
 import { updateGameOfLifeGrid, GameOfLifeFrame } from "./examples/game-of-life";
 
 const examples = [
-  { label: "Default", props: {}, frame: <Frame /> },
+  {
+    label: "Default",
+    props: {},
+    frame: <Frame />
+  },
   {
     label: "Game of Life",
     props: { auto: false, updateData: updateGameOfLifeGrid, maxTime: Infinity },
@@ -42,7 +46,7 @@ class App extends React.Component {
             ))}
           </ul>
         </FlexColumn>
-        <FlexColumn>
+        <FlexColumn styles={{ width: "100%" }}>
           {examples.map(
             ({ props, frame }, index) =>
               index === this.state.selected && (

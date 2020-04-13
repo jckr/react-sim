@@ -5,6 +5,7 @@ import { FlexColumn, FlexRow, Controls, Frame } from "./";
 export default class Model extends React.Component {
   static defaultProps = {
     auto: true,
+    controls: null,
     initialData: [],
     initialTick: 0,
     minTime: 0,
@@ -12,7 +13,8 @@ export default class Model extends React.Component {
     showTime: true,
     isPlaying: false,
     timeInterval: 100,
-    updateData: (d, t) => [d]
+    updateData: (d, t) => [d],
+    updateParams: args => console.log(args)
   };
   timer = null;
   state = {
@@ -132,6 +134,7 @@ export default class Model extends React.Component {
       <FlexColumn>
         <FlexRow>{this.renderFrame()}</FlexRow>
         <Controls
+          controls={this.props.controls}
           isPlaying={this.state.isPlaying}
           maxTime={this.props.maxTime}
           minTime={this.props.minTime}
@@ -139,6 +142,7 @@ export default class Model extends React.Component {
           pause={this.pause}
           showTime={this.props.showTime}
           stop={this.stop}
+          updateParams={this.props.updateParams}
           updateTime={this.updateTime}
           time={this.state.tick}
         />

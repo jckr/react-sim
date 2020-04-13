@@ -3,13 +3,50 @@ import { FlexRow, FlexColumn, Play, Range, Stop } from "./index";
 
 export default class Controls extends React.Component {
   static defaultProps = {
+    controls: null,
     minTime: 0,
     maxTime: 100,
     showTime: true,
+    updateParams: args => {
+      console.log(args);
+    }
   };
+
+  renderControls(controls, horizontally = false) {
+    if (!controls) {
+      return null;
+    }
+    // if parameter is an array, we render a series of controls
+    const Block = horizontally ? FlexColumn : FlexRow;
+    if (Array.isArray(controls)) {
+      return controls.map((c, i) => (
+        <Block
+          styles={{ margin: horizontally ? "0 10px 0 0" : "10px 0" }}
+          key={`c-${i}`}
+        >
+          {/* If original parameter is a nested array, we render nested rows of columns */}
+          {this.renderControls(c, !horizontally)}
+        </Block>
+      ));
+    }
+
+    // parameter is a single control
+
+    // we can do something different depending on type
+
+    return (
+      <Range
+        {...controls}
+        setValue={value =>
+          this.props.updateParams({ param: controls.param, value })
+        }
+      />
+    );
+  }
 
   render() {
     const {
+      controls,
       isPlaying,
       play,
       pause,
@@ -18,26 +55,31 @@ export default class Controls extends React.Component {
       maxTime,
       showTime,
       time,
+      updateParams,
       updateTime
     } = this.props;
+
     return (
-      <FlexRow styles={{ alignItems: "center" }}>
-        <FlexColumn>
-          <Play isPlaying={isPlaying} play={play} pause={pause} />
-        </FlexColumn>
-        <FlexColumn>
-          <Stop isPlaying={isPlaying} stop={stop} />
-        </FlexColumn>
-        {showTime && (
-          <Range
-            minValue={minTime}
-            maxValue={maxTime}
-            value={time}
-            setValue={updateTime}
-            label="Time"
-          />
-        )}
-      </FlexRow>
+      <FlexColumn>
+        {this.renderControls(controls)}
+        <FlexRow styles={{ alignItems: "center" }}>
+          <FlexColumn>
+            <Play isPlaying={isPlaying} play={play} pause={pause} />
+          </FlexColumn>
+          <FlexColumn>
+            <Stop isPlaying={isPlaying} stop={stop} />
+          </FlexColumn>
+          {showTime && (
+            <Range
+              minValue={minTime}
+              maxValue={maxTime}
+              value={time}
+              setValue={updateTime}
+              label="Time"
+            />
+          )}
+        </FlexRow>
+      </FlexColumn>
     );
   }
 }
