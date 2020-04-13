@@ -12,6 +12,7 @@ export default class Play extends React.Component {
     const styles = {
       width: "36px",
       height: "24px",
+      margin: "0 12px 0 0",
       display: "flex",
       background: "#eee",
       borderRadius: "3px",

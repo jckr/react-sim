@@ -9,9 +9,10 @@ export default class Model extends React.Component {
     initialTick: 0,
     minTime: 0,
     maxTime: 100,
+    showTime: true,
     isPlaying: false,
     timeInterval: 100,
-    updateData: (d, t) => d.concat(t)
+    updateData: (d, t) => [d]
   };
   timer = null;
   state = {
@@ -29,7 +30,11 @@ export default class Model extends React.Component {
       this.play();
     }
   }
-
+  componentWillUnmount() {
+    if (this.timer !== null) {
+      clearInterval(this.timer);
+    }
+  }
   play = () => {
     this.timer = setInterval(this.tick, this.props.timeInterval);
     this.setState({ isPlaying: true });
@@ -51,16 +56,17 @@ export default class Model extends React.Component {
       return;
     }
     let updatedTick = this.state.tick + 1;
-    let updatedIsPlaying = this.state.isPlaying;
+    let shouldStopTicking = false;
 
     if (this.props.maxTime !== undefined) {
-      if (updatedTick === this.props.maxTime) {
+      if (updatedTick >= this.props.maxTime) {
         // stop timer
         clearInterval(this.timer);
-        updatedIsPlaying = false;
+        updatedTick = this.props.maxTime;
+        shouldStopTicking = true;
       }
     }
-    this.updateData(this.state.data, updatedTick, updatedIsPlaying);
+    this.updateData(this.state.data, updatedTick, shouldStopTicking);
   };
   updateTime = value => {
     if (this.timer) {
@@ -68,10 +74,39 @@ export default class Model extends React.Component {
     }
     this.setState({ tick: Number(value), isPlaying: false });
   };
-  setData = value => this.setState({ data: value });
-  updateData = (prevData, updatedTick, updatedIsPlaying) => {
+  setData = value => {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
     this.setState({
-      data: this.props.updateData(prevData, updatedTick),
+      data: value,
+      isPlaying: false,
+      tick: this.props.initialTick
+    });
+  };
+  updateData = (prevData, updatedTick, shouldStopTicking) => {
+    const [updatedData, shouldStopUpdating] = this.props.updateData(
+      prevData,
+      updatedTick
+    );
+
+    // two reasons to stop auto-playing:
+    // - it came from tick function - we reached the max time,
+    // - it came from the the function that updates data - we reached a special state.
+
+    const updatedIsPlaying = !(shouldStopTicking && shouldStopUpdating);
+
+    // the function that updates data doesn't have access to the timer
+    // so if we stop because of that, we need to stop the timer here
+
+    if (shouldStopUpdating) {
+      if (this.timer) {
+        clearInterval(this.timer);
+      }
+    }
+
+    this.setState({
+      data: updatedData,
       isPlaying: updatedIsPlaying,
       tick: updatedTick
     });
@@ -98,8 +133,11 @@ export default class Model extends React.Component {
         <FlexRow>{this.renderFrame()}</FlexRow>
         <Controls
           isPlaying={this.state.isPlaying}
+          maxTime={this.props.maxTime}
+          minTime={this.props.minTime}
           play={this.play}
           pause={this.pause}
+          showTime={this.props.showTime}
           stop={this.stop}
           updateTime={this.updateTime}
           time={this.state.tick}

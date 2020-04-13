@@ -5,6 +5,7 @@ import { FlexColumn, FlexRow } from "./";
 export default function Frame(props) {
   const rows = [...Array(10).keys()];
   const cols = [...Array(10).keys()];
+
   return (
     <FlexColumn>
       {rows.map(y => (

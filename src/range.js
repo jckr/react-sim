@@ -41,22 +41,21 @@ export default class Play extends React.Component {
         </FlexRow>
       ) : null;
 
-    return (
-      <FlexColumn>
-        {LabelRow}
-        <FlexRow>
-          {shouldDisplayMinValue && <div>{minValue}</div>}
-          <input
-            type="range"
-            style={styles}
-            max={maxValue}
-            min={minValue}
-            onChange={e => setValue(e.target.value)}
-            value={value}
-          />
-          {shouldDisplayMaxValue && <div>{maxValue}</div>}
-        </FlexRow>
-      </FlexColumn>
+    const ControlRow = maxValue && maxValue < Infinity && (
+      <FlexRow>
+        {shouldDisplayMinValue && <div>{minValue}</div>}
+        <input
+          type="range"
+          style={styles}
+          max={maxValue}
+          min={minValue}
+          onChange={e => setValue(e.target.value)}
+          value={value}
+        />
+        {shouldDisplayMaxValue && <div>{maxValue}</div>}
+      </FlexRow>
     );
+
+    return <FlexColumn>{LabelRow}{ControlRow}</FlexColumn>;
   }
 }

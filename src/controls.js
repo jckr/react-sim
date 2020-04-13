@@ -4,7 +4,8 @@ import { FlexRow, FlexColumn, Play, Range, Stop } from "./index";
 export default class Controls extends React.Component {
   static defaultProps = {
     minTime: 0,
-    maxTime: 100
+    maxTime: 100,
+    showTime: true,
   };
 
   render() {
@@ -15,24 +16,27 @@ export default class Controls extends React.Component {
       stop,
       minTime,
       maxTime,
+      showTime,
       time,
       updateTime
     } = this.props;
     return (
-      <FlexRow>
+      <FlexRow styles={{ alignItems: "center" }}>
         <FlexColumn>
           <Play isPlaying={isPlaying} play={play} pause={pause} />
         </FlexColumn>
         <FlexColumn>
           <Stop isPlaying={isPlaying} stop={stop} />
         </FlexColumn>
-        <Range
-          minValue={minTime}
-          maxValue={maxTime}
-          value={time}
-          setValue={updateTime}
-          label="Time"
-        />
+        {showTime && (
+          <Range
+            minValue={minTime}
+            maxValue={maxTime}
+            value={time}
+            setValue={updateTime}
+            label="Time"
+          />
+        )}
       </FlexRow>
     );
   }
