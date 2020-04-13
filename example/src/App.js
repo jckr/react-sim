@@ -11,12 +11,19 @@ import {
 import "react-sim/dist/index.css";
 
 import { updateGameOfLifeGrid, GameOfLifeFrame } from "./examples/game-of-life";
+import { updateEpidemic, EpidemicFrame } from "./examples/epidemic";
 
 const examples = [
+
   {
     label: "Default",
     props: {},
     frame: <Frame />
+  },
+  {
+    label: "Agent-based epidemic simulation",
+    props: { auto: false, updateData: updateEpidemic, maxTime: Infinity },
+    frame: <EpidemicFrame />
   },
   {
     label: "Game of Life",
