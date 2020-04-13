@@ -1,6 +1,6 @@
 {
   "name": "react-sim",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Boilerplate components to create a model simulation with React",
   "author": "jckr",
   "license": "MIT",
