@@ -1,5 +1,5 @@
 import React from "react";
-import { FlexRow, FlexColumn } from "react-sim";
+import { FlexRow, FlexColumn, Model } from "react-sim";
 
 // helpers
 
@@ -128,3 +128,11 @@ export class GameOfLifeFrame extends React.Component {
     );
   }
 }
+
+const GameOfLife = () => (
+  <Model auto={false} updateData={updateGameOfLifeGrid} maxTime={Infinity}>
+    <GameOfLifeFrame />
+  </Model>
+);
+
+export default GameOfLife;

@@ -37,9 +37,7 @@ export default class Controls extends React.Component {
     return (
       <Range
         {...controls}
-        setValue={value =>
-          this.props.updateParams({ param: controls.param, value })
-        }
+        setValue={value => this.props.setParams({ [controls.param]: value })}
       />
     );
   }
@@ -55,7 +53,7 @@ export default class Controls extends React.Component {
       maxTime,
       showTime,
       time,
-      updateParams,
+      setParams,
       updateTime
     } = this.props;
 

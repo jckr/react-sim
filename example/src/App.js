@@ -10,25 +10,21 @@ import {
 } from "react-sim";
 import "react-sim/dist/index.css";
 
-import { updateGameOfLifeGrid, GameOfLifeFrame } from "./examples/game-of-life";
-import { updateEpidemic, EpidemicFrame } from "./examples/epidemic";
+import GameOfLife from "./examples/game-of-life";
+import Epidemic from "./examples/epidemic";
 
 const examples = [
-
   {
     label: "Default",
-    props: {},
-    frame: <Frame />
+    model: <Model />
   },
   {
     label: "Agent-based epidemic simulation",
-    props: { auto: false, updateData: updateEpidemic, maxTime: Infinity },
-    frame: <EpidemicFrame />
+    model: <Epidemic />
   },
   {
     label: "Game of Life",
-    props: { auto: false, updateData: updateGameOfLifeGrid, maxTime: Infinity },
-    frame: <GameOfLifeFrame />
+    model: <GameOfLife />
   }
 ];
 
@@ -43,24 +39,26 @@ class App extends React.Component {
       <FlexRow>
         <FlexColumn styles={{ width: "200px" }}>
           <ul>
-            {examples.map(({ label }, index) => (
-              <li
-                key={`label-${index}`}
-                onClick={() => this.updateSelection(index)}
-              >
-                {label}
-              </li>
-            ))}
+            {examples.map(({ label }, index) => {
+              console.log(index, this.state.selected);
+
+              return (
+                <li
+                  key={`label-${index}`}
+                  onClick={() => this.updateSelection(index)}
+                  style={{
+                    background: this.state.selected === index ? "#eee" : "none"
+                  }}
+                >
+                  {label}
+                </li>
+              );
+            })}
           </ul>
         </FlexColumn>
         <FlexColumn styles={{ width: "100%" }}>
           {examples.map(
-            ({ props, frame }, index) =>
-              index === this.state.selected && (
-                <Model key={`m-${index}`} {...props}>
-                  {frame}
-                </Model>
-              )
+            ({ model }, index) => index === this.state.selected && model
           )}
         </FlexColumn>
       </FlexRow>

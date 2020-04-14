@@ -1,5 +1,5 @@
 import React from "react";
-import { FlexRow, FlexColumn } from "react-sim";
+import { FlexRow, FlexColumn, Model } from "react-sim";
 
 const COLORS = {
   sick: "red",
@@ -16,14 +16,15 @@ function updateVxVy(angle, speed) {
   return [vx, vy];
 }
 
-export function updateEpidemic(data, tick) {
+export function updateEpidemic(data, tick, params) {
   let updatedData = JSON.parse(JSON.stringify(data));
   let nbSick = 0;
+
+  const { contaminationRisk, deathRisk } = params;
+
   updatedData.forEach((agent, i) => {
     const {
       status,
-      contaminationRisk,
-      deathRisk,
       r,
       x,
       y,
@@ -40,7 +41,6 @@ export function updateEpidemic(data, tick) {
 
     let recovery0 = recovery;
     if (status0 === "sick") {
-      debugger;
       if (tick >= recovery) {
         status0 = "recovered";
       } else {
@@ -255,3 +255,11 @@ export class EpidemicFrame extends React.Component {
     );
   }
 }
+
+const Epidemic = () => (
+  <Model auto="false" updateData={updateEpidemic} maxTime={Infinity}>
+    <EpidemicFrame />
+  </Model>
+);
+
+export default Epidemic;

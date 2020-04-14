@@ -7,14 +7,14 @@ export default class Model extends React.Component {
     auto: true,
     controls: null,
     initialData: [],
+    initialParams: {},
     initialTick: 0,
     minTime: 0,
     maxTime: 100,
     showTime: true,
     isPlaying: false,
     timeInterval: 100,
-    updateData: (d, t) => [d],
-    updateParams: args => console.log(args)
+    updateData: (d, t) => [d]
   };
   timer = null;
   state = {
@@ -24,7 +24,8 @@ export default class Model extends React.Component {
   constructor(props) {
     super(props);
     this.state.data = props.initialData;
-    this.state.tick = props.initialTick;
+    (this.state.params = props.initialParams),
+      (this.state.tick = props.initialTick);
     this.state.isPlaying = props.isPlaying;
   }
   componentDidMount() {
@@ -86,10 +87,14 @@ export default class Model extends React.Component {
       tick: this.props.initialTick
     });
   };
+  setParams = params => {
+    this.setState({ params: { ...this.state.params, ...params } });
+  };
   updateData = (prevData, updatedTick, shouldStopTicking) => {
     const [updatedData, shouldStopUpdating] = this.props.updateData(
       prevData,
-      updatedTick
+      updatedTick,
+      this.state.params
     );
 
     // two reasons to stop auto-playing:
@@ -142,7 +147,7 @@ export default class Model extends React.Component {
           pause={this.pause}
           showTime={this.props.showTime}
           stop={this.stop}
-          updateParams={this.props.updateParams}
+          setParams={this.setParams}
           updateTime={this.updateTime}
           time={this.state.tick}
         />
