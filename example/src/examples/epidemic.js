@@ -20,12 +20,11 @@ export function updateEpidemic(data, tick, params) {
   let updatedData = JSON.parse(JSON.stringify(data));
   let nbSick = 0;
 
-  const { contaminationRisk, deathRisk } = params;
+  const { contaminationRisk, deathRisk, r, height, width } = params;
 
   updatedData.forEach((agent, i) => {
     const {
       status,
-      r,
       x,
       y,
       vx,
@@ -33,9 +32,7 @@ export function updateEpidemic(data, tick, params) {
       angle,
       recovery,
       recoveryTicks,
-      speed,
-      height,
-      width
+      speed
     } = agent;
     let status0 = status;
 
@@ -179,18 +176,12 @@ function initData({
     const [vx, vy] = updateVxVy(angle, speed);
 
     agents.push({
-      id: i,
       x,
       y,
-      r,
-      height,
-      width,
       status,
       isDistancing,
       vx,
       vy,
-      contaminationRisk,
-      deathRisk,
       recovery,
       speed,
       angle
@@ -200,30 +191,20 @@ function initData({
 }
 
 export class EpidemicFrame extends React.Component {
-  static defaultProps = {
-    nbAgents: 500,
-    nbSick: 20,
-    contaminationRisk: 1,
-    deathRisk: 0.001,
-    maxSpeed: 2,
-    recoveryTicks: 200,
-    nbDistancing: 0,
-    r: 3,
-    height: 300,
-    width: 400
-  };
   constructor(props) {
     super(props);
-    this.props.setData(initData({ ...this.props }));
     this.myRef = React.createRef();
   }
   componentDidUpdate() {
-    const { data, height, width } = this.props;
+    const {
+      data,
+      params: { width, height, r }
+    } = this.props;
     const canvas = this.myRef.current;
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = "#fff";
     ctx.clearRect(0, 0, width, height);
-    data.forEach(({ status, x, y, r }) => {
+    data.forEach(({ status, x, y }) => {
       ctx.beginPath();
       ctx.fillStyle = COLORS[status];
       ctx.arc(x, y, r, 0, 2 * Math.PI, false);
@@ -235,8 +216,8 @@ export class EpidemicFrame extends React.Component {
     return (
       <div>
         <canvas
-          width={this.props.width}
-          height={this.props.height}
+          width={this.props.params.width}
+          height={this.props.params.height}
           ref={this.myRef}
         />
         <div
@@ -247,7 +228,7 @@ export class EpidemicFrame extends React.Component {
             margin: "8px 8px 8px 0",
             width: "fit-content"
           }}
-          onClick={() => this.props.setData(initData({ ...this.props }))}
+          onClick={this.props.initData}
         >
           Reset sim
         </div>
@@ -257,7 +238,24 @@ export class EpidemicFrame extends React.Component {
 }
 
 const Epidemic = () => (
-  <Model auto="false" updateData={updateEpidemic} maxTime={Infinity}>
+  <Model
+    auto="false"
+    initData={initData}
+    initialParams={{
+      nbAgents: 500,
+      nbSick: 20,
+      contaminationRisk: 1,
+      deathRisk: 0.001,
+      maxSpeed: 2,
+      recoveryTicks: 200,
+      nbDistancing: 0,
+      r: 3,
+      height: 300,
+      width: 400
+    }}
+    updateData={updateEpidemic}
+    maxTime={Infinity}
+  >
     <EpidemicFrame />
   </Model>
 );

@@ -6,7 +6,8 @@ export default class Model extends React.Component {
   static defaultProps = {
     auto: true,
     controls: null,
-    initialData: [],
+    initData: () => null,
+    initialData: null,
     initialParams: {},
     initialTick: 0,
     minTime: 0,
@@ -29,6 +30,7 @@ export default class Model extends React.Component {
     this.state.isPlaying = props.isPlaying;
   }
   componentDidMount() {
+    this.initData();
     if (this.props.auto) {
       this.play();
     }
@@ -38,6 +40,11 @@ export default class Model extends React.Component {
       clearInterval(this.timer);
     }
   }
+
+  initData = () => {
+    this.setData(this.props.initData(this.state.params));
+  };
+
   play = () => {
     this.timer = setInterval(this.tick, this.props.timeInterval);
     this.setState({ isPlaying: true });
@@ -120,18 +127,20 @@ export default class Model extends React.Component {
   };
   renderFrame() {
     const children = React.Children.toArray(this.props.children);
-    const params = {
+    const injectedProps = {
       data: this.state.data,
+      initData: this.initData,
+      params: this.state.params,
       tick: this.state.tick,
       setData: this.setData
     };
     switch (children.length) {
       case 0:
-        return <Frame {...params} />;
+        return <Frame {...injectedProps} />;
       case 1:
-        return React.cloneElement(children[0], params);
+        return React.cloneElement(children[0], injectedProps);
       default:
-        return children.map(child => React.cloneElement(child, params));
+        return children.map(child => React.cloneElement(child, injectedProps));
     }
   }
   render() {

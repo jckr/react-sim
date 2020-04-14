@@ -62,26 +62,17 @@ export function updateGameOfLifeGrid(grid) {
   return [updatedGrid, changes === 0];
 }
 
-function initGrid(height, width, creator = () => Number(Math.random() > 0.85)) {
+function initGrid({ height, width, creator }) {
   return [...Array(height).keys()].map(row =>
     [...Array(width).keys()].map(creator)
   );
 }
 
 export class GameOfLifeFrame extends React.Component {
-  static defaultProps = {
-    height: 24,
-    width: 48,
-    initialGrid: null
-  };
-  constructor(props) {
-    super(props);
-    this.props.setData(
-      JSON.parse(JSON.stringify(this.props.initialGrid)) ||
-        initGrid(this.props.height, this.props.width)
-    );
-  }
   render() {
+    if (this.props.data === null) {
+      return null;
+    }
     return (
       <div>
         {this.props.data.map((row, index) => (
@@ -118,9 +109,7 @@ export class GameOfLifeFrame extends React.Component {
             margin: "8px 8px 8px 0",
             width: "fit-content"
           }}
-          onClick={() =>
-            this.props.setData(initGrid(this.props.height, this.props.width))
-          }
+          onClick={this.props.initData}
         >
           Reset grid
         </div>
@@ -130,7 +119,17 @@ export class GameOfLifeFrame extends React.Component {
 }
 
 const GameOfLife = () => (
-  <Model auto={false} updateData={updateGameOfLifeGrid} maxTime={Infinity}>
+  <Model
+    auto={false}
+    updateData={updateGameOfLifeGrid}
+    maxTime={Infinity}
+    initData={initGrid}
+    initialParams={{
+      height: 24,
+      width: 48,
+      creator: () => Number(Math.random()) > 0.85
+    }}
+  >
     <GameOfLifeFrame />
   </Model>
 );
