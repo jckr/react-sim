@@ -1,6 +1,7 @@
 import React from "react";
 import { FlexRow, FlexColumn, Model } from "react-sim";
 
+
 const COLORS = {
   sick: "red",
   recovered: "gold",
@@ -16,7 +17,7 @@ function updateVxVy(angle, speed) {
   return [vx, vy];
 }
 
-export function updateEpidemic(data, tick, params) {
+export function updateEpidemic({data, tick, params, pause}) {
   let updatedData = JSON.parse(JSON.stringify(data));
   let nbSick = 0;
 
@@ -120,7 +121,9 @@ export function updateEpidemic(data, tick, params) {
       };
     }
   });
-  return [updatedData, nbSick === 0];
+  if (nbSick === 0) {pause();}
+
+  return updatedData;
 }
 
 function chooseMamongN(n, m) {

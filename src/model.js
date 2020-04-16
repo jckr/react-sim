@@ -98,26 +98,19 @@ export default class Model extends React.Component {
     this.setState({ params: { ...this.state.params, ...params } });
   };
   updateData = (prevData, updatedTick, shouldStopTicking) => {
-    const [updatedData, shouldStopUpdating] = this.props.updateData(
-      prevData,
-      updatedTick,
-      this.state.params
-    );
+    const updatedData = this.props.updateData({
+      data: prevData,
+      tick: updatedTick,
+      params: this.state.params,
+      stop: this.stop,
+      pause: this.pause
+    });
 
     // two reasons to stop auto-playing:
     // - it came from tick function - we reached the max time,
     // - it came from the the function that updates data - we reached a special state.
 
-    const updatedIsPlaying = !(shouldStopTicking && shouldStopUpdating);
-
-    // the function that updates data doesn't have access to the timer
-    // so if we stop because of that, we need to stop the timer here
-
-    if (shouldStopUpdating) {
-      if (this.timer) {
-        clearInterval(this.timer);
-      }
-    }
+    const updatedIsPlaying = !shouldStopTicking;
 
     this.setState({
       data: updatedData,

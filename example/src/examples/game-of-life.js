@@ -39,11 +39,11 @@ function countNeighbors(x, y, grid) {
   return n;
 }
 
-export function updateGameOfLifeGrid(grid) {
+export function updateGameOfLifeGrid({data, pause}) {
   let changes = 0;
-  const updatedGrid = grid.map((row, y) =>
+  const updatedGrid = data.map((row, y) =>
     row.map((cell, x) => {
-      const neighbors = countNeighbors(x, y, grid);
+      const neighbors = countNeighbors(x, y, data);
       if (cell && (neighbors < 2 || neighbors > 3)) {
         // living cell has too few or too many neighbors, and dies.
         changes++;
@@ -58,8 +58,8 @@ export function updateGameOfLifeGrid(grid) {
       return cell;
     })
   );
-
-  return [updatedGrid, changes === 0];
+  if (changes === 0) {pause()}
+  return updatedGrid;
 }
 
 function initGrid({ height, width, creator }) {
