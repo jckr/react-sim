@@ -8,14 +8,14 @@ function getTotalValue(grid, listOfCells) {
   return listOfCells.reduce((total, [x, y]) => total + grid[y][x].value, 0);
 }
 
-export function updateFur({ data, tick, params, pause }) {
+export function updateFur({ data, tick, params, complete }) {
   let grid = JSON.parse(JSON.stringify(data));
   let changes = 0;
   const { height, width, w } = params;
 
   for (let row = 0; row < height; row++) {
     for (let col = 0; col < width; col++) {
-      const {innerNeighbors, outerNeighbors} = data[row][col];
+      const { innerNeighbors, outerNeighbors } = data[row][col];
 
       const activators = getTotalValue(data, innerNeighbors);
       const inhibitors = getTotalValue(data, outerNeighbors);
@@ -35,13 +35,13 @@ export function updateFur({ data, tick, params, pause }) {
       // if mutation = 0, leave cell unchanged
     }
   }
-  if (changes < 5) {
-    pause();
+  if (changes < 0.01 * height * width) {
+    complete();
   }
   return grid;
 }
 
-function initData({ height, width, density, innerRadius, outerRadius}) {
+function initData({ height, width, density, innerRadius, outerRadius }) {
   const data = [];
   for (let row = 0; row < height; row++) {
     const cells = [];
@@ -69,7 +69,7 @@ function initData({ height, width, density, innerRadius, outerRadius}) {
 
       const value = Math.random() < density;
 
-      cells.push({value, innerNeighbors, outerNeighbors});
+      cells.push({ value, innerNeighbors, outerNeighbors });
     }
     data.push(cells);
   }
@@ -79,10 +79,32 @@ function initData({ height, width, density, innerRadius, outerRadius}) {
 const Fur = () => (
   <Model
     auto="false"
+    controls={[
+      [
+        { param: "w", minValue: 0, maxValue: 1, label: "weight", step: 0.01 },
+        {
+          param: "innerRadius",
+          minValue: 1,
+          maxValue: 10,
+          label: "Inner Radius"
+        },
+        {
+          param: "outerRadius",
+          minValue: 1,
+          maxValue: 10,
+          label: "Outer Radius"
+        }
+      ],
+      [
+        { param: "height", minValue: 5, maxValue: 100, label: "Outer Radius" },
+        { param: "width", minValue: 5, maxValue: 100, label: "Outer Radius" },
+        { param: "density", minValue: 0, maxValue: 1, step: 0.1 }
+      ]
+    ]}
     initData={initData}
     initialParams={{
-      height: 100,
-      width: 100,
+      height: 30,
+      width: 30,
       density: 0.5,
       innerRadius: 3,
       outerRadius: 6,
@@ -91,7 +113,7 @@ const Fur = () => (
     updateData={updateFur}
     maxTime={200}
   >
-    <GameOfLifeFrame size={6} accessor={d => d.value} />
+    <GameOfLifeFrame size={10} accessor={d => d.value} />
   </Model>
 );
 

@@ -9,6 +9,7 @@ export default class Play extends React.Component {
     shouldDisplayMaxValue: true,
     shouldDisplayMinValue: true,
     shouldDisplayValue: true,
+    step: 1,
     styles: {}
   };
 
@@ -31,6 +32,7 @@ export default class Play extends React.Component {
       shouldDisplayMaxValue,
       shouldDisplayMinValue,
       shouldDisplayValue,
+      step,
       value
     } = this.props;
 
@@ -52,6 +54,7 @@ export default class Play extends React.Component {
           max={maxValue}
           min={minValue}
           onChange={e => setValue(e.target.value)}
+          step={step}
           value={value}
         />
         {shouldDisplayMaxValue && <div>{maxValue}</div>}

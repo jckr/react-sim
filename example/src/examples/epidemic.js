@@ -8,7 +8,7 @@ const COLORS = {
   dead: "black"
 };
 
-export function updateEpidemic({ data, tick, params, pause }) {
+export function updateEpidemic({ data, tick, params, complete }) {
   let updatedData = JSON.parse(JSON.stringify(data));
   let nbSick = 0;
 
@@ -97,7 +97,7 @@ export function updateEpidemic({ data, tick, params, pause }) {
     }
   });
   if (nbSick === 0) {
-    pause();
+    complete();
   }
 
   return updatedData;

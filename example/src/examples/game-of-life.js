@@ -39,7 +39,7 @@ function countNeighbors(x, y, grid) {
   return n;
 }
 
-export function updateGameOfLifeGrid({data, pause}) {
+export function updateGameOfLifeGrid({data, complete}) {
   let changes = 0;
   const updatedGrid = data.map((row, y) =>
     row.map((cell, x) => {
@@ -58,7 +58,7 @@ export function updateGameOfLifeGrid({data, pause}) {
       return cell;
     })
   );
-  if (changes === 0) {pause()}
+  if (changes === 0) {complete()}
   return updatedGrid;
 }
 
@@ -99,7 +99,7 @@ export class GameOfLifeFrame extends React.Component {
                     borderRadius: accessor(cell) ? 0 : "50%",
                     width: accessor(cell) ? "100%" : 0,
                     height: accessor(cell) ? "100%" : 0,
-                    transition: "all 0.1s"
+                    // transition: "all 0.1s"
                   }}
                 ></div>
               </FlexColumn>

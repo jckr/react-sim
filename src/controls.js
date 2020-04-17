@@ -34,10 +34,15 @@ export default class Controls extends React.Component {
 
     // we can do something different depending on type
 
+    const paramName = controls.param;
+    const { params } = this.props;
+
     return (
       <Range
+        label={paramName}
+        setValue={value => this.props.setParams({ [paramName]: value })}
+        value={params[paramName]}
         {...controls}
-        setValue={value => this.props.setParams({ [controls.param]: value })}
       />
     );
   }

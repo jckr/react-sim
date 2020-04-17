@@ -4,7 +4,7 @@ import { FlexColumn, FlexRow, Controls, Frame } from "./";
 
 export default class Model extends React.Component {
   static defaultProps = {
-    auto: true,
+    start: false,
     controls: null,
     initData: () => null,
     initialData: null,
@@ -19,74 +19,98 @@ export default class Model extends React.Component {
   };
   timer = null;
   state = {
+    canPlay: true,
     isPlaying: null,
     tick: null
   };
   constructor(props) {
     super(props);
     this.state.data = props.initialData;
-    (this.state.params = props.initialParams),
-      (this.state.tick = props.initialTick);
+    this.state.params = props.initialParams;
+    this.state.tick = props.initialTick;
     this.state.isPlaying = props.isPlaying;
   }
   componentDidMount() {
     this.initData();
-    if (this.props.auto) {
+  }
+  componentDidUpdate() {
+    if (this.props.start && this.state.canPlay) {
       this.play();
     }
   }
   componentWillUnmount() {
     if (this.timer !== null) {
-      clearInterval(this.timer);
+      window.cancelAnimationFrame(this.timer);
     }
   }
 
+  complete = () => {
+    this.setState(() => ({ canPlay: false }));
+  };
   initData = () => {
-    this.setData(this.props.initData(this.state.params));
-  };
-
-  play = () => {
-    this.timer = setInterval(this.tick, this.props.timeInterval);
-    this.setState({ isPlaying: true });
-  };
-  pause = () => {
-    clearInterval(this.timer);
-    this.setState({ isPlaying: false });
-  };
-  stop = () => {
-    clearInterval(this.timer);
     this.setState({
-      isPlaying: false,
-      tick: this.props.initialTick
+      canPlay: true,
+      data: this.props.initData(this.state.params)
     });
   };
 
-  tick = () => {
-    if (!this.state.isPlaying) {
-      return;
-    }
-    let updatedTick = this.state.tick + 1;
-    let shouldStopTicking = false;
-
-    if (this.props.maxTime !== undefined) {
-      if (updatedTick >= this.props.maxTime) {
-        // stop timer
-        clearInterval(this.timer);
-        updatedTick = this.props.maxTime;
-        shouldStopTicking = true;
-      }
-    }
-    this.updateData(this.state.data, updatedTick, shouldStopTicking);
+  play = () => {
+    this.setState(() => ({ isPlaying: true }), this.tick);
   };
+  pause = () => {
+    window.cancelAnimationFrame(this.timer);
+    this.setState(() => ({ isPlaying: false }));
+  };
+  stop = () => {
+    window.cancelAnimationFrame(this.timer);
+    this.setState(() => ({
+      isPlaying: false,
+      tick: this.props.initialTick
+    }));
+  };
+
+  tick = () => {
+    if (
+      this.state.canPlay === false ||
+      (this.props.maxTime !== undefined &&
+        this.state.tick >= this.props.maxTime)
+    ) {
+      return this.setState(() => ({
+        isPlaying: false
+      }));
+    }
+
+    const updatedTick = this.state.tick + 1;
+    const updatedData = this.props.updateData({
+      data: this.state.data,
+      tick: updatedTick,
+      params: this.state.params,
+      complete: this.complete,
+      stop: this.stop,
+      pause: this.pause
+    });
+
+    this.setState(() => ({
+      data: updatedData,
+      tick: updatedTick
+    }));
+
+    if (this.state.isPlaying) {
+      window.cancelAnimationFrame(this.timer);
+      this.timer = window.requestAnimationFrame(this.tick);
+    }
+  };
+
   updateTime = value => {
     if (this.timer) {
-      clearInterval(this.timer);
+      window.cancelAnimationFrame(this.timer);
     }
     this.setState({ tick: Number(value), isPlaying: false });
   };
+
   setData = value => {
     if (this.timer) {
-      clearInterval(this.timer);
+      window.cancelAnimationFrame(this.timer);
     }
     this.setState({
       data: value,
@@ -97,27 +121,7 @@ export default class Model extends React.Component {
   setParams = params => {
     this.setState({ params: { ...this.state.params, ...params } });
   };
-  updateData = (prevData, updatedTick, shouldStopTicking) => {
-    const updatedData = this.props.updateData({
-      data: prevData,
-      tick: updatedTick,
-      params: this.state.params,
-      stop: this.stop,
-      pause: this.pause
-    });
 
-    // two reasons to stop auto-playing:
-    // - it came from tick function - we reached the max time,
-    // - it came from the the function that updates data - we reached a special state.
-
-    const updatedIsPlaying = !shouldStopTicking;
-
-    this.setState({
-      data: updatedData,
-      isPlaying: updatedIsPlaying,
-      tick: updatedTick
-    });
-  };
   renderFrame() {
     const children = React.Children.toArray(this.props.children);
     const injectedProps = {
@@ -145,6 +149,7 @@ export default class Model extends React.Component {
           isPlaying={this.state.isPlaying}
           maxTime={this.props.maxTime}
           minTime={this.props.minTime}
+          params={this.state.params}
           play={this.play}
           pause={this.pause}
           showTime={this.props.showTime}
