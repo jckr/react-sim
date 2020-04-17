@@ -8,14 +8,6 @@ const COLORS = {
   dead: "black"
 };
 
-// helpers
-
-function updateVxVy(angle, speed) {
-  const vx = Math.cos(angle) * speed;
-  const vy = Math.sin(angle) * speed;
-  return [vx, vy];
-}
-
 export function updateEpidemic({ data, tick, params, pause }) {
   let updatedData = JSON.parse(JSON.stringify(data));
   let nbSick = 0;

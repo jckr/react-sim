@@ -11,6 +11,8 @@ import {
 import "react-sim/dist/index.css";
 
 import GameOfLife from "./examples/game-of-life";
+import Fur from "./examples/fur";
+
 import Epidemic from "./examples/epidemic";
 
 const examples = [
@@ -25,6 +27,10 @@ const examples = [
   {
     label: "Game of Life",
     model: <GameOfLife />
+  },
+  {
+    label: "Fur",
+    model: <Fur />
   }
 ];
 

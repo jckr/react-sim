@@ -69,31 +69,36 @@ function initGrid({ height, width, creator }) {
 }
 
 export class GameOfLifeFrame extends React.Component {
+  static defaultProps = {
+    size: 12,
+    accessor: d => d
+  }
   render() {
     if (this.props.data === null) {
       return null;
     }
+    const {accessor, data, size} = this.props;
     return (
       <div>
-        {this.props.data.map((row, index) => (
-          <FlexRow key={`r-${index}`} styles={{ height: "12px" }}>
+        {data.map((row, index) => (
+          <FlexRow key={`r-${index}`} styles={{ height: size }}>
             {row.map((cell, index) => (
               <FlexColumn
                 key={`c-${index}`}
                 styles={{
-                  width: "12px",
+                  width: size,
                   overflow: "hidden",
                   alignItems: "center",
                   justifyContent: "center",
-                  border: "1px solid black"
+                  // border: "1px solid black"
                 }}
               >
                 <div
                   style={{
                     background: "#000",
-                    borderRadius: cell ? 0 : "50%",
-                    width: cell ? "100%" : 0,
-                    height: cell ? "100%" : 0,
+                    borderRadius: accessor(cell) ? 0 : "50%",
+                    width: accessor(cell) ? "100%" : 0,
+                    height: accessor(cell) ? "100%" : 0,
                     transition: "all 0.1s"
                   }}
                 ></div>
