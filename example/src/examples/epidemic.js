@@ -1,7 +1,6 @@
 import React from "react";
 import { FlexRow, FlexColumn, Model } from "react-sim";
 
-
 const COLORS = {
   sick: "red",
   recovered: "gold",
@@ -17,111 +16,97 @@ function updateVxVy(angle, speed) {
   return [vx, vy];
 }
 
-export function updateEpidemic({data, tick, params, pause}) {
+export function updateEpidemic({ data, tick, params, pause }) {
   let updatedData = JSON.parse(JSON.stringify(data));
   let nbSick = 0;
 
-  const { contaminationRisk, deathRisk, r, height, width } = params;
+  const {
+    contaminationRisk,
+    deathRisk,
+    r,
+    recoveryTicks,
+    height,
+    width
+  } = params;
 
   updatedData.forEach((agent, i) => {
-    const {
-      status,
-      x,
-      y,
-      vx,
-      vy,
-      angle,
-      recovery,
-      recoveryTicks,
-      speed
-    } = agent;
-    let status0 = status;
+    // update status
 
-    let recovery0 = recovery;
-    if (status0 === "sick") {
-      if (tick >= recovery) {
-        status0 = "recovered";
+    if (agent.status === "sick") {
+      if (tick >= agent.recovery) {
+        agent.status = "recovered";
       } else {
         if (Math.random() < deathRisk) {
-          status0 = "dead";
+          agent.status = "dead";
         }
       }
     }
-    if (status0 === "dead") {
-      updatedData[i].status = status0;
-    } else {
-      let angle0 = angle;
-      let vx0 = vx;
-      let vy0 = vy;
-      // tentative new position
-      let x0 = x + vx0;
-      let y0 = y + vy0;
+    if (agent.status !== "dead") {
+      // checking for collisions
 
-      // bouncing on walls
-      if (y0 < 0 || y0 > height) {
-        angle0 = -angle0;
-      }
+      for (let j = i + 1; j < updatedData.length; j++) {
+        let otherAgent = updatedData[j];
+        const dx = otherAgent.x - agent.x;
+        const dy = otherAgent.y - agent.y;
+        const distance = Math.hypot(dx, dy);
+        if (distance < 2 * r) {
+          // collision
 
-      if (x0 < 0 || x0 > width) {
-        angle0 = Math.PI - angle0;
-      }
+          const ax = dx / distance;
+          const ay = dy / distance;
 
-      if (angle0 !== angle) {
-        [vx0, vy0] = updateVxVy(angle0, speed);
-        x0 = x + vx0;
-        y0 = y + vy0;
-      }
+          agent.vx = agent.vx - ax;
+          agent.vy = agent.vy - ay;
+          otherAgent.vx = ax;
+          otherAgent.vy = ay;
 
-      const collisions = findOverlaps(updatedData, i + 1, r, { x: x0, y: y0 });
+          // test for contagion
 
-      if (collisions.length) {
-        const sumAngles = collisions.reduce(
-          (prev, curr) => prev + curr.angle,
-          angle0
-        );
-        // current agent will be stopped for this tick.
-        x0 = x;
-        y0 = y;
-
-        angle0 = (sumAngles - agent.angle) / collisions.length;
-        [vx0, vy0] = updateVxVy(angle0, speed);
-
-        collisions.forEach(otherAgent => {
-          // we are mutating agents we haven't looped through yet
-          otherAgent.angle = (sumAngles - otherAgent.angle) / collisions.length;
-
-          [otherAgent.vx, otherAgent.vy] = updateVxVy(otherAgent.angle, speed);
-          // contagion
-          if (status0 === "sick" && otherAgent.status === "healthy") {
+          if (agent.status === "sick" && otherAgent.status === "healthy") {
             if (Math.random() <= contaminationRisk) {
               otherAgent.status = "sick";
               otherAgent.recovery = tick + recoveryTicks;
             }
           }
-          if (status0 === "healthy" && otherAgent.status === "sick") {
+          if (agent.status === "healthy" && otherAgent.status === "sick") {
             if (Math.random() <= contaminationRisk) {
-              status0 = "sick";
-              recovery0 = tick + recoveryTicks;
+              agent.status = "sick";
+              agent.recovery = tick + recoveryTicks;
             }
           }
-        });
+        }
       }
-      if (status0 === "sick") {
+
+      // now move
+
+      agent.x = agent.x + agent.vx;
+      agent.y = agent.y + agent.vy;
+
+      // bouncing on walls
+      if (
+        (agent.vy < 0 && agent.y < r) ||
+        (agent.vy > 0 && agent.y > height - r)
+      ) {
+        agent.vy = -agent.vy;
+      }
+
+      if (
+        (agent.vx < 0 && agent.x < r) ||
+        (agent.vx > 0 && agent.x > width - r)
+      ) {
+        agent.vx = -agent.vx;
+      }
+
+      // counting sick agents
+
+      if (agent.status === "sick") {
         nbSick++;
       }
-      updatedData[i] = {
-        ...agent,
-        recovery: recovery0,
-        status: status0,
-        x: x0,
-        y: y0,
-        vx: vx0,
-        vy: vy0
-        // other properties don't change
-      };
     }
   });
-  if (nbSick === 0) {pause();}
+  if (nbSick === 0) {
+    pause();
+  }
 
   return updatedData;
 }
@@ -151,7 +136,7 @@ function findOverlaps(agents, i, r, point) {
 function initData({
   nbAgents = 200,
   nbSick = 5,
-  maxSpeed = 10,
+  maxSpeed = 30,
   contaminationRisk = 1,
   deathRisk = 0.005,
   recoveryTicks = 20,
@@ -175,19 +160,20 @@ function initData({
     const recovery = sick.has(i) ? recoveryTicks : null;
     const isDistancing = distancing.has(i);
     const speed = isDistancing ? 0 : maxSpeed;
-    const angle = Math.random() * 2 * Math.PI;
-    const [vx, vy] = updateVxVy(angle, speed);
+    const vx = speed * (Math.random() * 2 - 1);
+    const vy = speed * (Math.random() * 2 - 1);
+    const isBouncing = false;
 
     agents.push({
       x,
       y,
       status,
+      isBouncing,
       isDistancing,
       vx,
       vy,
       recovery,
-      speed,
-      angle
+      speed
     });
   }
   return agents;
@@ -206,8 +192,9 @@ export class EpidemicFrame extends React.Component {
     const canvas = this.myRef.current;
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = "#fff";
+    ctx.lineWidth = '5px';
     ctx.clearRect(0, 0, width, height);
-    data.forEach(({ status, x, y }) => {
+    data.forEach(({ status, isBouncing, x, y }) => {
       ctx.beginPath();
       ctx.fillStyle = COLORS[status];
       ctx.arc(x, y, r, 0, 2 * Math.PI, false);
