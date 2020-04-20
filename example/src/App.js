@@ -14,6 +14,7 @@ import GameOfLife from "./examples/game-of-life";
 import Fur from "./examples/fur";
 
 import Epidemic from "./examples/epidemic";
+import Snake from './examples/snake/';
 
 const examples = [
   {
@@ -31,7 +32,8 @@ const examples = [
   {
     label: "Fur",
     model: <Fur />
-  }
+  },
+  { label: "Snake", model: <Snake /> }
 ];
 
 class App extends React.Component {

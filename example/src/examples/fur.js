@@ -96,8 +96,8 @@ const Fur = () => (
         }
       ],
       [
-        { param: "height", minValue: 5, maxValue: 100, label: "Outer Radius" },
-        { param: "width", minValue: 5, maxValue: 100, label: "Outer Radius" },
+        { param: "height", minValue: 5, maxValue: 100, label: "Height" },
+        { param: "width", minValue: 5, maxValue: 100, label: "Width" },
         { param: "density", minValue: 0, maxValue: 1, step: 0.1 }
       ]
     ]}
