@@ -1,6 +1,6 @@
 import React from "react";
 import { FlexRow, FlexColumn, Play, Range, Stop } from "./index";
-
+import { Label, Slider } from "@rebass/forms";
 export default class Controls extends React.Component {
   static defaultProps = {
     controls: null,

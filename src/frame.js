@@ -1,5 +1,4 @@
 import React from "react";
-
 import { FlexColumn, FlexRow } from "./";
 
 export default function Frame(props) {

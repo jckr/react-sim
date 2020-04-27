@@ -1,6 +1,6 @@
 import React from "react";
-import { FlexColumn, FlexRow } from "./";
-
+import { Flex, Text } from "rebass";
+import { Label, Slider } from "@rebass/forms";
 export default class Play extends React.Component {
   static defaultProps = {
     minValue: 0,
@@ -9,20 +9,10 @@ export default class Play extends React.Component {
     shouldDisplayMaxValue: true,
     shouldDisplayMinValue: true,
     shouldDisplayValue: true,
-    step: 1,
-    styles: {}
+    step: 1
   };
 
   render() {
-    const styles = {
-      display: "flex",
-      borderRadius: "3px",
-      justifyContent: "center",
-      alignItems: "center",
-
-      ...this.props.styles
-    };
-
     const {
       label,
       maxValue,
@@ -39,28 +29,35 @@ export default class Play extends React.Component {
     const LabelRow =
       (label !== undefined || value !== undefined) &&
       (shouldDisplayLabel || shouldDisplayValue) ? (
-        <FlexRow>
+        <Label htmlFor={label}>
           {shouldDisplayLabel && `${label}: `}
           {shouldDisplayValue && value}
-        </FlexRow>
+        </Label>
       ) : null;
 
     const ControlRow = maxValue && maxValue < Infinity && (
-      <FlexRow>
-        {shouldDisplayMinValue && <div>{minValue}</div>}
-        <input
-          type="range"
-          style={styles}
+      <Flex flexDirection="row" alignItems="center" sx={{width: [200]}}>
+        {shouldDisplayMinValue && <Text>{minValue}</Text>}
+        <Slider
+          id={label}
+          sx={{
+            mx: 2
+          }}
           max={maxValue}
           min={minValue}
           onChange={e => setValue(e.target.value)}
           step={step}
           value={value}
         />
-        {shouldDisplayMaxValue && <div>{maxValue}</div>}
-      </FlexRow>
+        {shouldDisplayMaxValue && <Text>{maxValue}</Text>}
+      </Flex>
     );
 
-    return <FlexColumn>{LabelRow}{ControlRow}</FlexColumn>;
+    return (
+      <Flex flexDirection="column">
+        {LabelRow}
+        {ControlRow}
+      </Flex>
+    );
   }
 }

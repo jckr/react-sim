@@ -1,0 +1,345 @@
+---
+Title: Tutorial
+---
+import GameOfLife, {Step2, Step3, Step4, Step5} from '../components/examples/game-of-life';
+
+To illustrate how React-Sim works, let's recreate John Conway's game of life.
+
+Our finished demo:
+<GameOfLife />
+
+# Setup
+
+This assumes you have a running React project. If not, check out [create-react-app](http://create-react-app.dev).
+
+In your project, install react-sim:
+
+```bash
+npm install react-sim
+```
+
+And start a new file.
+
+```jsx
+import React from 'react';
+import {Model} from 'react-sim';
+
+const GameOfLife = () => <Model />;
+
+export default GameOfLife;
+```
+
+You'll have a very simple model up and running, but that is not game of life.
+
+To get our simulation started, we need:
+- a way to initialize the data,
+- a way to update data after each tick,
+- a way to render the data, and
+- controls.
+
+Let's build all this!
+
+# initialize the data
+
+Now, we're going to add a function to initialize our data.
+The data will look like a 2d grid with random 0s or 1s, corresponding to whether a cell is full or not.
+So, to initiate our grid, we need to know its dimensions, and we can also control how full our grid is going to be.
+So, we'll give three arguments to this function: height, width and density.
+Height and width will be integers, the number of cells in each dimension, and density will be a value between 0 and 1.
+The lower density is, the emptier the grid will be.
+
+Add a function:
+
+```jsx
+function initGrid({ height, width, density }) {
+  return Array(height)
+    .fill(0)
+    .map(row =>
+      Array(width)
+        .fill(0)
+        .map(() => Number(Math.random()) < density)
+    );
+}
+```
+
+The arguments to initGrid should come from the model's params.
+
+So let's change `const GameOfLife = () => <Model />;` into:
+
+```jsx
+const GameOfLife = () => (
+  <Model
+    initialParams={{
+      height: 24,
+      width: 48,
+      density: 0.15
+    }}
+    initData={initGrid}
+  />
+)
+```
+
+Now, when the simulation will start, data will be updated to a random grid.
+
+# Rendering the data
+
+Let's create a Frame component to render our data.
+
+```jsx
+const Frame = ({ data = [[]], size = 12, initData }) => (
+  <div>
+    {data.map((row, index) => (
+      <div
+        key={`r-${index}`}
+        styles={{ display: 'flex', flexDirection: 'row', height: size }}
+      >
+        {row.map((cell, index) => (
+          <div
+            key={`c-${index}`}
+            style={{
+              width: size,
+              background: cell ? '#000' : 'none',
+            }}
+          />
+        ))}
+      </div>
+    ))}
+    <div
+      style={{
+        cursor: 'pointer',
+        background: '#eee',
+        padding: '8px',
+        margin: '8px 8px 8px 0',
+        width: 'fit-content',
+      }}
+      onClick={initData}
+    >
+      Reset grid
+    </div>
+  </div>
+);
+```
+
+Now, let's update our model:
+
+```jsx
+const GameOfLife = () => (
+  <Model
+    initialParams={{
+      height: 24,
+      width: 48,
+      density: 0.15
+    }}
+    initData={initGrid}
+  >
+    <Frame />
+  </Model>
+)
+```
+
+Nothing super unusual, we literally display a black square if a cell is full and nothing if it isn't.
+We add a little Reset button at the end so users can reset the data.
+
+<Step2 />
+
+That's what we have at this point. Now we can display our random grid, but it doesn't change as the simulation plays, because we're not updating the data. Let's fix that.
+
+# Updating data
+
+Next, we're going to create a function that updates our data.
+
+The rules of the game of life is that after each turn:
+
+- Any live cell with 2 or 3 live neighbors survive.
+- Any dead cell with three live neighbors becomes a live cell.
+- All other live cells die in the next generation. Similarly, all other dead cells stay dead.
+
+So, first we need a way to count neighbors of a cell. Let's add this helper function:
+
+```jsx
+function countNeighbors(x, y, grid) {
+  const height = grid.length;
+  if (!height) {
+    return 0;
+  }
+  const width = grid[0].length;
+
+  let n = 0;
+  for (let xOffset = -1; xOffset <= 1; xOffset++) {
+    for (let yOffset = -1; yOffset <= 1; yOffset++) {
+      const x1 = x + xOffset;
+      const y1 = y + yOffset;
+      if (
+        x1 < width &&
+        x1 > 0 &&
+        y1 < height &&
+        y1 > 0 &&
+        (x1 !== x || y1 !== y)
+      ) {
+        n += grid[y1][x1];
+      }
+    }
+  }
+  return n;
+}
+```
+
+And now, let's create our update function:
+
+```jsx
+function updateGrid({ data }) {
+  return data.map((row, y) =>
+    row.map((cell, x) => {
+      const neighbors = countNeighbors(x, y, data);
+      if (cell && (neighbors < 2 || neighbors > 3)) {
+        // living cell has too few or too many neighbors, and dies.
+        return 0;
+      }
+      if (!cell && neighbors === 3) {
+        // dead cell has the right amount of neighbors, and lives!
+        return 1;
+      }
+      // no change
+      return cell;
+    })
+  );
+}
+```
+
+Finally, let's plug our update function in our model:
+
+```jsx
+const GameOfLife = () => (
+  <Model
+    initialParams={{
+      height: 24,
+      width: 48,
+      density: 0.15
+    }}
+    initData={initGrid}
+    updateData={updateGrid}
+  >
+    <Frame />
+  </Model>
+)
+```
+
+<Step3 />
+
+Now, our game of life updates as the simulation plays!
+
+There is a problem though - if the data reaches a stable state, ie no new cell live or die, the simulation continues. It would be nice if it stopped in this case.
+
+Let's change our update function -
+
+```jsx
+function updateGrid({ data, complete }) {
+  let changes = 0;
+  const updatedGrid = data.map((row, y) =>
+    row.map((cell, x) => {
+      const neighbors = countNeighbors(x, y, data);
+      if (cell && (neighbors < 2 || neighbors > 3)) {
+        // living cell has too few or too many neighbors, and dies.
+        changes++;
+        return 0;
+      }
+      if (!cell && neighbors === 3) {
+        // dead cell has the right amount of neighbors, and lives!
+        changes++;
+        return 1;
+      }
+      // no change
+      return cell;
+    })
+  );
+  if (changes === 0) {
+    complete();
+  }
+  return updatedGrid;
+}
+```
+
+In your update function, you can access the method `complete()`, and so define conditions in this function that will call this method.
+When `complete()` is called, the simulation stops, until it is reset.
+
+<Step4 />
+
+Now our simulation will stop if it can't go any further.
+
+# Controls
+
+Right now, the simulation has default controls, which is the `Timer` slider.
+We can see time, we can move the slider back and forth, though it doesn't do anything.
+
+On the other hand, it would be nice if we could adjust the density of the grid.
+
+So let's address these two things.
+
+```jsx
+const GameOfLife = () => (
+  <Model
+    maxTime={Infinity}
+    controls={{
+      param: 'density',
+      maxValue: 1,
+      step: 0.01,
+      label: 'Grid density',
+    }}
+    initData={initGrid}
+    updateData={updateGameOfLifeGrid}
+    initialParams={{
+      height: 24,
+      width: 48,
+      density: 0.15,
+    }}
+  >
+    <Frame />
+  </Model>);
+```
+
+Setting the `maxTime` to `Infinity` is the simplest way to make the slider go away.
+If there's no upper bound to the value of time, then the slider is no longer displayed.
+
+We're adding a control via the `controls` prop. Here we have only one control, so we can use this simple syntax of just passing one object describing the control, with:
+- the param it's going to affect ("density"),
+- its maxValue, if different from the default of 100,
+- its step, if different from the default of 1,
+- a label, which is the name of the param, by default.
+
+That's it! we now can control the density of the grid.
+
+<Step5 />
+
+# Wrapping up
+
+The simulation is still super fast, as it refreshes 60 times per second. We can't see patterns so well.
+We can add a delay between each animation tick - through the delay property.
+
+```jsx
+const GameOfLife = () => (
+  <Model
+    delay={100}
+    maxTime={Infinity}
+    controls={{
+      param: 'density',
+      maxValue: 1,
+      step: 0.01,
+      label: 'Grid density',
+    }}
+    initData={initGrid}
+    updateData={updateGameOfLifeGrid}
+    initialParams={{
+      height: 24,
+      width: 48,
+      density: 0.15,
+    }}
+  >
+    <Frame />
+  </Model>);
+```
+
+And that concludes our tutorial!
+
+<GameOfLife />
+
+
