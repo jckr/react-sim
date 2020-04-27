@@ -1,0 +1,47 @@
+---
+Title: Model API
+---
+
+props:
+
+### initialParams
+
+Object
+
+An object that describes parameters for the simulation.
+These parameters may be changed through controls, but they cannot be updated by the simulation alone.
+
+The current value of the parameters is maintain in the Model's state.
+
+### controls
+
+Object
+
+Contains a [./controls] configuration.
+By default, controls contain a Timer module, which can be used to play or stop the simulation or to advance to a specific time.
+It's possible to add sliders, switches and text boxes to control any parameter for the simulation.
+
+### initData
+
+params => data
+
+initData contain a function that takes as input the params of the simulation, and which outputs the initial data.
+
+### initialTick
+
+number, default: 0
+
+
+
+
+controls: null,
+initData: () => null,
+    initialData: null,
+    initialParams: {},
+    initialTick: 0,
+    minTime: 0,
+    maxTime: 100,
+    showTime: true,
+    isPlaying: false,
+    timeInterval: 100,
+    updateData: (d, t) => [d]

@@ -10,14 +10,16 @@ export default class Model extends React.Component {
     initialData: null,
     initialParams: {},
     initialTick: 0,
+    delay: 0,
     minTime: 0,
     maxTime: 100,
     showTime: true,
     isPlaying: false,
     timeInterval: 100,
-    updateData: (d, t) => [d]
+    updateData: ({data}) => data
   };
   timer = null;
+  time = null;
   state = {
     canPlay: true,
     isPlaying: null,
@@ -50,12 +52,18 @@ export default class Model extends React.Component {
   initData = () => {
     this.setState({
       canPlay: true,
+      tick: this.props.initialTick,
       data: this.props.initData(this.state.params)
     });
   };
 
   play = () => {
-    this.setState(() => ({ isPlaying: true }), this.tick);
+    this.setState(
+      () => ({ isPlaying: true }),
+      () => {
+        this.timer = window.requestAnimationFrame(this.tick);
+      }
+    );
   };
   pause = () => {
     window.cancelAnimationFrame(this.timer);
@@ -69,7 +77,7 @@ export default class Model extends React.Component {
     }));
   };
 
-  tick = () => {
+  tick = timestamp => {
     if (
       this.state.canPlay === false ||
       (this.props.maxTime !== undefined &&
@@ -80,10 +88,29 @@ export default class Model extends React.Component {
       }));
     }
 
-    const updatedTick = this.state.tick + 1;
+    if (this.time === null) {
+      this.time = timestamp;
+    }
+    // if there is a delay specified, we're only going
+    // to update the state if we are passed that delay
+    if (timestamp - this.time >= this.props.delay) {
+      const updatedTick = this.state.tick + 1;
+      this.time = timestamp;
+      this.updateData(updatedTick);
+    }
+
+    // and delay or not, if we can continue looping, we
+    // keep on looping
+    if (this.state.isPlaying) {
+      window.cancelAnimationFrame(this.timer);
+      this.timer = window.requestAnimationFrame(this.tick);
+    }
+  };
+
+  updateData = (tick, stop) => {
     const updatedData = this.props.updateData({
       data: this.state.data,
-      tick: updatedTick,
+      tick,
       params: this.state.params,
       complete: this.complete,
       stop: this.stop,
@@ -92,20 +119,16 @@ export default class Model extends React.Component {
 
     this.setState(() => ({
       data: updatedData,
-      tick: updatedTick
+      tick,
+      ...(stop ? { isPlaying: false } : {})
     }));
-
-    if (this.state.isPlaying) {
-      window.cancelAnimationFrame(this.timer);
-      this.timer = window.requestAnimationFrame(this.tick);
-    }
   };
 
   updateTime = value => {
     if (this.timer) {
       window.cancelAnimationFrame(this.timer);
     }
-    this.setState({ tick: Number(value), isPlaying: false });
+    this.updateData(Number(value), true);
   };
 
   setData = value => {

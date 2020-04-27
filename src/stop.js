@@ -1,37 +1,30 @@
 import React from "react";
+import { Button } from "rebass";
 
 export default class Play extends React.Component {
   static defaultProps = {
-    stopIcon: "\u25A0",
+    stopIcon: <img src="https://icon.now.sh/stop/fff" alt="stop" />,
     isPlaying: false,
     styles: {}
   };
 
   render() {
-    const styles = {
-      width: "36px",
-      height: "24px",
-      margin: "0 12px 0 0",
-      display: "flex",
-      background: "#eee",
-      borderRadius: "3px",
-      justifyContent: "center",
-      alignItems: "center",
-      cursor: "pointer",
-      ...this.props.styles
-    };
+
 
     const { isPlaying, stop, stopIcon } = this.props;
-    // todo - style stop by isPlaying status;
     return (
-      <div
-        style={styles}
+    <Button
+          px={2}
+        py={1}
+        mr={2}
+        bg='#33e'
+        lineHeight={1}
         onClick={() => {
           stop();
         }}
       >
         {stopIcon}
-      </div>
+      </Button>
     );
   }
 }

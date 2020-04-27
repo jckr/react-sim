@@ -1,37 +1,28 @@
 import React from "react";
+import { Button } from "rebass";
 
 export default class Play extends React.Component {
   static defaultProps = {
-    playIcon: "\u25B6",
-    pauseIcon: "||",
+    playIcon: <img src="https://icon.now.sh/play_arrow/fff" alt="play" />,
+    pauseIcon: <img src="https://icon.now.sh/pause/fff" alt="play" />,
     isPlaying: false,
     styles: {}
   };
 
   render() {
-    const styles = {
-      width: "36px",
-      height: "24px",
-      margin: "0 12px 0 0",
-      display: "flex",
-      background: "#eee",
-      borderRadius: "3px",
-      justifyContent: "center",
-      alignItems: "center",
-      cursor: "pointer",
-      ...this.props.styles
-    };
-
     const { isPlaying, play, playIcon, pause, pauseIcon } = this.props;
     return (
-      <div
-        style={styles}
+      <Button
+        px={2}
+        py={1}
+        mr={2}
+        lineHeight={1}
         onClick={() => {
           isPlaying ? pause() : play();
         }}
       >
         {isPlaying ? pauseIcon : playIcon}
-      </div>
+      </Button>
     );
   }
 }

@@ -1,0 +1,66 @@
+---
+Title: how does it work?
+---
+import Image from '../components/image';
+
+# How does it work?
+
+At the core of a React-Sim simulation is the `Model`.
+
+<Image name="model" />
+
+The `Model` maintains three key pieces of information:
+
+<Image name="modelState" />
+
+- `params`, parameters of the simulation which don't change without a user intervention,
+- `tick`, a measure of the progression of the simulation, which may increase automatically over time, and
+- `data`, data for the simulation which will be updated at each new tick.
+
+<Image name="modelComponents" />
+
+To make a simulation work, the model has to interact with several other parts of the simulation:
+- `controls`, which will handle how users interact with the simulation,
+- `initData`, which is run at the beginning of the simulation, to create the initial dataset,
+- `updateData`, which is run each time the `tick` changes,
+- `frame`, which will render the simulation for each tick.
+
+Let's see how they work.
+
+## Controls
+
+<Image name="modelControls" />
+
+Controls let users interact with the simulation. Through `controls`, users can play or pause the simulation, when applicable, jump to a point in time, or control the parameters.
+
+Controls enable developers to describe a UI for these interactions, using things like sliders, textboxes, toggles etc. (or bring your own).
+
+Controls get to change both the `params` and the `tick` inside the `Model`. Controls can't access or change the `data` though.
+
+## initData
+<Image name="modelInitData" />
+
+`initData` generates the dataset at the start of the simulation. It can read the model's `params`, and replace its `data`.
+
+## updateData
+<Image name="modelUpdateData" />
+
+Each time the `tick` changes, `updateData` will generate a new dataset, as a function of:
+- the existing `data`,
+- the `params`,
+- the value of the `tick`.
+
+## frame
+<Image name="modelFrame" />
+
+The `frame` is how the simulation is going to represent the data.
+From the `Model`, it reads:
+- the current `data`,
+- the current `tick`,
+- the `params`
+
+and it uses that to render the simulation. Anything that can be rendered by React can go into a Frame - canvas, HTML content, SVG, you name it.
+
+<Image name="modelHighLevelView" />
+
+So that's how the Model and the other components interact at a high level.
