@@ -1,8 +1,11 @@
-import {system as base} from '@theme-ui/presets';
+import { system as base } from '@theme-ui/presets';
+
+console.log(base);
 
 const theme = {
   ...base,
   colors: {
+    ...base.colors,
     text: '#000',
     background: '#fff',
     primary: '#33e',
@@ -11,6 +14,19 @@ const theme = {
     muted: '#f6f6ff',
     gray: '#444',
     lightgray: '#cfcfd3',
+    modes: {
+      ...base.colors.modes,
+      system: {
+        text: '#000',
+        background: '#fff',
+        primary: '#33e',
+        secondary: '#a0c',
+        accent: '#f0a',
+        muted: '#f6f6ff',
+        gray: '#444',
+        lightgray: '#cfcfd3',
+      },
+    },
   },
   links: {
     ...base?.links,
@@ -27,7 +43,7 @@ const theme = {
       transition: 'color .2s ease-out',
       ':hover,:focus': {
         color: 'secondary',
-      }
+      },
     },
   },
   styles: {
@@ -38,9 +54,8 @@ const theme = {
       transition: 'color .2s ease-out',
       ':hover,:focus': {
         color: 'secondary',
-      }
+      },
     },
-  }
+  },
 };
-
 export default theme;

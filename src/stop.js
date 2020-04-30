@@ -1,30 +1,18 @@
 import React from "react";
-import { Button } from "rebass";
+import TimerButton from "./timer-button";
+import { withTheme } from "./model";
 
-export default class Play extends React.Component {
-  static defaultProps = {
-    stopIcon: <img src="https://icon.now.sh/stop/fff" alt="stop" />,
-    isPlaying: false,
-    styles: {}
-  };
-
-  render() {
-
-
-    const { isPlaying, stop, stopIcon } = this.props;
-    return (
-    <Button
-          px={2}
-        py={1}
-        mr={2}
-        bg='#33e'
-        lineHeight={1}
-        onClick={() => {
-          stop();
-        }}
-      >
-        {stopIcon}
-      </Button>
-    );
-  }
+export function Stop(props) {
+  const { theme } = props;
+  const background = theme?.colors?.background || '';
+  const icon = "stop";
+  const content = (
+    <img
+      src={`https://icon.now.sh/${icon}/${background.replace("#", "")}`}
+      alt={icon}
+    />
+  );
+  return <TimerButton onClick={props.stop}>{content}</TimerButton>;
 }
+
+export default withTheme(Stop);
