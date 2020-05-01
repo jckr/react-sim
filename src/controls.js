@@ -1,5 +1,17 @@
-import React from "react";
-import { FlexRow, FlexColumn, Play, Range, Stop } from "./index";
+import React from 'react'
+import {
+  Checkbox,
+  FlexRow,
+  FlexColumn,
+  Input,
+  Play,
+  Radio,
+  Range,
+  Select,
+  Stop,
+  Timer,
+  Toggle
+} from './index'
 
 export default class Controls extends React.Component {
   static defaultProps = {
@@ -7,83 +19,82 @@ export default class Controls extends React.Component {
     minTime: 0,
     maxTime: 100,
     showTime: true,
-    updateParams: args => {
-      console.log(args);
+    showTimer: true,
+    updateParams: (args) => {
+      console.log(args)
     }
-  };
-
+  }
+  state = { input: '', radio: 'jet', toggled: false }
   renderControls(controls, horizontally = false) {
     if (!controls) {
-      return null;
+      return null
     }
     // if parameter is an array, we render a series of controls
-    const Block = horizontally ? FlexColumn : FlexRow;
+    const Block = horizontally ? FlexColumn : FlexRow
     if (Array.isArray(controls)) {
       return controls.map((c, i) => (
         <Block
-          styles={{ margin: horizontally ? "0 10px 0 0" : "10px 0" }}
+          styles={{ margin: horizontally ? '0 10px 0 0' : '10px 0' }}
           key={`c-${i}`}
         >
           {/* If original parameter is a nested array, we render nested rows of columns */}
           {this.renderControls(c, !horizontally)}
         </Block>
-      ));
+      ))
     }
 
     // parameter is a single control
 
     // we can do something different depending on type
 
-    const paramName = controls.param;
-    const { params } = this.props;
+    const paramName = controls.param
+    const { params } = this.props
 
     return (
       <Range
         label={paramName}
-        setValue={value => this.props.setParams({ [paramName]: value })}
+        setValue={(value) => this.props.setParams({ [paramName]: value })}
         value={params[paramName]}
         {...controls}
       />
-    );
+    )
   }
 
   render() {
     const {
       controls,
       isPlaying,
-      play,
       pause,
-      stop,
-      minTime,
+      play,
       maxTime,
-      showTime,
-      time,
+      minTime,
       setParams,
+      showTime,
+      showTimer,
+      stop,
+      time,
+      timerLabel,
       updateTime
-    } = this.props;
+    } = this.props
 
     return (
       <FlexColumn>
         {this.renderControls(controls)}
-        <FlexRow styles={{ alignItems: "center" }}>
-          <FlexColumn>
-            <Play isPlaying={isPlaying} play={play} pause={pause} />
-          </FlexColumn>
-          <FlexColumn>
-            <Stop isPlaying={isPlaying} stop={stop} />
-          </FlexColumn>
-          {showTime && (
-            <Range
-              minValue={minTime}
-              maxValue={maxTime}
-              value={time}
-              setValue={updateTime}
-              label="Time"
-            />
-          )}
-        </FlexRow>
+        {showTimer && (
+          <Timer
+            isPlaying={isPlaying}
+            maxTime={maxTime}
+            minTime={minTime}
+            pause={pause}
+            play={play}
+            stop={stop}
+            time={time}
+            updateTime={updateTime}
+            label={timerLabel}
+          />
+        )}
       </FlexColumn>
-    );
+    )
   }
 }
 
@@ -91,12 +102,12 @@ export class StatefulControls extends React.Component {
   state = {
     time: 0,
     isPlaying: false
-  };
-  play = () => this.setState({ isPlaying: true });
-  pause = () => this.setState({ isPlaying: false });
-  stop = () => this.setState({ isPlaying: false, time: 0 });
+  }
+  play = () => this.setState({ isPlaying: true })
+  pause = () => this.setState({ isPlaying: false })
+  stop = () => this.setState({ isPlaying: false, time: 0 })
 
-  updateTime = value => this.setState({ time: Number(value) });
+  updateTime = (value) => this.setState({ time: Number(value) })
   render() {
     return (
       <Controls
@@ -107,6 +118,6 @@ export class StatefulControls extends React.Component {
         stop={this.stop}
         updateTime={this.updateTime}
       />
-    );
+    )
   }
 }
