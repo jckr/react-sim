@@ -1,5 +1,11 @@
 import React from 'react';
-import { Play, FlexRow, FlexColumn, Model, withTheme, withFrame, withControls } from 'react-sim';
+import {
+  Play,
+  FlexRow,
+  FlexColumn,
+  Model,
+  withTheme,
+} from 'react-sim';
 import { useThemeUI } from 'theme-ui';
 // helpers
 
@@ -189,11 +195,9 @@ export class DiceFrame extends React.Component {
   }
 }
 
-const WF = withFrame(DiceFrame);
-const WC = withControls(<div />)
 const Dice = () => {
   const context = useThemeUI();
-  const {theme} = context;
+  const { theme } = context;
   return (
     <>
       <Model
@@ -212,7 +216,7 @@ const Dice = () => {
           nbDice: 5,
         }}
       >
-        <WF theme={theme} /><WC />
+        <DiceFrame theme={theme} />
       </Model>
     </>
   );

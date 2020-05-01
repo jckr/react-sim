@@ -246,11 +246,7 @@ export class Model extends React.Component {
           typeof child.type === "string" ? {} : injectedProps
         );
       default:
-        // children.forEach(child => console.log(
-        //   React.cloneElement(child, typeof child.type === "string" ? {} : injectedProps)
-        // ));
-        return this.props.children;
-        return React.Children.map(children, child => {
+        return children.map(child => {
           return React.cloneElement(
             child,
             typeof child.type === "string" ? {} : injectedProps
