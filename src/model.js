@@ -4,6 +4,8 @@ import { system } from "@theme-ui/presets";
 import { FlexColumn, FlexRow, Controls, Frame } from "./";
 
 const ThemeContext = React.createContext({});
+const FrameContext = React.createContext({});
+const ControlsContext = React.createContext({});
 
 export class Model extends React.Component {
   static defaultProps = {
@@ -174,6 +176,7 @@ export class Model extends React.Component {
         // stop updating data and tick.
         tick++;
         data = this.props.updateData({
+          cachedData: this.cachedData,
           data,
           tick,
           params: this.state.params,
@@ -202,26 +205,7 @@ export class Model extends React.Component {
     }));
   };
 
-  // updateData = (tick, stop) => {
-  //   // might be redundant with updateToTick
-  //   const updatedData = this.props.updateData({
-  //     data: this.state.data,
-  //     tick,
-  //     params: this.state.params,
-  //     complete: this.complete,
-  //     stop: this.stop,
-  //     pause: this.pause
-  //   });
-
-  //   this.setState(() => ({
-  //     data: updatedData,
-  //     tick,
-  //     ...(stop ? { isPlaying: false } : {})
-  //   }));
-  // };
-
   updateTime = value => {
-    console.log(value);
     if (this.timer) {
       window.cancelAnimationFrame(this.timer);
     }
@@ -251,36 +235,102 @@ export class Model extends React.Component {
       tick: this.state.tick,
       setData: this.setData
     };
+
     switch (children.length) {
       case 0:
-        return <Frame {...injectedProps} />;
+        return withFrame(Frame)();
       case 1:
-        return React.cloneElement(children[0], injectedProps);
+        const child = children[0];
+        return React.cloneElement(
+          child,
+          typeof child.type === "string" ? {} : injectedProps
+        );
       default:
-        return children.map(child => React.cloneElement(child, injectedProps));
+        // children.forEach(child => console.log(
+        //   React.cloneElement(child, typeof child.type === "string" ? {} : injectedProps)
+        // ));
+        return this.props.children;
+        return React.Children.map(children, child => {
+          return React.cloneElement(
+            child,
+            typeof child.type === "string" ? {} : injectedProps
+          );
+        });
     }
   }
+
+  hasControls = children => {
+    let result = false;
+    React.Children.forEach(children, child => {
+      if (!result) {
+        const ctd = child.type.displayName || "";
+        const ctn = child.type.name || "";
+        const ct = typeof child.type === "string" ? child.type : "";
+
+        if (
+          ctd === "Controls" ||
+          ctn === "Controls" ||
+          ct === "Controls" ||
+          ctd.startsWith("withControls") ||
+          ctn.startsWith("withControls") ||
+          ct.startsWith("controls")
+        ) {
+          result = true;
+        }
+      } else {
+        if (child.props.children && child.props.children.length) {
+          result = this.hasControls(child.props.children);
+        }
+      }
+    });
+    return result;
+  };
   render() {
+    const frameContext = {
+      data: this.state.data,
+      initData: this.initData,
+      params: this.state.params,
+      tick: this.state.tick,
+      setData: this.setData
+    };
+
+    const controlsContext = {
+      isPlaying: this.state.isPlaying,
+      params: this.state.params,
+      pause: this.pause,
+      play: this.play,
+      setParams: this.setParams,
+      stop: this.stop,
+      updateTime: this.updateTime
+    };
+
+    const hasControls = this.hasControls(this.props.children);
     return (
       <ThemeContext.Provider value={{ theme: this.props.theme }}>
         <ThemeProvider theme={this.props.theme}>
-          <FlexColumn>
-            <FlexRow>{this.renderFrame()}</FlexRow>
-            <Controls
-              controls={this.props.controls}
-              isPlaying={this.state.isPlaying}
-              maxTime={this.state.params.maxTime}
-              minTime={this.state.params.minTime}
-              params={this.state.params}
-              play={this.play}
-              pause={this.pause}
-              showTime={this.props.showTime}
-              stop={this.stop}
-              setParams={this.setParams}
-              updateTime={this.updateTime}
-              time={this.state.tick}
-            />
-          </FlexColumn>
+          <FrameContext.Provider value={frameContext}>
+            <ControlsContext.Provider value={controlsContext}>
+            <FlexColumn>
+              <FlexRow>{this.renderFrame()}</FlexRow>
+              {hasControls ? null : (
+                <Controls
+                  controls={this.props.controls}
+                  isPlaying={this.state.isPlaying}
+                  maxTime={this.state.params.maxTime}
+                  minTime={this.state.params.minTime}
+                  params={this.state.params}
+                  play={this.play}
+                  pause={this.pause}
+                  showTime={this.props.showTime}
+                  stop={this.stop}
+                  setParams={this.setParams}
+                  updateTime={this.updateTime}
+                  time={this.state.tick}
+                />
+              )}
+            </FlexColumn>
+            </ControlsContext.Provider>
+          </FrameContext.Provider>
         </ThemeProvider>
       </ThemeContext.Provider>
     );
@@ -295,6 +345,52 @@ export function withTheme(Component) {
       </ThemeContext.Consumer>
     );
   };
+}
+
+export function withFrame(Component) {
+  function FrameComponent(props) {
+    return (
+      <FrameContext.Consumer>
+        {({ data, initData, params, setData, tick }) => (
+          <Component
+            data={data}
+            initData={initData}
+            params={params}
+            setData={setData}
+            tick={tick}
+            {...props}
+          />
+        )}
+      </FrameContext.Consumer>
+    );
+  }
+  const componentName = Component.displayName || Component.name || "Component";
+  FrameComponent.displayName = `withFrame(${componentName})`;
+  return FrameComponent;
+}
+
+export function withControls(Component) {
+  function ControlsComponent(props) {
+    return (
+      <ControlsContext.Consumer>
+        {({ isPlaying, params, pause, play, setParams, stop, updateTime }) => (
+          <Component
+            isPlaying={isPlaying}
+            params={params}
+            pause={pause}
+            play={play}
+            setParams={setParams}
+            stop={stop}
+            updateTime={updateTime}
+            {...props}
+          />
+        )}
+      </ControlsContext.Consumer>
+    );
+  }
+  const componentName = Component.displayName || Component.name || "Component";
+  ControlsComponent.displayName = `withControls(${componentName})`;
+  return ControlsComponent;
 }
 
 function ThemedModel(props) {
