@@ -4,16 +4,18 @@ import { Pagination } from '@theme-ui/sidenav';
 import { MDXProvider } from '@mdx-js/react';
 import mdxComponents from './mdx-components';
 import Head from './head';
-// import SkipLink from './skip-link'
 import Header from './header';
-// import Footer from './footer'
 import Nav from './nav';
-// import EditLink from './edit-link'
 
-const SkipLink = props => <div>{props.children}</div>;
-const Footer = props => <div>{props.children}</div>;
+// import EditLink from './edit-link'
+// import Footer from './footer'
+// import SkipLink from './skip-link'
+
+// derived from rebassjs.org layout file
 
 const EditLink = props => <div>{props.children}</div>;
+const Footer = props => <div>{props.children}</div>;
+const SkipLink = props => <div>{props.children}</div>;
 
 const Sidebar = props => (
   <Flex>

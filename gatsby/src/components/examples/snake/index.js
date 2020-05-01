@@ -152,16 +152,21 @@ function initSnake({ height, width, initialLength }) {
   };
 }
 
-const SnakeBit = ({ size, color, directionNext, directionPrev }) => {
+const SnakeBit = ({ size, color, directionNext, directionPrev, weight}) => {
   if (directionNext === null) {
     // tail
     return SnakeBit({
       size,
       color,
+      weight,
       directionNext: directionPrev,
       directionPrev: null,
     });
   }
+  const margin = (1 - weight) / 2;
+  const ms = margin * size;
+  const ws = weight * size;
+
   if (directionPrev === null) {
     // head, or "reversed tail"
     return (
@@ -169,11 +174,11 @@ const SnakeBit = ({ size, color, directionNext, directionPrev }) => {
         <div
           style={{
             borderRadius: '50%',
-            height: size / 3,
-            width: size / 3,
+            height: ws,
+            width: ws,
             background: color,
-            left: size / 3,
-            top: size / 3,
+            left: ms,
+            top: ms,
             position: 'absolute',
           }}
         />
@@ -182,8 +187,8 @@ const SnakeBit = ({ size, color, directionNext, directionPrev }) => {
             position: 'absolute',
             background: color,
             ...(IS_VERTICAL[directionNext]
-              ? { width: size / 3, left: size / 3, height: size / 2 }
-              : { width: size / 2, top: size / 3, height: size / 3 }),
+              ? { width: ws, left: ms, height: size / 2 }
+              : { width: size / 2, top: ms, height: ws }),
             ...(directionNext === UP ? { top: 0 } : {}),
             ...(directionNext === DOWN ? { bottom: 0 } : {}),
             ...(directionNext === LEFT ? { left: 0 } : {}),
@@ -203,11 +208,11 @@ const SnakeBit = ({ size, color, directionNext, directionPrev }) => {
             background: color,
             ...(IS_VERTICAL[directionNext]
               ? {
-                  width: size / 3,
+                  width: ws,
                   height: size,
-                  left: size / 3,
+                  left: ms,
                 }
-              : { width: size, height: size / 3, top: size / 3 }),
+              : { width: size, height: ws, top: ms }),
           }}
         />
       </div>
@@ -256,8 +261,8 @@ const SnakeBit = ({ size, color, directionNext, directionPrev }) => {
         style={{
           position: 'absolute',
           background: color,
-          width: (2 * size) / 3,
-          height: (2 * size) / 3,
+          width: ws + ms,
+          height: ws + ms,
           ...cornerStyles,
         }}
       />
@@ -265,8 +270,8 @@ const SnakeBit = ({ size, color, directionNext, directionPrev }) => {
         style={{
           position: 'absolute',
           background: 'white',
-          width: size / 3,
-          height: size / 3,
+          width: ms,
+          height: ms,
           ...cornerStyles,
         }}
       />
@@ -389,6 +394,7 @@ export class SnakeFrame extends React.Component {
                 return (
                   <SnakeBit
                     size={size}
+                    weight={0.8}
                     color="green"
                     directionNext={directionNext}
                     directionPrev={directionPrev}

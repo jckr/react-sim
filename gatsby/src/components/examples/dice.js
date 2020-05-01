@@ -1,6 +1,12 @@
 import React from 'react';
-import { FlexRow, FlexColumn, Model } from 'react-sim';
-
+import {
+  Play,
+  FlexRow,
+  FlexColumn,
+  Model,
+  withTheme,
+} from 'react-sim';
+import { useThemeUI } from 'theme-ui';
 // helpers
 
 const roll = () => Math.ceil(Math.random() * 6);
@@ -92,9 +98,10 @@ const Die = ({ value }) => {
   );
 };
 
-const Bar = ({ label, max, nbRolls, nbValues }) => {
+const Bar = ({ label, max, nbRolls, nbValues, theme }) => {
   const height = max ? (50 * nbRolls) / max : 0;
   const width = 500 / nbValues;
+  const color = theme?.colors?.primary || '#33f';
 
   return (
     <FlexColumn>
@@ -106,9 +113,7 @@ const Bar = ({ label, max, nbRolls, nbValues }) => {
           height: 50,
         }}
       >
-        <div
-          style={{ width: width * 0.8, height, backgroundColor: 'steelblue' }}
-        />
+        <div style={{ width: width * 0.8, height, backgroundColor: color }} />
       </FlexRow>
       <FlexRow
         styles={{
@@ -131,6 +136,7 @@ export class DiceFrame extends React.Component {
       data,
       tick,
       params: { nbDice },
+      theme,
     } = this.props;
 
     const minValue = Number(nbDice);
@@ -162,7 +168,13 @@ export class DiceFrame extends React.Component {
           </FlexRow>
           <FlexRow styles={{ alignItems: 'flex-end', height: '80px' }}>
             {bars.map(bar => (
-              <Bar {...bar} key={bar.label} max={max} nbValues={nbValues} />
+              <Bar
+                {...bar}
+                key={bar.label}
+                max={max}
+                nbValues={nbValues}
+                theme={theme}
+              />
             ))}
           </FlexRow>
         </FlexColumn>
@@ -183,19 +195,31 @@ export class DiceFrame extends React.Component {
   }
 }
 
-const Dice = () => (
-  <Model
-    auto={false}
-    controls={{ param: "nbDice", minValue: 1, maxValue: 6, label: "Number of dice per roll" }}
-    updateData={updateDice}
-    maxTime={1000}
-    initData={initDice}
-    initialParams={{
-      nbDice: 5,
-    }}
-  >
-    <DiceFrame />
-  </Model>
-);
+const Dice = () => {
+  const context = useThemeUI();
+  const { theme } = context;
+  return (
+    <>
+      <Model
+        theme={theme}
+        auto={false}
+        controls={{
+          param: 'nbDice',
+          minValue: 1,
+          maxValue: 6,
+          label: 'Number of dice per roll',
+        }}
+        updateData={updateDice}
+        maxTime={1000}
+        initData={initDice}
+        initialParams={{
+          nbDice: 5,
+        }}
+      >
+        <DiceFrame theme={theme} />
+      </Model>
+    </>
+  );
+};
 
 export default Dice;

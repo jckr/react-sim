@@ -45,7 +45,9 @@ export default class Play extends React.Component {
           }}
           max={maxValue}
           min={minValue}
-          onChange={e => setValue(e.target.value)}
+          onChange={e => {
+            setValue(e.target.value)
+          }}
           step={step}
           value={value}
         />

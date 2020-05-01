@@ -1,28 +1,22 @@
 import React from "react";
-import { Button } from "rebass";
+import TimerButton from "./timer-button";
+import { withTheme } from "./model";
 
-export default class Play extends React.Component {
-  static defaultProps = {
-    playIcon: <img src="https://icon.now.sh/play_arrow/fff" alt="play" />,
-    pauseIcon: <img src="https://icon.now.sh/pause/fff" alt="play" />,
-    isPlaying: false,
-    styles: {}
-  };
-
-  render() {
-    const { isPlaying, play, playIcon, pause, pauseIcon } = this.props;
-    return (
-      <Button
-        px={2}
-        py={1}
-        mr={2}
-        lineHeight={1}
-        onClick={() => {
-          isPlaying ? pause() : play();
-        }}
-      >
-        {isPlaying ? pauseIcon : playIcon}
-      </Button>
-    );
-  }
+function Play(props) {
+  const { theme } = props;
+  const background = theme?.colors?.background || '';
+  const icon = props.isPlaying ? "pause" : "play_arrow";
+  const content = (
+    <img
+      src={`https://icon.now.sh/${icon}/${background.replace("#", "")}`}
+      alt={icon}
+    />
+  );
+  return (
+    <TimerButton onClick={props.isPlaying ? props.pause : props.play}>
+      {content}
+    </TimerButton>
+  );
 }
+
+export default withTheme(Play);

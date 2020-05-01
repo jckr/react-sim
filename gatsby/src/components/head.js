@@ -1,23 +1,31 @@
-import React from 'react'
-import { Helmet } from 'react-helmet'
-import pkg from 'rebass/package.json'
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { useStaticQuery, graphql } from 'gatsby';
 
 export default props => {
-  const title = [props.title, 'Rebass'].filter(Boolean).join(' | ')
+  const data = useStaticQuery(graphql`
+    query {
+      site {
+        siteMetadata {
+          title
+          author
+          description
+        }
+      }
+    }
+  `);
 
   return (
     <Helmet
       htmlAttributes={{
         lang: 'en-us',
-      }}>
-      <title>{title}</title>
-      {/* <link rel='icon' href='/icon.png' /> */}
-      <meta name='description' content={pkg.description} />
-      <meta name='twitter:card' content='summary' />
-      <meta name='twitter:site' content='@jcukier' />
-      <meta name='twitter:title' content={title} />
-      <meta name='twitter:description' content={pkg.description} />
-      <meta name='twitter:image' content='https://rebassjs.org/card.png' />
+      }}
+    >
+      <title>{data?.site?.siteMetadata?.title}</title>
+      <meta
+        name="description"
+        content={data?.site?.siteMetadata?.description}
+      />
     </Helmet>
-  )
-}
+  );
+};
