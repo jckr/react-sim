@@ -1,6 +1,5 @@
 import React from "react";
 import { Button } from "rebass";
-import { withTheme } from "./model";
 
 function TimerButton(props) {
   return (
