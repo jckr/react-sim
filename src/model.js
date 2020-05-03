@@ -100,10 +100,12 @@ export class Model extends React.Component {
   };
   stop = () => {
     window.cancelAnimationFrame(this.timer);
+
     this.setState(() => ({
       isPlaying: false,
       tick: this.props.initialTick
-    }));
+    }), this.initData());
+
   };
 
   checkCanPlay = tick => {
@@ -227,6 +229,9 @@ export class Model extends React.Component {
   };
 
   renderFrame() {
+    if (this.state.data === null) {
+      return null;
+    }
     const children = React.Children.toArray(this.props.children);
     const injectedProps = {
       data: this.state.data,

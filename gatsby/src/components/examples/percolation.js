@@ -1,0 +1,360 @@
+import React, { useRef, useEffect } from 'react';
+import { Flex, Box } from 'rebass';
+import { Model } from 'react-sim';
+
+const EMPTY = 0;
+const ROCK = 1;
+const ROCK_WITH_ROCK_ON_RIGHT = 2;
+const ROCK_WITH_ROCK_BELOW = 3;
+const ROCK_WITH_ROCK_RIGHT_AND_BELOW = 4;
+const ROCK_WITH_ROCKS_ALL_AROUND = 5;
+const WATER_FROM_TOP = 6;
+const WATER_FROM_RIGHT = 7;
+const WATER_FROM_LEFT = 8;
+
+const status = {
+  pending: 'PENDING',
+  success: 'SUCCESS',
+  failure: 'FAILURE',
+};
+
+function updateData({ data, params, complete }) {
+  const { queue, grid } = data;
+  const { height, width } = params;
+  let updatedStatus = data.status;
+  if (queue.length === 0) {
+    updatedStatus = status.failure;
+  }
+  const nextQueue = [];
+  while (queue.length > 0 && updatedStatus === status.pending) {
+    const cell = queue.shift();
+    const { x, y } = cell;
+    if (y === height - 1) {
+      updatedStatus = status.success;
+    } else if (grid[y + 1][x] === EMPTY) {
+      grid[y + 1][x] = WATER_FROM_TOP;
+      nextQueue.push({ x, y: y + 1 });
+    }
+    // note - grid[y][x - 1] and grid[y][x + 1] can be undefined,
+    // but that doesn't make any difference.
+    if (grid[y][x - 1] === EMPTY) {
+      grid[y][x - 1] = WATER_FROM_RIGHT;
+      nextQueue.push({ x: x - 1, y });
+    }
+    if (grid[y][x + 1] === EMPTY) {
+      grid[y][x + 1] = WATER_FROM_LEFT;
+      nextQueue.push({ x: x + 1, y });
+    }
+  }
+  if (updatedStatus !== status.PENDING && params.shouldComplete) {
+    complete(updatedStatus);
+  }
+  return {
+    grid,
+    queue: nextQueue,
+    status: updatedStatus,
+  };
+}
+
+function updateDataGrid({ data, params, complete }) {
+  let nbPending = 0;
+  data.forEach((row, y) =>
+    row.forEach((cell, x) => {
+      if (cell.status === status.pending) {
+        const updatedCell = updateData({
+          data: cell,
+          params: { height: params.height, shouldComplete: false },
+        });
+        data[y][x] = updatedCell;
+        if (updatedCell.status === status.pending) {
+          nbPending++;
+        }
+      }
+    })
+  );
+  if (nbPending === 0) {
+    complete();
+  }
+  return data;
+}
+
+function initData({ porosity, height, width }) {
+  const grid = [];
+  const queue = [];
+  let x, y;
+  for (y = 0; y < height; y++) {
+    const row = [];
+    for (x = 0; x < width; x++) {
+      row.push(Math.random() < Number(porosity) ? ROCK : EMPTY);
+    }
+    grid.push(row);
+  }
+
+  for (y = 0; y < height; y++) {
+    for (x = 0; x < width; x++) {
+      if (grid[y][x]) {
+        if (grid[y + 1] && grid[y + 1][x]) {
+          // rock below
+          grid[y][x] = grid[y][x] + 2;
+        }
+        if (grid[y][x + 1]) {
+          // rock to the right
+          grid[y][x] = grid[y][x] + 1;
+        }
+        if (
+          grid[y][x] === ROCK_WITH_ROCK_RIGHT_AND_BELOW &&
+          grid[y + 1][x + 1]
+        ) {
+          grid[y][x] = ROCK_WITH_ROCKS_ALL_AROUND;
+        }
+      } else {
+        if (y === 0) {
+          grid[y][x] = WATER_FROM_TOP;
+          queue.push({ x, y });
+        }
+      }
+    }
+  }
+  return { grid, queue, status: status.pending };
+}
+
+function roundRect({ ctx, x, y, width, height, r = 1, tl, tr, br, bl }) {
+  const topLeft = tl || r;
+  const topRight = tr || r;
+  const bottomLeft = bl || r;
+  const bottomRight = br || r;
+
+  ctx.beginPath();
+  ctx.moveTo(x + topLeft, y);
+  ctx.lineTo(x + width - topRight, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + topRight);
+  ctx.lineTo(x + width, y + height - bottomRight);
+  ctx.quadraticCurveTo(
+    x + width,
+    y + height,
+    x + width - bottomRight,
+    y + height
+  );
+  ctx.lineTo(x + bottomLeft, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - bottomLeft);
+  ctx.lineTo(x, y + topLeft);
+  ctx.quadraticCurveTo(x, y, x + topLeft, y);
+  ctx.closePath();
+}
+
+const PercolationFrame = ({ data, params }) => {
+  const { cellSize, margin, height, width } = params;
+  const canvasRef = useRef(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'beige';
+    ctx.fillRect(0, 0, width * cellSize, height * cellSize);
+
+    if (data === null) {
+      return;
+    }
+
+    data.grid.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        const x = colIndex * cellSize;
+        const y = rowIndex * cellSize;
+        if (cell >= ROCK && cell <= ROCK_WITH_ROCKS_ALL_AROUND) {
+          // rock
+          ctx.fillStyle = '#777';
+
+          roundRect({
+            ctx,
+            x: x + margin,
+            y: y + margin,
+            r: margin,
+            height: cellSize - 2 * margin,
+            width: cellSize - 2 * margin,
+          });
+          ctx.fill();
+          if (
+            cell === ROCK_WITH_ROCK_ON_RIGHT ||
+            cell === ROCK_WITH_ROCK_RIGHT_AND_BELOW ||
+            cell === ROCK_WITH_ROCKS_ALL_AROUND
+          ) {
+            ctx.fillRect(
+              x + cellSize - 2 * margin,
+              y + margin,
+              4 * margin,
+              cellSize - 2 * margin
+            );
+          }
+          if (
+            cell === ROCK_WITH_ROCK_BELOW ||
+            cell === ROCK_WITH_ROCK_RIGHT_AND_BELOW ||
+            cell === ROCK_WITH_ROCKS_ALL_AROUND
+          ) {
+            ctx.fillRect(
+              x + margin,
+              y + cellSize - 2 * margin,
+              cellSize - 2 * margin,
+              4 * margin
+            );
+          }
+          if (cell === ROCK_WITH_ROCKS_ALL_AROUND) {
+            ctx.fillRect(
+              x + cellSize - 2 * margin,
+              y + cellSize - 2 * margin,
+              4 * margin,
+              4 * margin
+            );
+          }
+        }
+        if (cell >= WATER_FROM_TOP) {
+          ctx.lineWidth = cellSize - 2 * margin;
+          ctx.strokeStyle = 'cyan';
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(x + cellSize / 2, y + cellSize / 2);
+          if (cell === WATER_FROM_TOP) {
+            ctx.lineTo(x + cellSize / 2, Math.max(y - cellSize / 2, 0));
+          }
+          if (cell === WATER_FROM_LEFT) {
+            ctx.lineTo(x - cellSize / 2, y + cellSize / 2);
+          }
+          if (cell === WATER_FROM_RIGHT) {
+            ctx.lineTo(x + (3 * cellSize) / 2, y + cellSize / 2);
+          }
+          ctx.stroke();
+        }
+      });
+    });
+  });
+
+  return (
+    <div
+      style={{
+        boxSizing: 'content-box',
+        height: cellSize * height,
+        width: cellSize * width,
+        border: `3px solid ${
+          data.status === status.pending
+            ? 'transparent'
+            : data.status === status.success
+            ? 'green'
+            : 'red'
+        }`,
+      }}
+    >
+      <canvas
+        width={width * cellSize}
+        height={height * cellSize}
+        ref={canvasRef}
+      />
+    </div>
+  );
+};
+
+const PercolationFrameGrid = ({ data, params }) => {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: (params.height * params.cellSize + 10) * params.rows + 20,
+        width: (params.width * params.cellSize + 10) * params.cols + 20,
+      }}
+    >
+      {data.map((row, y) => (
+        <div style={{ display: 'flex', flexDirection: 'row' }} key={`row-${y}`}>
+          {row.map((cell, x) => (
+            <div
+              style={{
+                height: params.height * params.cellSize,
+                width: params.width * params.cellSize,
+                margin: 5,
+              }}
+            >
+              <PercolationFrame
+                key={`cell-${x}-${y}`}
+                data={cell}
+                params={params}
+              />
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export const Percolation = () => {
+  return (
+    <>
+      <Model
+        auto={false}
+        controls={{
+          param: 'porosity',
+          label: 'Porosity',
+          minValue: 0,
+          maxValue: 1,
+          step: 0.01,
+        }}
+        updateData={updateData}
+        maxTime={Infinity}
+        initData={initData}
+        initialParams={{
+          width: 100,
+          height: 100,
+          cellSize: 5,
+          margin: 0,
+          porosity: 0.4,
+          shouldComplete: true,
+        }}
+      >
+        <PercolationFrame />
+      </Model>
+    </>
+  );
+};
+
+function initDataGrid({
+  width,
+  height,
+  cellSize,
+  margin,
+  rows,
+  cols,
+  minP,
+  stepP,
+}) {
+  return [...Array(rows).keys()].map(r =>
+    [...Array(cols).keys()].map(c =>
+      initData({
+        height,
+        width,
+        porosity: minP + c * stepP,
+      })
+    )
+  );
+}
+
+export const PercolationGrid = () => {
+  return (
+    <>
+      <Model
+        auto={false}
+        updateData={updateDataGrid}
+        maxTime={Infinity}
+        initData={initDataGrid}
+        initialParams={{
+          width: 20,
+          height: 20,
+          cellSize: 1.5,
+          margin: 0,
+          rows: 10,
+          cols: 10,
+          minP: 0.35,
+          stepP: 0.02,
+        }}
+      >
+        <PercolationFrameGrid />
+      </Model>
+    </>
+  );
+};
