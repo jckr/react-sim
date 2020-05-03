@@ -1,15 +1,21 @@
-import React from "react";
-import TimerButton from "./timer-button";
-import { withTheme } from "./model";
+import React from 'react';
+import TimerButton from './timer-button';
+import { withTheme } from './model';
 
 export function Stop(props) {
   const { theme } = props;
   const background = theme?.colors?.background || '';
-  const icon = "stop";
-  const content = (
+  const icon = 'stop';
+  const content = props.shouldShowReset ? (
     <img
-      src={`https://icon.now.sh/${icon}/${background.replace("#", "")}`}
-      alt={icon}
+      src={`https://icon.now.sh/refresh/${background.replace('#', '')}`}
+      style={{ transform: 'scaleX(-1)' }}
+      alt='reset'
+    />
+  ) : (
+    <img
+      src={`https://icon.now.sh/stop/${background.replace('#', '')}`}
+      alt='stop'
     />
   );
   return <TimerButton onClick={props.stop}>{content}</TimerButton>;

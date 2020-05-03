@@ -1,6 +1,6 @@
 import React from 'react'
 import { Flex } from 'rebass'
-import {Pause, Play, Range, Stop, withControls} from './';
+import {Pause, Play, Range, Stop, Step, withControls} from './';
 
 function Timer({
   isPlaying,
@@ -14,10 +14,13 @@ function Timer({
   updateTime,
   label = 'Time'
 }) {
+  const step = () => updateTime(time + 1);
+
   return (
     <Flex sx={{ alignItems: 'center', flexDirection: 'row' }}>
       <Play isPlaying={isPlaying} play={play} pause={pause} />
-      <Stop isPlaying={isPlaying} stop={stop} />
+      <Stop shouldShowReset={isPlaying === false && time === minTime} stop={stop} />
+      <Step isPlaying={isPlaying} step={step} />
       {showTime && (
         <Range
           minValue={minTime}
