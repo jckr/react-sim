@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   Checkbox,
   FlexRow,
@@ -11,26 +11,18 @@ import {
   Stop,
   Timer,
   Toggle
-} from './index'
+} from './index';
 
 export default class Controls extends React.Component {
   static defaultProps = {
-    controls: null,
-    minTime: 0,
-    maxTime: 100,
-    showTime: true,
-    showTimer: true,
-    updateParams: (args) => {
-      console.log(args)
-    }
-  }
-  state = { input: '', radio: 'jet', toggled: false }
+    controls: null
+  };
   renderControls(controls, horizontally = false) {
     if (!controls) {
-      return null
+      return null;
     }
     // if parameter is an array, we render a series of controls
-    const Block = horizontally ? FlexColumn : FlexRow
+    const Block = horizontally ? FlexColumn : FlexRow;
     if (Array.isArray(controls)) {
       return controls.map((c, i) => (
         <Block
@@ -40,84 +32,58 @@ export default class Controls extends React.Component {
           {/* If original parameter is a nested array, we render nested rows of columns */}
           {this.renderControls(c, !horizontally)}
         </Block>
-      ))
+      ));
     }
 
     // parameter is a single control
 
     // we can do something different depending on type
 
-    const paramName = controls.param
-    const { params } = this.props
+    const paramName = controls.param;
+    const { params } = this.props;
 
-    return (
-      <Range
-        label={paramName}
-        setValue={(value) => this.props.setParams({ [paramName]: value })}
-        value={params[paramName]}
-        {...controls}
-      />
-    )
+    const commonProps = {
+      label: paramName,
+      setValue: (value) => this.props.setParams({ [paramName]: value }),
+      value: params[paramName]
+    };
+
+    switch (controls.type) {
+      case 'checkbox':
+        return <Checkbox {...commonProps} {...controls} />;
+      case 'input':
+        return <Input {...commonProps} {...controls} />;
+      case 'radio':
+        return <Radio {...commonProps} {...controls} />;
+      case 'select':
+        return <Select {...commonProps} {...controls} />;
+      case 'timer':
+        return <Timer {...controls} />;
+      case 'toggle':
+        return <Toggle {...commonProps} {...controls} />;
+      default:
+        return <Range {...commonProps} {...controls} />;
+    }
   }
 
   render() {
-    const {
-      controls,
-      isPlaying,
-      pause,
-      play,
-      maxTime,
-      minTime,
-      setParams,
-      showTime,
-      showTimer,
-      stop,
-      time,
-      timerLabel,
-      updateTime
-    } = this.props
-
-    return (
-      <FlexColumn>
-        {this.renderControls(controls)}
-        {showTimer && (
-          <Timer
-            isPlaying={isPlaying}
-            maxTime={maxTime}
-            minTime={minTime}
-            pause={pause}
-            play={play}
-            stop={stop}
-            time={time}
-            updateTime={updateTime}
-            label={timerLabel}
-          />
-        )}
-      </FlexColumn>
-    )
+    const { controls } = this.props;
+    return <FlexColumn>{this.renderControls(controls)}</FlexColumn>;
   }
 }
 
-export class StatefulControls extends React.Component {
-  state = {
-    time: 0,
-    isPlaying: false
+export function hasTimer(controls) {
+  // no controls
+  if (!controls) {
+    return false;
   }
-  play = () => this.setState({ isPlaying: true })
-  pause = () => this.setState({ isPlaying: false })
-  stop = () => this.setState({ isPlaying: false, time: 0 })
 
-  updateTime = (value) => this.setState({ time: Number(value) })
-  render() {
-    return (
-      <Controls
-        {...this.props}
-        {...this.state}
-        play={this.play}
-        pause={this.pause}
-        stop={this.stop}
-        updateTime={this.updateTime}
-      />
-    )
+  // array of controls (rows or columns of controls)
+  if (Array.isArray(controls)) {
+    // if this is true for one of the children, returns true.
+    return controls.some((c) => hasTimer(c));
   }
+
+  // single object
+  return controls.type === 'timer';
 }

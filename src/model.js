@@ -1,17 +1,18 @@
-import React from 'react'
-import { useThemeUI, ThemeProvider } from 'theme-ui'
-import { system } from '@theme-ui/presets'
-import { FlexColumn, FlexRow, Controls, Frame } from './'
+import React from 'react';
+import { useThemeUI, ThemeProvider } from 'theme-ui';
+import { system } from '@theme-ui/presets';
+import { FlexColumn, FlexRow, Controls, Frame } from './';
+import { hasTimer } from './controls';
 
-const ThemeContext = React.createContext({})
-const FrameContext = React.createContext({})
-const ControlsContext = React.createContext({})
+const ThemeContext = React.createContext({});
+const FrameContext = React.createContext({});
+const ControlsContext = React.createContext({});
 
 export class Model extends React.Component {
   static defaultProps = {
     start: false,
     controls: null,
-    initData: () => null,
+    initData: () => [],
     initialData: null,
     initialParams: {},
     initialTick: 0,
@@ -19,72 +20,74 @@ export class Model extends React.Component {
     minTime: 0,
     maxTime: 100,
     noCache: false,
+    noControls: false,
     showTime: true,
+    showTimer: true,
     isPlaying: false,
     ticksPerAnimation: 1,
     updateData: ({ data }) => data
-  }
-  timer = null
-  time = null
+  };
+  timer = null;
+  time = null;
 
-  cachedData = {}
-  maxTick = -Infinity
+  cachedData = {};
+  maxTick = -Infinity;
 
   state = {
     canPlay: true,
     isPlaying: null,
     results: [],
     tick: null
-  }
+  };
   constructor(props) {
-    super(props)
-    this.state.data = props.initialData
+    super(props);
+    this.state.data = props.initialData;
     this.state.params = {
       delay: this.props.delay,
       minTime: this.props.minTime,
       maxTime: this.props.maxTime,
       ticksPerAnimation: this.props.ticksPerAnimation,
       ...props.initialParams
-    }
-    this.state.tick = props.initialTick
-    this.state.isPlaying = props.isPlaying
+    };
+    this.state.tick = props.initialTick;
+    this.state.isPlaying = props.isPlaying;
   }
   componentDidMount() {
-    this.initData()
+    this.initData();
   }
   componentDidUpdate() {
     if (this.props.start && this.state.canPlay) {
-      this.play()
+      this.play();
     }
   }
   componentWillUnmount() {
     if (this.timer !== null) {
-      window.cancelAnimationFrame(this.timer)
+      window.cancelAnimationFrame(this.timer);
     }
   }
 
   complete = (result) => {
-    const { results } = this.state
-    results.push(result)
-    this.setState(() => ({ canPlay: false, results }))
-  }
+    const { results } = this.state;
+    results.push(result);
+    this.setState(() => ({ canPlay: false, results }));
+  };
 
   initData = () => {
-    const data = this.props.initData(this.state.params)
-    const tick = this.props.initialTick
+    const data = this.props.initData(this.state.params);
+    const tick = this.props.initialTick;
 
-    this.cachedData = {}
-    this.maxTick = tick
+    this.cachedData = {};
+    this.maxTick = tick;
     if (!this.props.noCache) {
-      this.cachedData[this.maxTick] = data
+      this.cachedData[this.maxTick] = data;
     }
 
     this.setState({
       canPlay: true,
       tick,
       data
-    })
-  }
+    });
+  };
 
   play = () => {
     // the fact that we can have a setState callback is the main
@@ -94,16 +97,16 @@ export class Model extends React.Component {
     this.setState(
       () => ({ isPlaying: true }),
       () => {
-        this.timer = window.requestAnimationFrame(this.tick)
+        this.timer = window.requestAnimationFrame(this.tick);
       }
-    )
-  }
+    );
+  };
   pause = () => {
-    window.cancelAnimationFrame(this.timer)
-    this.setState(() => ({ isPlaying: false }))
-  }
+    window.cancelAnimationFrame(this.timer);
+    this.setState(() => ({ isPlaying: false }));
+  };
   stop = () => {
-    window.cancelAnimationFrame(this.timer)
+    window.cancelAnimationFrame(this.timer);
 
     this.setState(
       () => ({
@@ -111,8 +114,8 @@ export class Model extends React.Component {
         tick: this.props.initialTick
       }),
       this.initData()
-    )
-  }
+    );
+  };
 
   checkCanPlay = (tick) => {
     if (
@@ -122,52 +125,52 @@ export class Model extends React.Component {
     ) {
       this.setState(() => ({
         isPlaying: false
-      }))
-      return false
+      }));
+      return false;
     }
-    return true
-  }
+    return true;
+  };
 
   tick = (timestamp) => {
     if (this.checkCanPlay(this.state.tick)) {
       if (this.time === null) {
-        this.time = timestamp
+        this.time = timestamp;
       }
       // if there is a delay specified, we're only going
       // to update the state if we are passed that delay
       if (timestamp - this.time >= this.state.params.delay) {
-        this.time = timestamp
+        this.time = timestamp;
         this.updateToTick({
           target: this.state.tick + this.state.params.ticksPerAnimation
-        })
+        });
       }
 
       // and delay or not, if we can continue looping, we
       // keep on looping
       if (this.state.isPlaying) {
-        window.cancelAnimationFrame(this.timer)
-        this.timer = window.requestAnimationFrame(this.tick)
+        window.cancelAnimationFrame(this.timer);
+        this.timer = window.requestAnimationFrame(this.tick);
       }
     }
-  }
+  };
 
   updateToTick = ({ target, shouldStop }) => {
-    let data = this.state.data
-    let tick
+    let data = this.state.data;
+    let tick;
 
     // if we've already computed (and cached) data for a given tick,
     // we'll just retrieve it.
     if (this.cachedData.hasOwnProperty(target)) {
-      data = this.cachedData[target]
-      tick = target
+      data = this.cachedData[target];
+      tick = target;
     } else {
       // else, we're starting from the last tick for which we cached data.
       // failing that, we start from the current tick.
 
       if (this.cachedData[this.maxTick]) {
-        tick = this.maxTick
+        tick = this.maxTick;
       } else {
-        tick = this.state.tick
+        tick = this.state.tick;
       }
 
       // note - if data is not cached, and user wants
@@ -182,7 +185,7 @@ export class Model extends React.Component {
         //
         // this is what the checkCanPlay method addresses. If false, we
         // stop updating data and tick.
-        tick++
+        tick++;
         data = this.props.updateData({
           cachedData: this.cachedData,
           data,
@@ -191,7 +194,7 @@ export class Model extends React.Component {
           complete: this.complete,
           stop: this.stop,
           pause: this.pause
-        })
+        });
 
         // then, we cache the data which is calculated.
         // it's possible to opt out cache, because if there's no maxTime
@@ -199,8 +202,8 @@ export class Model extends React.Component {
         // we'll run out of memory eventually.
 
         if (!this.props.noCache) {
-          this.maxTick = tick
-          this.cachedData[tick] = data
+          this.maxTick = tick;
+          this.cachedData[tick] = data;
         }
       }
     }
@@ -210,35 +213,35 @@ export class Model extends React.Component {
       data,
       tick,
       ...(shouldStop ? { isPlaying: false } : {})
-    }))
-  }
+    }));
+  };
 
   updateTime = (value) => {
     if (this.timer) {
-      window.cancelAnimationFrame(this.timer)
+      window.cancelAnimationFrame(this.timer);
     }
-    this.updateToTick({ target: Number(value), shouldStop: true })
-  }
+    this.updateToTick({ target: Number(value), shouldStop: true });
+  };
 
   setData = (value) => {
     if (this.timer) {
-      window.cancelAnimationFrame(this.timer)
+      window.cancelAnimationFrame(this.timer);
     }
     this.setState({
       data: value,
       isPlaying: false,
       tick: this.props.initialTick
-    })
-  }
+    });
+  };
   setParams = (params) => {
-    this.setState({ params: { ...this.state.params, ...params } })
-  }
+    this.setState({ params: { ...this.state.params, ...params } });
+  };
 
   renderFrame() {
     if (this.state.data === null) {
-      return null
+      return null;
     }
-    const children = React.Children.toArray(this.props.children)
+    const children = React.Children.toArray(this.props.children);
     const injectedProps = {
       data: this.state.data,
       initData: this.initData,
@@ -246,34 +249,34 @@ export class Model extends React.Component {
       results: this.state.results,
       tick: this.state.tick,
       setData: this.setData
-    }
+    };
 
     switch (children.length) {
       case 0:
-        return withFrame(Frame)()
+        return withFrame(Frame)();
       case 1:
-        const child = children[0]
+        const child = children[0];
         return React.cloneElement(
           child,
           typeof child.type === 'string' ? {} : injectedProps
-        )
+        );
       default:
         return children.map((child) => {
           return React.cloneElement(
             child,
             typeof child.type === 'string' ? {} : injectedProps
-          )
-        })
+          );
+        });
     }
   }
 
   hasControls = (children) => {
-    let result = false
+    let result = false;
     React.Children.forEach(children, (child) => {
       if (!result) {
-        const ctd = child.type.displayName || ''
-        const ctn = child.type.name || ''
-        const ct = typeof child.type === 'string' ? child.type : ''
+        const ctd = child.type.displayName || '';
+        const ctn = child.type.name || '';
+        const ct = typeof child.type === 'string' ? child.type : '';
 
         if (
           ctd === 'Controls' ||
@@ -283,16 +286,56 @@ export class Model extends React.Component {
           ctn.startsWith('withControls') ||
           ct.startsWith('controls')
         ) {
-          result = true
+          result = true;
         }
       } else {
         if (child.props.children && child.props.children.length) {
-          result = this.hasControls(child.props.children)
+          result = this.hasControls(child.props.children);
         }
       }
-    })
-    return result
+    });
+    return result;
+  };
+
+  renderControls() {
+    if (this.props.noControls) {
+      return null;
+    }
+    if (this.hasControls(this.props.children)) {
+      return null;
+    }
+
+    const controls = this.props.controls;
+    let shouldAddTimer = this.props.showTimer && !hasTimer(controls);
+
+    const updatedControls = [];
+    if (controls) {
+      updatedControls.push(controls);
+    }
+    if (shouldAddTimer) {
+      updatedControls.push({
+        type: 'timer',
+        isPlaying: this.state.isPlaying,
+        maxTime: this.state.params.maxTime,
+        minTime: this.state.params.minTime,
+        play: this.play,
+        pause: this.pause,
+        showTime: this.props.showTime,
+        stop: this.stop,
+        updateTime: this.updateTime,
+        time: this.state.tick
+      });
+    }
+
+    return (
+      <Controls
+        controls={updatedControls}
+        params={this.state.params}
+        setParams={this.setParams}
+      />
+    );
   }
+
   render() {
     const frameContext = {
       data: this.state.data,
@@ -301,7 +344,7 @@ export class Model extends React.Component {
       results: this.state.results,
       tick: this.state.tick,
       setData: this.setData
-    }
+    };
 
     const controlsContext = {
       isPlaying: this.state.isPlaying,
@@ -311,9 +354,8 @@ export class Model extends React.Component {
       setParams: this.setParams,
       stop: this.stop,
       updateTime: this.updateTime
-    }
+    };
 
-    const hasControls = this.hasControls(this.props.children)
     return (
       <ThemeContext.Provider value={{ theme: this.props.theme }}>
         <ThemeProvider theme={this.props.theme}>
@@ -321,28 +363,13 @@ export class Model extends React.Component {
             <ControlsContext.Provider value={controlsContext}>
               <FlexColumn>
                 <FlexRow>{this.renderFrame()}</FlexRow>
-                {hasControls ? null : (
-                  <Controls
-                    controls={this.props.controls}
-                    isPlaying={this.state.isPlaying}
-                    maxTime={this.state.params.maxTime}
-                    minTime={this.state.params.minTime}
-                    params={this.state.params}
-                    play={this.play}
-                    pause={this.pause}
-                    showTime={this.props.showTime}
-                    stop={this.stop}
-                    setParams={this.setParams}
-                    updateTime={this.updateTime}
-                    time={this.state.tick}
-                  />
-                )}
+                {this.renderControls()}
               </FlexColumn>
             </ControlsContext.Provider>
           </FrameContext.Provider>
         </ThemeProvider>
       </ThemeContext.Provider>
-    )
+    );
   }
 }
 
@@ -352,22 +379,15 @@ export function withTheme(Component) {
       <ThemeContext.Consumer>
         {({ theme }) => <Component theme={theme} {...props} />}
       </ThemeContext.Consumer>
-    )
-  }
+    );
+  };
 }
 
 export function withFrame(Component) {
   function FrameComponent(props) {
     return (
       <FrameContext.Consumer>
-        {({
-          data,
-          initData,
-          params,
-          results,
-          setData,
-          tick
-        }) => (
+        {({ data, initData, params, results, setData, tick }) => (
           <Component
             data={data}
             initData={initData}
@@ -378,11 +398,11 @@ export function withFrame(Component) {
           />
         )}
       </FrameContext.Consumer>
-    )
+    );
   }
-  const componentName = Component.displayName || Component.name || 'Component'
-  FrameComponent.displayName = `withFrame(${componentName})`
-  return FrameComponent
+  const componentName = Component.displayName || Component.name || 'Component';
+  FrameComponent.displayName = `withFrame(${componentName})`;
+  return FrameComponent;
 }
 
 export function withControls(Component) {
@@ -402,23 +422,23 @@ export function withControls(Component) {
           />
         )}
       </ControlsContext.Consumer>
-    )
+    );
   }
-  const componentName = Component.displayName || Component.name || 'Component'
-  ControlsComponent.displayName = `withControls(${componentName})`
-  return ControlsComponent
+  const componentName = Component.displayName || Component.name || 'Component';
+  ControlsComponent.displayName = `withControls(${componentName})`;
+  return ControlsComponent;
 }
 
 function ThemedModel(props) {
-  let theme = props.theme || system
+  let theme = props.theme || system;
   try {
-    const context = useThemeUI()
-    theme = context.theme || theme
+    const context = useThemeUI();
+    theme = context.theme || theme;
   } catch (err) {
-    console.log('couldnt get theme from context')
+    console.log('couldnt get theme from context');
   } finally {
-    return <Model theme={theme} {...props} />
+    return <Model theme={theme} {...props} />;
   }
 }
 
-export default ThemedModel
+export default ThemedModel;
