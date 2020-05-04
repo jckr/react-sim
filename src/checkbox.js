@@ -2,15 +2,16 @@ import React from 'react'
 import { Label, Checkbox as RBCheckbox } from '@rebass/forms'
 import { Flex } from 'rebass'
 
-function Checkbox({ label, value, setValue, ...props }) {
+function Checkbox({ label, name, value, setValue, ...props }) {
   return (
     <Flex mr={1} {...props}>
-      <Label htmlFor={label}>
+      <Label htmlFor={name || label}>
         <RBCheckbox
           checked={value}
-          id={label}
+          id={name || label}
           value={value}
-          name={label}
+          name={name || label}
+          readOnly
           onClick={() => setValue(!value)}
         />
         {label}

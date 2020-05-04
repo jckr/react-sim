@@ -7,15 +7,10 @@ import Head from './head';
 import Header from './header';
 import Nav from './nav';
 
-// import EditLink from './edit-link'
-// import Footer from './footer'
-// import SkipLink from './skip-link'
+import EditLink from './edit-link'
+import Footer from './footer'
 
 // derived from rebassjs.org layout file
-
-const EditLink = props => <div>{props.children}</div>;
-const Footer = props => <div>{props.children}</div>;
-const SkipLink = props => <div>{props.children}</div>;
 
 const Sidebar = props => (
   <Flex>
@@ -98,7 +93,6 @@ export default props => {
       components={mdxComponents}
     >
       <div>
-        <SkipLink />
         <Head {...props} />
         <Header fullwidth={fullwidth} menu={menu} setMenu={setMenu} nav={nav} />
         {!fullwidth ? (

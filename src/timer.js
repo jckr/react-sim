@@ -4,18 +4,20 @@ import {Pause, Play, Range, Stop, Step, withControls} from './';
 
 function Timer({
   isPlaying,
-  maxTime,
-  minTime,
+  label = 'Time',
+  name = 'Time',
+  maxTime = 100,
+  minTime = 0,
   pause,
   play,
-  showTime,
+  showTimeSlider = true,
+  showTime = true,
   stop,
   time,
   updateTime,
-  label = 'Time'
+  ...rangeProps
 }) {
   const step = () => updateTime(time + 1);
-
   return (
     <Flex sx={{ alignItems: 'center', flexDirection: 'row' }}>
       <Play isPlaying={isPlaying} play={play} pause={pause} />
@@ -25,9 +27,12 @@ function Timer({
         <Range
           minValue={minTime}
           maxValue={maxTime}
+          name={name}
           value={time}
           setValue={updateTime}
-          label='Time'
+          shouldDisplaySlider={showTimeSlider}
+          label={label}
+          {...rangeProps}
         />
       )}
     </Flex>

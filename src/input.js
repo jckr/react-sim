@@ -2,12 +2,13 @@ import React from "react";
 import { Label, Input as RBInput } from "@rebass/forms";
 import { Flex } from "rebass";
 
-function Input({label, value, setValue, ...props}) {
+function Input({label, name, value, setValue, ...props}) {
   return (
     <Flex flexDirection="column" mr={1}>
-    {label && <Label htmlFor={label}>{label}</Label>}
+    {label && <Label htmlFor={name || label}>{label}</Label>}
     <RBInput
-      id={label}
+      id={name || label}
+      name={name || label}
       value={value}
       onChange={(e) => setValue(e.target.value)}
       {...props}

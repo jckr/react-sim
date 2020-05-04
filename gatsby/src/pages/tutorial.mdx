@@ -269,8 +269,9 @@ Now our simulation will stop if it can't go any further.
 # Controls
 
 Right now, the simulation has default controls, which is the `Timer` slider.
-We can see time, we can move the slider back and forth, though it doesn't do anything.
+We can see time, we can move the slider back and forth. This will take us back to previous states of the simulation, or take us many steps in the future.
 
+But let's get rid of the slider for now.
 On the other hand, it would be nice if we could adjust the density of the grid.
 
 So let's address these two things.
@@ -278,12 +279,13 @@ So let's address these two things.
 ```jsx
 const GameOfLife = () => (
   <Model
-    maxTime={Infinity}
+    showTimeSlider={false}
     controls={{
       param: 'density',
       maxValue: 1,
       step: 0.01,
       label: 'Grid density',
+      resetOnChange: true,
     }}
     initData={initGrid}
     updateData={updateGameOfLifeGrid}
@@ -297,14 +299,14 @@ const GameOfLife = () => (
   </Model>);
 ```
 
-Setting the `maxTime` to `Infinity` is the simplest way to make the slider go away.
-If there's no upper bound to the value of time, then the slider is no longer displayed.
+We can hide the time slider by setting `showTimeSlider` to false.
 
 We're adding a control via the `controls` prop. Here we have only one control, so we can use this simple syntax of just passing one object describing the control, with:
 - the param it's going to affect ("density"),
 - its maxValue, if different from the default of 100,
 - its step, if different from the default of 1,
 - a label, which is the name of the param, by default.
+- resetOnChange: we want the simulation to reinitialize if we touch that control.
 
 That's it! we now can control the density of the grid.
 
@@ -319,12 +321,13 @@ We can add a delay between each animation tick - through the delay property.
 const GameOfLife = () => (
   <Model
     delay={100}
-    maxTime={Infinity}
+    showTimeSlider={false}
     controls={{
       param: 'density',
       maxValue: 1,
       step: 0.01,
       label: 'Grid density',
+      resetOnChange: true,
     }}
     initData={initGrid}
     updateData={updateGameOfLifeGrid}

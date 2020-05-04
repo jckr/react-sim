@@ -1,0 +1,48 @@
+---
+Title: Default timer
+---
+
+import {
+  DefaultTimer,
+  NegativeMinTime,
+  HideTimerBlock,
+  HideTimerSlider,
+} from '../../components/examples/controls-examples';
+
+# Default timer
+
+<DefaultTimer />
+
+_The default timer_
+
+The following `Model` props affect the behavior of the `Timer`:
+
+- `minTime` (integer, 0 by default): at which position the timer starts. Can be negative.
+- `maxTime` (integer, 100 by default): at which position the timer ends.
+- `showTime` (boolean, true by default): Whether the time block (i.e. slider and time value) is going to be shown.
+- `showTimeSlider` (boolean, true by default): Whether the time slider is going to be shown.
+- `showTimer` (boolean, true by default): Whether the Timer is shown at all. If the Timer is not shown, you will have to provide another way to start the simulation (or effectively force the user to stay on the initial state).
+
+<NegativeMinTime />
+
+_Timer with negative minTime_
+
+```jsx
+<Model minTime={-10} maxTime={0} />
+```
+
+<HideTimerSlider />
+
+_Timer with showTimeSlider set to false_
+
+```jsx
+<Model showTimeSlider={false} />
+```
+
+<HideTimerBlock />
+
+_Timer with showTime set to false_
+
+```jsx
+<Model showTime={false} />
+```

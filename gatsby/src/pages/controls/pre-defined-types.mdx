@@ -1,0 +1,32 @@
+---
+Title: Pre-defined types
+---
+
+# Pre-defined control types
+
+If you want more than the default timer, the next simpler way is to pass a `controls` property to your `Model`.
+
+By doing so, you can use one or more of the _pre-defined control types_.
+
+These control types are:
+- [Checkbox](/controls/checkbox)
+- [Input](/controls/input)
+- [Toggle](/controls/toggle)
+- [Radio](/controls/radio)
+- [Select](/controls/select)
+- [Range](/controls/range)
+- [Timer](/controls/timer)
+
+The `controls` props can be:
+- an object, in which case you are specifying a single control, or
+- an array, which is how you can [arrange controls](/controls/arranging-controls)
+
+# Common props
+
+All controls, except the `Timer`, have the following props -
+
+- type: (one of 'checkbox', 'input', 'radio', 'range', 'select', 'timer' or 'toggle', 'timer' by default) - defines the kind of control we're describing
+- param: (string) The name of the parameter in params that will be changed by this control,
+- label: (string) The description of this control in the UI. If left blank, `param` will be used.
+- name: (string) The name of the control. If not specified, `label` will be used.
+- sx: (object) All controls are created with [rebass](https://rebassjs.org), and can take `sx` props.

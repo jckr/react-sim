@@ -1,7 +1,5 @@
 import { system as base } from '@theme-ui/presets';
 
-console.log(base);
-
 const theme = {
   ...base,
   colors: {
@@ -27,6 +25,19 @@ const theme = {
         lightgray: '#cfcfd3',
       },
     },
+  },
+  forms: {
+    label: { fontSize: 1, fontWeight: 'bold' },
+    field: {
+      borderColor: 'lightgray',
+      ':focus': { borderColor: 'primary', outline: 'none' },
+    },
+    input: { variant: 'forms.field' },
+    select: { variant: 'forms.field' },
+    textarea: { variant: 'forms.field' },
+    radio: {},
+    slider: { bg: 'lightgray' },
+    switch: {},
   },
   links: {
     ...base?.links,
@@ -57,5 +68,20 @@ const theme = {
       },
     },
   },
+  variants: {
+    ...base?.variants,
+    nav: {
+      ...base?.variants?.nav,
+      fontSize: 1,
+      fontWeight: 'bold',
+      display: 'inline-block',
+      p: 2,
+      color: 'inherit',
+      textDecoration: 'none',
+      ':hover,:focus,.active': { color: 'primary' },
+    },
+  },
 };
+
+console.log(theme);
 export default theme;
