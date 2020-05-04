@@ -75,7 +75,7 @@ const Sidebar = props => (
       {props.children}
       <EditLink my={5}>Edit this page on GitHub</EditLink>
       <Nav
-        pathname={props.location.pathname}
+        pathname={props.location?.pathname}
         components={{
           wrapper: Pagination,
         }}
@@ -85,7 +85,7 @@ const Sidebar = props => (
 );
 
 export default props => {
-  const fullwidth = props.location.pathname === '/';
+  const fullwidth = props.location?.pathname === '/';
   const [menu, setMenu] = useState(false);
   const nav = useRef(null);
   return (
