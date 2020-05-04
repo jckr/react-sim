@@ -3,6 +3,7 @@ import { useThemeUI, ThemeProvider } from 'theme-ui';
 import { system } from '@theme-ui/presets';
 import { FlexColumn, FlexRow, Controls, Frame } from './';
 import { hasTimer } from './controls';
+import { forms } from './constants';
 
 const ThemeContext = React.createContext({});
 const FrameContext = React.createContext({});
@@ -23,6 +24,7 @@ export class Model extends React.Component {
     noControls: false,
     showTime: true,
     showTimer: true,
+    showTimeSlider: true,
     isPlaying: false,
     ticksPerAnimation: 1,
     updateData: ({ data }) => data
@@ -74,7 +76,7 @@ export class Model extends React.Component {
 
   initData = () => {
     const data = this.props.initData(this.state.params);
-    const tick = this.props.initialTick;
+    const tick = this.props.minTime || this.props.initialTick;
 
     this.cachedData = {};
     this.maxTick = tick;
@@ -111,7 +113,7 @@ export class Model extends React.Component {
     this.setState(
       () => ({
         isPlaying: false,
-        tick: this.props.initialTick
+        tick: this.props.minTime || this.props.initialTick
       }),
       this.initData()
     );
@@ -237,19 +239,11 @@ export class Model extends React.Component {
     this.setState({ params: { ...this.state.params, ...params } });
   };
 
-  renderFrame() {
+  renderFrame = (injectedProps) => {
     if (this.state.data === null) {
       return null;
     }
     const children = React.Children.toArray(this.props.children);
-    const injectedProps = {
-      data: this.state.data,
-      initData: this.initData,
-      params: this.state.params,
-      results: this.state.results,
-      tick: this.state.tick,
-      setData: this.setData
-    };
 
     switch (children.length) {
       case 0:
@@ -268,7 +262,7 @@ export class Model extends React.Component {
           );
         });
     }
-  }
+  };
 
   hasControls = (children) => {
     let result = false;
@@ -297,7 +291,7 @@ export class Model extends React.Component {
     return result;
   };
 
-  renderControls() {
+  renderControls = (injectedProps) => {
     if (this.props.noControls) {
       return null;
     }
@@ -310,7 +304,11 @@ export class Model extends React.Component {
 
     const updatedControls = [];
     if (controls) {
-      updatedControls.push(controls);
+      if (Array.isArray(controls)) {
+        controls.forEach((c) => updatedControls.push(c));
+      } else {
+        updatedControls.push(controls);
+      }
     }
     if (shouldAddTimer) {
       updatedControls.push({
@@ -321,20 +319,15 @@ export class Model extends React.Component {
         play: this.play,
         pause: this.pause,
         showTime: this.props.showTime,
+        showTimeSlider: this.props.showTimeSlider,
         stop: this.stop,
         updateTime: this.updateTime,
         time: this.state.tick
       });
     }
 
-    return (
-      <Controls
-        controls={updatedControls}
-        params={this.state.params}
-        setParams={this.setParams}
-      />
-    );
-  }
+    return <Controls controls={updatedControls} {...injectedProps} />;
+  };
 
   render() {
     const frameContext = {
@@ -353,6 +346,7 @@ export class Model extends React.Component {
       play: this.play,
       setParams: this.setParams,
       stop: this.stop,
+      tick: this.state.tick,
       updateTime: this.updateTime
     };
 
@@ -362,8 +356,8 @@ export class Model extends React.Component {
           <FrameContext.Provider value={frameContext}>
             <ControlsContext.Provider value={controlsContext}>
               <FlexColumn>
-                <FlexRow>{this.renderFrame()}</FlexRow>
-                {this.renderControls()}
+                <FlexRow>{this.renderFrame(frameContext)}</FlexRow>
+                {this.renderControls(controlsContext)}
               </FlexColumn>
             </ControlsContext.Provider>
           </FrameContext.Provider>
@@ -430,7 +424,7 @@ export function withControls(Component) {
 }
 
 function ThemedModel(props) {
-  let theme = props.theme || system;
+  let theme = props.theme || { ...system, forms };
   try {
     const context = useThemeUI();
     theme = context.theme || theme;

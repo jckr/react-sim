@@ -1,0 +1,46 @@
+---
+Title: Range
+---
+
+import {
+  ToggleExample,
+  CheckAndToggleExample,
+  RadioExample,
+  SelectExample,
+  SelectAndRadioExample,
+  InputExample,
+  RangeExample,
+  TimerExample,
+  RowsOfSlidersExample,
+  SlidersOnTwoRowsExample,
+} from '../../components/examples/controls-examples';
+
+# Range
+
+The Range control is a slider that let a user choose a value between a minimum and a maximum, and that's the default control.
+
+It has more properties than the typical control:
+
+- maxValue (number, defaults to 100): the maximum you can set your value to using this control.
+- minValue (number, defaults to 0): the minimum value for your control.
+- shouldDisplayLabel (boolean, true by default): whether the label will be shown.
+- shouldDisplayMaxValue (boolean, true by default): whether the max value will be shown after the slider.
+- shouldDisplayMinValue (boolean, true by default): whether the min value will be shown before the slider.
+- shouldDisplaySlider (boolean, true by default): whether the slider will be shown (if false, min and max values are not shown either).
+- shouldDisplayValue (boolean, true by default): whether the value will be shown, next to the label
+- step (number, defaults to 1): by how much the user can change the value.
+
+<RangeExample />
+
+```jsx
+<Model
+  showTimer={false}
+  initialParams={{ value: 0 }}
+  controls={{
+    type: 'range',
+    label: 'Choose a value',
+    name: 'range',
+    param: 'value',
+  }}
+/>
+```

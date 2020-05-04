@@ -1,0 +1,131 @@
+---
+Title: Time
+---
+import Fibonacci from '../components/examples/fibonacci';
+
+# How Time Works
+
+Time is one of the central notions of `react-sim`.
+
+A react-sim `Model` will maintain:
+
+- `tick` (integer), a representation of the progress in the simulation,
+- `data` (anything), the internal state of the data to be shown,
+- `isPlaying` (boolean), a flag that controls whether the animation is running or not.
+
+In addition to these main properties, `Model` also maintains:
+
+- `cachedData` (object), which caches data which has already been calculated for a given `tick`,
+- `results` (array), where information on the previous runs of the simulation can be stored.
+
+The simulation author is expected to pass properties such as:
+
+- `initialParams` (object), a list of params for the simulation. They can be overridden by the [controls](/controls).
+- `initData` (function), which takes `params`as input and outputs the first value for `data`.
+- `updateData` (function), which takes: `params`, `data`, `tick`, `cachedData`, and `results` as inputs, and outputs a new value for `data`.
+
+# The simulation lifecycle
+
+## Initial state
+
+When a `<Model />` is created it will:
+
+- initiate the interal `params` from the values of `initParams`.
+- initiate `tick` - either through the `minTime` or the `initialTick` prop. `minTime` takes precedence.
+- run `initData` and generate a first value for `data` from the `params`.
+
+The [frames](/frame) will not render until `initData` has run, but they will render once `data` has been initialized once.
+
+If the `isPlaying` prop of the `<Model />` is set to true, it will start `playing`. Else, the simulation doesn't change until [controls](/controls) trigger it.
+
+## Playing
+
+When the simulation is playing, every so often it will try to update `data` and refresh the `Frames`.
+By default, the simulation refreshes 60 times per second.
+
+It's possible to make it go slower by providing a `delay` prop to `Model`. The simulation will wait that long (in ms) to refresh the animation.
+Each time the animation refreshes, the simulation will progress by 1 tick (i.e. the `tick` value will increase by 1.)
+It's also possible to make it go faster with a `ticksPerAnimation` prop. If this value is greater than 1, then the simualtion will try to update `data` that many times before re-rendering `Frames`.
+
+We can use both values at once. For instance, we can have a simulation that, every 100ms, updates 500 times.
+
+### Playing stops if:
+
+- the user _pauses_ or _stops_ the simulation,
+- `ticks` reaches the maximum value,
+- the simulation _completes_.
+
+When the simulation _pauses_, `isPlaying` simply switches to false. Nothing else changes, `tick` stays the same, so does `data`, etc.
+The [default timer](/controls/default-timer) provides an easy way for a user to trigger a `pause`. Model has an internal method that pauses, which can be exposed to controls.
+
+When the simulation _stops_, `isPlaying` switches to false, but data is also re-initiated:
+
+- `tick` goes back to its original value,
+- `initData` fires again and overwrites `data`,
+- `cachedData` is emptied,
+- `results` is left unchanged.
+
+The simulation _completes_ when `updateData` triggered a condition where it can't go any further.
+When this happens:
+
+- `isPlaying` switches to false, but:
+- `tick` is unchanged,
+- `data` is unchanged,
+- A `result` for this run may be appended to `results`.
+
+The simulation won't reset unless manually triggered.
+
+### When to update or cache data
+
+Each time `tick` changes, `data` is updated.
+If using cached data, and `tick` changes to a value for which `cachedData` has precomputed values, then the simulation will simply retrieve those values and not do further calculations.
+This can happen, for instance, if a user uses the time slider to move back in time.
+
+Else, we're going to figure out which is the latest value of `tick` for which we have data, and through how many cycles do we have to go to get to the current value of `tick` - which can be just 1 if tick is simply incrementing along the animation, but which could be more if `ticksPerAnimation` is set, or if we are moving foward in time with the time slider, and run `updateData` as many times as needed.
+`updateData` will stop running if:
+
+- `tick` reaches the maximum value, or
+- the simulation _completes_.
+
+Each time it successfully runs, if caching data, it will update `cachedData`.
+
+If a simulation is never going to complete, and has no maximum time value, and there's no reason to go back in time, then it may be a good idea to disable caching, as the system will eventually run out of memory. You can do that by setting the `noCache` property of the `Model` to `true`.
+
+### Updating data
+
+Updating data is done through the `updateData` function, which takes as arguments an object with the following properties:
+
+- `data`: the existing `data`,
+- `tick`: the next value of `tick`,
+- `params`: all the `params` of the simulation,
+- `cachedData`: the cached values of `data` for previous ticks,
+- `results`: the results of previous runs,
+- `complete`: a function that signals that the simulation is complete. If it's provided an argument (result), that is added to the `results` property of the simulation.
+
+`updateData` will return an updated value for `data`. Even if it completes, it's expected to return `data`.
+
+The main idea behind `updateData` taking the existing `data` as an argument is that it can operates as a mathematical sequence.
+
+For example, in the following Fibonacci spiral example:
+<Fibonacci />
+
+the `updateData` function is a very simple recursion:
+
+```jsx
+function updateData({ data, tick }) {
+  if (tick === 0) {
+    return [0];
+  }
+  if (tick === 1) {
+    return [0, 1];
+  }
+  const lastNumber = data[tick - 1] + data[tick - 2];
+  return [...data, lastNumber];
+}
+```
+
+But `updateData` has access to other properties of the simulation, and can use past values of data, or even information on previous runs of the simulation, as needed.
+`updateData` can also not use any of these arguments and provide values unrelated to the previous state of the simulation.
+
+
+

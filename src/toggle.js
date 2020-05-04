@@ -5,7 +5,7 @@ import { Flex } from "rebass";
 function Toggle({label, value, setValue, ...props}) {
   return (
     <Flex flexDirection="column" mr={1}>
-    {label && <Label htmlFor={label}>{label}</Label>}
+    {label && <Label htmlFor={label} mb={1}>{label}</Label>}
     <Switch
       id={label}
       checked={value}

@@ -1,8 +1,6 @@
 import React from 'react';
 import {
   Checkbox,
-  FlexRow,
-  FlexColumn,
   Input,
   Play,
   Radio,
@@ -12,26 +10,27 @@ import {
   Timer,
   Toggle
 } from './index';
+import { Flex } from 'rebass';
 
 export default class Controls extends React.Component {
   static defaultProps = {
     controls: null
   };
-  renderControls(controls, horizontally = false) {
+  renderControls(controls, horizontally = true) {
     if (!controls) {
       return null;
     }
     // if parameter is an array, we render a series of controls
-    const Block = horizontally ? FlexColumn : FlexRow;
     if (Array.isArray(controls)) {
       return controls.map((c, i) => (
-        <Block
-          styles={{ margin: horizontally ? '0 10px 0 0' : '10px 0' }}
+        <Flex
+          flexDirection={horizontally ? 'row' : 'column'}
+          sx={horizontally ? { mt: 1, alignItems: 'center' } : { my: 1 }}
           key={`c-${i}`}
         >
           {/* If original parameter is a nested array, we render nested rows of columns */}
           {this.renderControls(c, !horizontally)}
-        </Block>
+        </Flex>
       ));
     }
 
@@ -48,27 +47,47 @@ export default class Controls extends React.Component {
       value: params[paramName]
     };
 
+    let control;
+
     switch (controls.type) {
       case 'checkbox':
-        return <Checkbox {...commonProps} {...controls} />;
+        control = <Checkbox {...commonProps} {...controls} />;
+        break;
       case 'input':
-        return <Input {...commonProps} {...controls} />;
+        control = <Input {...commonProps} {...controls} />;
+        break;
       case 'radio':
-        return <Radio {...commonProps} {...controls} />;
+        control = <Radio {...commonProps} {...controls} />;
+        break;
       case 'select':
-        return <Select {...commonProps} {...controls} />;
+        control = <Select {...commonProps} {...controls} />;
+        break;
       case 'timer':
-        return <Timer {...controls} />;
+        control = (
+          <Timer
+            isPlaying={this.props.isPlaying}
+            time={this.props.tick}
+            updateTime={this.props.updateTime}
+            pause={this.props.pause}
+            play={this.props.play}
+            stop={this.props.stop}
+            {...controls}
+          />
+        );
+        break;
       case 'toggle':
-        return <Toggle {...commonProps} {...controls} />;
+        control = <Toggle {...commonProps} {...controls} />;
+        break;
       default:
-        return <Range {...commonProps} {...controls} />;
+        control = <Range {...commonProps} {...controls} />;
     }
+    return <Flex mr={2}>{control}</Flex>
+
   }
 
   render() {
     const { controls } = this.props;
-    return <FlexColumn>{this.renderControls(controls)}</FlexColumn>;
+    return <Flex flexDirection='column'>{this.renderControls(controls)}</Flex>;
   }
 }
 

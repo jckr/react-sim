@@ -1,0 +1,50 @@
+---
+Title: Toggle
+---
+
+import {
+  ToggleExample,
+  CheckAndToggleExample
+} from '../../components/examples/controls-examples';
+
+# Toggle
+
+<ToggleExample />
+
+A Toggle is functionally equivalent to a checkbox, but looks differently.
+Like the checkbox, it doesn't need anything else besides the common props.
+
+```jsx
+<Model
+  showTimer={false}
+  initialParams={{ checked: false }}
+  controls={{
+    type: 'toggle',
+    label: 'Check me',
+    param: 'checked',
+  }}
+/>
+```
+
+Two controls can act on the same param:
+
+<CheckAndToggleExample />
+
+```jsx
+<Model
+  showTimer={false}
+  initialParams={{ checked: false }}
+  controls={[
+    {
+      type: 'checkbox',
+      label: 'Check me',
+      param: 'checked',
+    },
+    {
+      type: 'toggle',
+      label: 'Toggle me',
+      param: 'checked',
+    },
+  ]}
+/>
+```

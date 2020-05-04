@@ -4,7 +4,6 @@ import {
   FlexRow,
   FlexColumn,
   Model,
-  withTheme,
 } from 'react-sim';
 import { useThemeUI } from 'theme-ui';
 // helpers
