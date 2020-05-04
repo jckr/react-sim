@@ -43,7 +43,9 @@ export default class Controls extends React.Component {
 
     const commonProps = {
       label: paramName,
-      setValue: (value) => this.props.setParams({ [paramName]: value }),
+      setValue: (value) => {
+        this.props.setParams({ [paramName]: value }, controls.resetOnChange);
+      },
       value: params[paramName]
     };
 
@@ -81,8 +83,7 @@ export default class Controls extends React.Component {
       default:
         control = <Range {...commonProps} {...controls} />;
     }
-    return <Flex mr={2}>{control}</Flex>
-
+    return <Flex mr={2}>{control}</Flex>;
   }
 
   render() {

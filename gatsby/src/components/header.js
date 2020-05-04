@@ -33,6 +33,8 @@ export default ({
     <Flex
       as='header'
       px={3}
+      color='background'
+      bg='text'
       py={2}
       height={64}
       alignItems='center'>
@@ -41,8 +43,8 @@ export default ({
           title='Toggle Menu'
           display={[ 'block', 'none' ]}
           sx={{
-            background: 'white',
-            color: 'black',
+            background: 'black',
+            color: 'white',
             width: 32,
             height: 32,
             p: 1,

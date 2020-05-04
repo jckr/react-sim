@@ -156,7 +156,6 @@ export class DiceFrame extends React.Component {
       });
 
     return (
-      <div>
         <FlexColumn
           styles={{ justifyContent: 'space-between', height: '140px' }}
         >
@@ -177,19 +176,6 @@ export class DiceFrame extends React.Component {
             ))}
           </FlexRow>
         </FlexColumn>
-        <div
-          style={{
-            cursor: 'pointer',
-            background: '#eee',
-            padding: '8px',
-            margin: '8px 8px 8px 0',
-            width: 'fit-content',
-          }}
-          onClick={this.props.initData}
-        >
-          Reset sim
-        </div>
-      </div>
     );
   }
 }
@@ -206,6 +192,7 @@ const Dice = () => {
           param: 'nbDice',
           minValue: 1,
           maxValue: 6,
+          resetOnChange: true,
           label: 'Number of dice per roll',
         }}
         updateData={updateDice}

@@ -68,6 +68,19 @@ const theme = {
       },
     },
   },
+  variants: {
+    ...base?.variants,
+    nav: {
+      ...base?.variants?.nav,
+      fontSize: 1,
+      fontWeight: 'bold',
+      display: 'inline-block',
+      p: 2,
+      color: 'inherit',
+      textDecoration: 'none',
+      ':hover,:focus,.active': { color: 'primary' },
+    },
+  },
 };
 
 console.log(theme);

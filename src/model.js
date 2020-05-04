@@ -235,8 +235,13 @@ export class Model extends React.Component {
       tick: this.props.initialTick
     });
   };
-  setParams = (params) => {
-    this.setState({ params: { ...this.state.params, ...params } });
+  setParams = (params, resetOnChange) => {
+    this.setState(
+      () => ({ params: { ...this.state.params, ...params } })
+    );
+    if (resetOnChange) {
+      this.initData();
+    }
   };
 
   renderFrame = (injectedProps) => {

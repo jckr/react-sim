@@ -120,18 +120,6 @@ export class GameOfLifeFrame extends React.Component {
             ))}
           </FlexRow>
         ))}
-        <div
-          style={{
-            cursor: 'pointer',
-            background: '#eee',
-            padding: '8px',
-            margin: '8px 8px 8px 0',
-            width: 'fit-content',
-          }}
-          onClick={this.props.initData}
-        >
-          Reset grid
-        </div>
       </div>
     );
   }
@@ -159,18 +147,6 @@ const Frame = ({ data, size = 12, initData }) => {
           ))}
         </div>
       ))}
-      <div
-        style={{
-          cursor: 'pointer',
-          background: '#eee',
-          padding: '8px',
-          margin: '8px 8px 8px 0',
-          width: 'fit-content',
-        }}
-        onClick={initData}
-      >
-        Reset grid
-      </div>
     </div>
   );
 };
@@ -182,9 +158,10 @@ const GameOfLife = () => (
       param: 'density',
       maxValue: 1,
       step: 0.01,
+      resetOnChange: true,
       label: 'Grid density',
     }}
-    maxTime={Infinity}
+    showTimeSlider={false}
     updateData={updateGameOfLifeGrid}
     delay={100}
     initData={initGrid}
@@ -243,11 +220,12 @@ export const Step5 = () => (
   <Model
     controls={{
       param: 'density',
+      resetOnChange: true,
       maxValue: 1,
       step: 0.01,
       label: 'Grid density',
     }}
-    maxTime={Infinity}
+    showTimeSlider={false}
     initData={initGrid}
     updateData={updateGameOfLifeGrid}
     initialParams={{
