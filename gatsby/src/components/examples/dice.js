@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Play,
-  FlexRow,
-  FlexColumn,
-  Model,
-} from 'react-sim';
+import { Play, FlexRow, FlexColumn, Model } from 'react-sim';
 import { useThemeUI } from 'theme-ui';
 // helpers
 
@@ -156,26 +151,24 @@ export class DiceFrame extends React.Component {
       });
 
     return (
-        <FlexColumn
-          styles={{ justifyContent: 'space-between', height: '140px' }}
-        >
-          <FlexRow>
-            {rolls.map((value, index) => (
-              <Die value={value} key={`k-${index}`} />
-            ))}
-          </FlexRow>
-          <FlexRow styles={{ alignItems: 'flex-end', height: '80px' }}>
-            {bars.map(bar => (
-              <Bar
-                {...bar}
-                key={bar.label}
-                max={max}
-                nbValues={nbValues}
-                theme={theme}
-              />
-            ))}
-          </FlexRow>
-        </FlexColumn>
+      <FlexColumn styles={{ justifyContent: 'space-between', height: '140px' }}>
+        <FlexRow>
+          {rolls.map((value, index) => (
+            <Die value={value} key={`k-${index}`} />
+          ))}
+        </FlexRow>
+        <FlexRow styles={{ alignItems: 'flex-end', height: '80px' }}>
+          {bars.map(bar => (
+            <Bar
+              {...bar}
+              key={bar.label}
+              max={max}
+              nbValues={nbValues}
+              theme={theme}
+            />
+          ))}
+        </FlexRow>
+      </FlexColumn>
     );
   }
 }
