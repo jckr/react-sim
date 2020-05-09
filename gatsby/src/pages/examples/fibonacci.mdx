@@ -1,10 +1,59 @@
 ---
 Title: Fibonacci
 ---
-import Fibonacci from '../../components/examples/fibonacci';
 
-# Fibonacci
+import {
+  FibonacciSpiral,
+  FibonacciSquares,
+} from '../../components/examples/fibonacci';
 
-<Fibonacci />
+# Fibonacci sequence
 
+Both of these examples are inspired by the Fibonacci sequence, where:
+- F<sub>0</sub> = 0,
+- F<sub>1</sub> = 1,
+- F<sub>n</sub> = F<sub>n - 1</sub> + F<sub>n - 2</sub> for each n > 2.
+
+
+0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...
+
+<FibonacciSquares />
+
+The corresponding `udpateData` function is really simple:
+
+```jsx
+function updateData({ data, tick }) {
+  if (tick === 0) {
+    return [0];
+  }
+  if (tick === 1) {
+    return [0, 1];
+  }
+  const lastNumber = data[tick - 1] + data[tick - 2];
+  return [...data, lastNumber];
+}
+```
+
+We can draw squares with sides corresponding to the number in the sequence:
+
+
+Joining their corners, they form a spiral.
+
+F<sub>n</sub> / F<sub>n-1</sub> converges to φ, the golden ratio - (1 - √5) / 2.
+
+We can start from a rectangle φ * k by k rectangle, divide its longer side by φ, draw that square, and keep on dividing the remaining rectangle.
+We'll have squares of same proportions and can also draw a similar spiral.
+
+<FibonacciSpiral />
+
+In this case, we don't even need to provide data, an initData or an updateData function.
+All we need is the number of steps we want to go (tick) and a Frame to render the squares and spiral.
+
+```jsx
+const FibonacciSpiral = () => (
+  <Model initialParams={{ size: 500 }} delay={100} maxTime={20}>
+    <FibonacciSpiralFrame />
+  </Model>
+);
+```
 

@@ -11,6 +11,13 @@ const D = {
   3: 'up',
 };
 
+const colors = {
+  right: '#b6b6e2',
+  down: '#a6d3d9',
+  left: '#ffeb3b',
+  up: '#95d392',
+};
+
 function initData() {
   return [0];
 }
@@ -26,7 +33,7 @@ function updateData({ data, tick }) {
   return [...data, lastNumber];
 }
 
-const FibonacciFrame = ({ data, params }) => {
+const FibonacciSpiralFrame = ({ tick, params }) => {
   const canvasRef = useRef(null);
   const { size } = params;
 
@@ -39,7 +46,7 @@ const FibonacciFrame = ({ data, params }) => {
     let x = 0,
       y = 0,
       side = size;
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 0; i < tick; i++) {
       const d = D[i % 4];
       side = side / phi;
       ctx.strokeStyle = '#ddd';
@@ -85,16 +92,132 @@ const FibonacciFrame = ({ data, params }) => {
   return <canvas width={size} height={size / phi} ref={canvasRef} />;
 };
 
-const Fibonacci = () => (
-  <Model
-    initialParams={{ size: 500 }}
-    delay={100}
-    initData={initData}
-    updateData={updateData}
-    maxTime={20}
-  >
-    <FibonacciFrame />
+const FibonacciSpiral = () => (
+  <Model initialParams={{ size: 500 }} delay={100} maxTime={20}>
+    <FibonacciSpiralFrame />
   </Model>
 );
 
-export default Fibonacci;
+const FibonacciSquaresFrame = ({ data, tick, params }) => {
+  let maxX = 0,
+    minX = 0,
+    maxY = 0,
+    minY = 0,
+    x = 0,
+    y = 0;
+  function renderSquares(sequence) {
+    return sequence.map((n, i) => {
+      const direction = D[i % 4];
+      switch (direction) {
+        case 'right':
+          y = y - n;
+          break;
+        case 'left':
+          x = x - n;
+          break;
+        case 'up':
+          x = x - n;
+          y = y - n;
+          break;
+      }
+      const borderWidth = Math.max(
+        0.1,
+        i < 2 ? 1 / params.size : 1 / (n + sequence[i - 1])
+      );
+
+      const square = (
+        <div
+          key={`rect-${i}`}
+          style={{
+            position: 'absolute',
+            border: `#{borderWidth}px solid #777`,
+            boxSizing: 'border-box',
+            background: colors[direction],
+            top: y,
+            left: x,
+            width: n,
+            height: n,
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              width: 2 * n,
+              height: 2 * n,
+              border: `${borderWidth}px solid black`,
+              borderRadius: n,
+              boxSizing: 'border-box',
+              transform: {
+                right: undefined,
+                down: 'translate(-50%)',
+                left: 'translate(-50%,-50%)',
+                up: 'translate(0,-50%)',
+              }[direction],
+            }}
+          />
+        </div>
+      );
+      switch (direction) {
+        case 'right':
+          x = x + n;
+          break;
+        case 'down':
+          x = x + n;
+          y = y + n;
+          break;
+        case 'left':
+          y = y + n;
+          break;
+      }
+      maxX = Math.max(maxX, x);
+      minX = Math.min(minX, x);
+      maxY = Math.max(maxY, y);
+      minY = Math.min(minY, y);
+      return square;
+    });
+  }
+
+  const squares = renderSquares(data.slice(1));
+  const maxSide = Math.max(maxX - minX, maxY - minY);
+  const scale = params.size / maxSide;
+
+  return (
+    <div
+      style={{
+        width: params.size,
+        height: params.size,
+        position: 'relative',
+        pointerEvents: 'none',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          position: 'relative',
+          transformOrigin: 'top left',
+          transform: `scale(${scale}) translate(${-minX}px,${-minY}px)`,
+          width: `${maxX - minX}px`,
+          height: `${maxY - minY}px`,
+          transition: 'transform 0.2s',
+        }}
+      >
+        {squares}
+      </div>
+    </div>
+  );
+};
+
+const FibonacciSquares = () => (
+  <Model
+    initialParams={{ size: 500 }}
+    initData={initData}
+    updateData={updateData}
+    delay={400}
+    maxTime={20}
+  >
+    <FibonacciSquaresFrame />
+  </Model>
+);
+
+export { FibonacciSpiral, FibonacciSquares };

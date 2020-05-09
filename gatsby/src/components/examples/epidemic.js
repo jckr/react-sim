@@ -1,16 +1,20 @@
-import React from "react";
-import { FlexRow, FlexColumn, Model } from "react-sim";
+import React, { useRef, useEffect } from 'react';
+import { Flex } from 'rebass';
+import { Model, TimeSeries, Counter, withFrame } from 'react-sim';
 
 const COLORS = {
-  sick: "red",
-  recovered: "gold",
-  healthy: "blue",
-  dead: "black"
+  sick: '#4f8c9d',
+  recovered: '#add51f',
+  healthy: '#997cfb',
+  dead: '#6a9012',
 };
 
 export function updateEpidemic({ data, tick, params, complete }) {
-  let updatedData = JSON.parse(JSON.stringify(data));
-  let nbSick = 0;
+  let updatedData = JSON.parse(JSON.stringify(data.agents));
+  let nbSick = 0,
+    nbHealthy = 0,
+    nbDead = 0,
+    nbRecovered = 0;
 
   const {
     contaminationRisk,
@@ -18,22 +22,22 @@ export function updateEpidemic({ data, tick, params, complete }) {
     r,
     recoveryTicks,
     height,
-    width
+    width,
   } = params;
 
   updatedData.forEach((agent, i) => {
     // update status
 
-    if (agent.status === "sick") {
+    if (agent.status === 'sick') {
       if (tick >= agent.recovery) {
-        agent.status = "recovered";
+        agent.status = 'recovered';
       } else {
         if (Math.random() < deathRisk) {
-          agent.status = "dead";
+          agent.status = 'dead';
         }
       }
     }
-    if (agent.status !== "dead") {
+    if (agent.status !== 'dead') {
       // checking for collisions
 
       for (let j = i + 1; j < updatedData.length; j++) {
@@ -54,15 +58,15 @@ export function updateEpidemic({ data, tick, params, complete }) {
 
           // test for contagion
 
-          if (agent.status === "sick" && otherAgent.status === "healthy") {
+          if (agent.status === 'sick' && otherAgent.status === 'healthy') {
             if (Math.random() <= contaminationRisk) {
-              otherAgent.status = "sick";
+              otherAgent.status = 'sick';
               otherAgent.recovery = tick + recoveryTicks;
             }
           }
-          if (agent.status === "healthy" && otherAgent.status === "sick") {
+          if (agent.status === 'healthy' && otherAgent.status === 'sick') {
             if (Math.random() <= contaminationRisk) {
-              agent.status = "sick";
+              agent.status = 'sick';
               agent.recovery = tick + recoveryTicks;
             }
           }
@@ -88,19 +92,33 @@ export function updateEpidemic({ data, tick, params, complete }) {
       ) {
         agent.vx = -agent.vx;
       }
-
-      // counting sick agents
-
-      if (agent.status === "sick") {
+    }
+    // counting agents
+    switch (agent.status) {
+      case 'sick':
         nbSick++;
-      }
+        break;
+      case 'healthy':
+        nbHealthy++;
+        break;
+      case 'recovered':
+        nbRecovered++;
+        break;
+      case 'dead':
+        nbDead++;
     }
   });
   if (nbSick === 0) {
     complete();
   }
 
-  return updatedData;
+  return {
+    agents: updatedData,
+    sick: nbSick,
+    recovered: nbRecovered,
+    dead: nbDead,
+    healthy: nbHealthy,
+  };
 }
 
 function chooseMamongN(n, m) {
@@ -135,11 +153,12 @@ function initData({
   nbDistancing = 50,
   r = 3,
   height = 300,
-  width = 400
+  width = 400,
 }) {
   const sick = chooseMamongN(nbAgents, nbSick);
   const distancing = chooseMamongN(nbAgents, nbDistancing);
   const agents = [];
+
   for (let i = 0; i < nbAgents; i++) {
     let x, y;
 
@@ -148,7 +167,8 @@ function initData({
       x = r / 2 + Math.random() * (width - r);
     } while (findOverlaps(agents, 0, r, { x, y }).length);
 
-    const status = sick.has(i) ? "sick" : "healthy";
+    const status = sick.has(i) ? 'sick' : 'healthy';
+
     const recovery = sick.has(i) ? recoveryTicks : null;
     const isDistancing = distancing.has(i);
     const speed = isDistancing ? 0 : maxSpeed;
@@ -165,10 +185,16 @@ function initData({
       vx,
       vy,
       recovery,
-      speed
+      speed,
     });
   }
-  return agents;
+  return {
+    agents,
+    sick: nbSick,
+    healthy: nbAgents - nbSick,
+    dead: 0,
+    recovered: 0,
+  };
 }
 
 export class EpidemicFrame extends React.Component {
@@ -179,14 +205,14 @@ export class EpidemicFrame extends React.Component {
   componentDidUpdate() {
     const {
       data,
-      params: { width, height, r }
+      params: { width, height, r },
     } = this.props;
     const canvas = this.myRef.current;
-    const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#fff";
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff';
     ctx.lineWidth = '5px';
     ctx.clearRect(0, 0, width, height);
-    data.forEach(({ status, isBouncing, x, y }) => {
+    data.agents.forEach(({ status, isBouncing, x, y }) => {
       ctx.beginPath();
       ctx.fillStyle = COLORS[status];
       ctx.arc(x, y, r, 0, 2 * Math.PI, false);
@@ -202,22 +228,35 @@ export class EpidemicFrame extends React.Component {
           height={this.props.params.height}
           ref={this.myRef}
         />
-        <div
-          style={{
-            cursor: "pointer",
-            background: "#eee",
-            padding: "8px",
-            margin: "8px 8px 8px 0",
-            width: "fit-content"
-          }}
-          onClick={this.props.initData}
-        >
-          Reset sim
-        </div>
       </div>
     );
   }
 }
+
+const ConnectedFrame = withFrame(EpidemicFrame);
+
+const series = [
+  {
+    color: COLORS['healthy'],
+    label: 'Healthy',
+    accessor: d => d.healthy,
+  },
+  {
+    color: COLORS['sick'],
+    label: 'Sick',
+    accessor: d => d.sick,
+  },
+  {
+    color: COLORS['recovered'],
+    label: 'Recovered',
+    accessor: d => d.recovered,
+  },
+  {
+    color: COLORS['dead'],
+    label: 'Dead',
+    accessor: d => d.dead,
+  },
+];
 
 const Epidemic = () => (
   <Model
@@ -233,12 +272,16 @@ const Epidemic = () => (
       nbDistancing: 0,
       r: 3,
       height: 300,
-      width: 400
+      width: 500,
     }}
     updateData={updateEpidemic}
-    maxTime={Infinity}
+    maxTime={500}
   >
-    <EpidemicFrame />
+    <Flex flexDirection="column">
+      <ConnectedFrame />
+      <TimeSeries series={series} stacked={true}/>
+      <Counter series={series} />
+    </Flex>
   </Model>
 );
 

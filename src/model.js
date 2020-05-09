@@ -236,9 +236,7 @@ export class Model extends React.Component {
     });
   };
   setParams = (params, resetOnChange) => {
-    this.setState(
-      () => ({ params: { ...this.state.params, ...params } })
-    );
+    this.setState(() => ({ params: { ...this.state.params, ...params } }));
     if (resetOnChange) {
       this.initData();
     }
@@ -336,6 +334,7 @@ export class Model extends React.Component {
 
   render() {
     const frameContext = {
+      cachedData: this.cachedData,
       data: this.state.data,
       initData: this.initData,
       params: this.state.params,
@@ -386,8 +385,9 @@ export function withFrame(Component) {
   function FrameComponent(props) {
     return (
       <FrameContext.Consumer>
-        {({ data, initData, params, results, setData, tick }) => (
+        {({ cachedData, data, initData, params, results, setData, tick }) => (
           <Component
+            cachedData={cachedData}
             data={data}
             initData={initData}
             params={params}

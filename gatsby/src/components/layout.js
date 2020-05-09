@@ -7,8 +7,8 @@ import Head from './head';
 import Header from './header';
 import Nav from './nav';
 
-import EditLink from './edit-link'
-import Footer from './footer'
+import EditLink from './edit-link';
+import Footer from './footer';
 
 const disableFullWidthForHomePage = false;
 
@@ -87,13 +87,12 @@ const Sidebar = props => (
 );
 
 export default props => {
-  const fullwidth = disableFullWidthForHomePage && props.location?.pathname === '/';
+  const fullwidth =
+    disableFullWidthForHomePage && props.location?.pathname === '/';
   const [menu, setMenu] = useState(false);
   const nav = useRef(null);
   return (
-    <MDXProvider
-      components={mdxComponents}
-    >
+    <MDXProvider components={mdxComponents}>
       <div>
         <Head {...props} />
         <Header fullwidth={fullwidth} menu={menu} setMenu={setMenu} nav={nav} />
