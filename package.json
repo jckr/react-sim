@@ -23,7 +23,8 @@
     "predeploy": "cd example && yarn install && yarn run build",
     "deploy": "gh-pages -d example/build",
     "predeployg": "cd gatsby && yarn install && yarn run build",
-    "deployg": "gh-pages -d gatsby/public"
+    "deployg": "gh-pages -d gatsby/public",
+    "publish-site": "./publish-docs.sh"
   },
   "peerDependencies": {
     "react": "^16.13.1",
