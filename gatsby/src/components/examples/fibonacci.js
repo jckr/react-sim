@@ -93,7 +93,7 @@ const FibonacciSpiralFrame = ({ tick, params }) => {
 };
 
 const FibonacciSpiral = () => (
-  <Model initialParams={{ size: 500 }} delay={100} maxTime={20}>
+  <Model initialParams={{ size: 500 }} delay={100} maxTime={15}>
     <FibonacciSpiralFrame />
   </Model>
 );
@@ -106,7 +106,8 @@ const FibonacciSquaresFrame = ({ data, tick, params }) => {
     x = 0,
     y = 0;
   function renderSquares(sequence) {
-    return sequence.map((n, i) => {
+    return sequence.map((d, i) => {
+      const n = d * 10;
       const direction = D[i % 4];
       switch (direction) {
         case 'right':
@@ -122,8 +123,10 @@ const FibonacciSquaresFrame = ({ data, tick, params }) => {
       }
       const borderWidth = Math.max(
         0.1,
-        i < 2 ? 1 / params.size : 1 / (n + sequence[i - 1])
+        i < 2 ? 1 / params.size : 1 / (n + 10 * sequence[i - 1])
       );
+
+      const fontSize = n / (1.5 * String(d).length);
 
       const square = (
         <div
@@ -132,6 +135,9 @@ const FibonacciSquaresFrame = ({ data, tick, params }) => {
             position: 'absolute',
             border: `#{borderWidth}px solid #777`,
             boxSizing: 'border-box',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             background: colors[direction],
             top: y,
             left: x,
@@ -142,12 +148,21 @@ const FibonacciSquaresFrame = ({ data, tick, params }) => {
         >
           <div
             style={{
+              fontSize,
+            }}
+          >
+            {d}
+          </div>
+          <div
+            style={{
               position: 'absolute',
               width: 2 * n,
               height: 2 * n,
               border: `${borderWidth}px solid black`,
               borderRadius: n,
               boxSizing: 'border-box',
+              top: 0,
+              left: 0,
               transform: {
                 right: undefined,
                 down: 'translate(-50%)',
@@ -214,7 +229,7 @@ const FibonacciSquares = () => (
     initData={initData}
     updateData={updateData}
     delay={400}
-    maxTime={20}
+    maxTime={16}
   >
     <FibonacciSquaresFrame />
   </Model>
