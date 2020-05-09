@@ -23,7 +23,7 @@
     "predeploy": "cd example && yarn install && yarn run build",
     "deploy": "gh-pages -d example/build",
     "link-react": "./link-react.sh",
-    "gatsby-build": "yarn link-react && yarn build && cd gatsby && yarn install && yarn run build"
+    "gatsby-build": "cd gatsby && yarn install && cd node_modules/react && yarn link && cd ../react-dom && yarn link && cd ../../.. && yarn link react && yarn link react-dom && yarn build &&  cd gatsby && yarn clean && yarn run build"
   },
   "peerDependencies": {
     "react": "^16.13.1",
