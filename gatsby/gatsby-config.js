@@ -6,7 +6,6 @@ module.exports = {
     description: `A framework for building simulation models in React`,
     author: `jckr`,
   },
-  pathPrefix: '/react-sim',
   plugins: [
     {
       resolve: 'gatsby-plugin-mdx',
