@@ -1,6 +1,9 @@
 import React from 'react'
 import { Flex } from 'rebass'
-import {Pause, Play, Range, Stop, Step, withControls} from './';
+import Play from './play';
+import Step from './step';
+import Range from './range';
+import Stop from './stop';
 
 function Timer({
   isPlaying,
