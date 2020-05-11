@@ -1,6 +1,12 @@
 import React from 'react';
-import { Model, withControls, withFrame } from 'react-sim';
+import { Model as RawModel, withControls, withFrame, Range } from 'react-sim';
 import { Flex } from 'rebass';
+
+const Model = props => (
+  <Flex sx={{ border: '1px solid #000', p: 2 }}>
+    <RawModel {...props} />
+  </Flex>
+);
 
 export const DefaultTimer = () => (
   <Model>
@@ -273,7 +279,31 @@ export const CustomControlExample = () => (
     <Flex flexDirection="column">
       <CustomControl />
       <CustomFrame />
+    </Flex>
+  </Model>
+);
 
+const MyCustomRange = ({ params, setParams }) => {
+  const value = params['my-param'];
+  const setValue = v => setParams({ 'my-param': v });
+  return (
+    <Range
+    label="My range"
+      value={value}
+      setValue={setValue}
+      minValue={0}
+      maxValue={100}
+      step={1}
+    />
+  );
+};
+const CustomRange = withControls(MyCustomRange);
+
+export const ControlAsComponent = () => (
+  <Model showTimer={false} initialParams={{ 'my-param': 50 }}>
+    <Flex flexDirection="column">
+      <CustomFrame />
+      <CustomRange />
     </Flex>
   </Model>
 );

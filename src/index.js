@@ -9,7 +9,8 @@ export {
   Radio,
   Range,
   Select,
-  Timer
+  Timer,
+  Toggle,
 } from './controls';
 export { default as Frame } from './frame';
 export { default as FlexRow } from './flex-row';

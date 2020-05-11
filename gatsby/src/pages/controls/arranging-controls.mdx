@@ -5,10 +5,13 @@ Title: Arranging controls
 import {
   RowsOfSlidersExample,
   SlidersOnTwoRowsExample,
+  ControlAsComponent,
 } from '../../components/examples/controls-examples';
 
 
 # Arranging controls
+
+## Presenting default controls on several rows and columns
 
 Instead of passing just one control object, you can pass an array of control objects.
 Each item of the array will be a different row.
@@ -67,5 +70,46 @@ But you can also arrange your sliders on two rows, like so:
     }
   ]
 ]
+```
+
+## Arranging controls as components
+
+You've seen in [custom controls](./custom-controls) how you can make your own control components.
+You can also import the pre-defined types:
+
+```jsx
+import {Checkbox, Input, Radio, Range, Select, Timer, Toggle} from 'react-sim';
+```
+
+You can now use these as Components and arrange them freely.
+
+<ControlAsComponent />
+
+```jsx
+const MyCustomRange = ({ params, setParams }) => {
+  const value = params['my-param'];
+  const setValue = v => setParams({ 'my-param': v });
+  return (
+    <Range
+    label="My range"
+      value={value}
+      setValue={setValue}
+      minValue={0}
+      maxValue={100}
+      step={1}
+    />
+  );
+};
+const CustomRange = withControls(MyCustomRange);
+
+export const ControlAsComponent = () => (
+  <Model showTimer={false} initialParams={{ 'my-param': 50 }}>
+    <Flex flexDirection="column">
+      <CustomFrame />
+      <CustomRange />
+    </Flex>
+  </Model>
+);
+}
 ```
 

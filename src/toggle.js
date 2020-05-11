@@ -9,7 +9,9 @@ function Toggle({label, value, setValue, ...props}) {
     <Switch
       id={label}
       checked={value}
-      onClick={() => setValue(!value)}
+      onClick={() => {
+        setValue(!value)
+      }}
       {...props}
     />
     </Flex>

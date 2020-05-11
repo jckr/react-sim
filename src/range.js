@@ -33,7 +33,7 @@ export default class Play extends React.Component {
       (label !== undefined || value !== undefined) &&
       (shouldDisplayLabel || shouldDisplayValue) ? (
         <Label htmlFor={name || label}>
-          {shouldDisplayLabel && `${label}: `}
+          {shouldDisplayLabel && label && `${label}: `}
           {shouldDisplayValue && value}
         </Label>
       ) : null;
