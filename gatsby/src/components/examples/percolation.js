@@ -1,6 +1,12 @@
 import React, { useRef, useEffect } from 'react';
 import { Flex, Box } from 'rebass';
-import { Model } from 'react-sim';
+import { Model as RawModel } from 'react-sim';
+
+const Model = props => (
+  <Flex sx={{ border: '1px solid #000', p: 2, width: 'fit-content' }}>
+    <RawModel {...props} />
+  </Flex>
+);
 
 const EMPTY = 0;
 const ROCK = 1;
@@ -46,7 +52,7 @@ function updateData({ data, params, complete }) {
       nextQueue.push({ x: x + 1, y });
     }
   }
-  if (updatedStatus !== status.PENDING && params.shouldComplete) {
+  if (updatedStatus !== status.pending && params.shouldComplete) {
     complete(updatedStatus);
   }
   return {
@@ -58,16 +64,19 @@ function updateData({ data, params, complete }) {
 
 function updateDataGrid({ data, params, complete }) {
   let nbPending = 0;
-  data.forEach((row, y) =>
+  data.grids.forEach((row, y) =>
     row.forEach((cell, x) => {
       if (cell.status === status.pending) {
         const updatedCell = updateData({
           data: cell,
           params: { height: params.height, shouldComplete: false },
         });
-        data[y][x] = updatedCell;
+        data.grids[y][x] = updatedCell;
         if (updatedCell.status === status.pending) {
           nbPending++;
+        }
+        if (updatedCell.status === status.success) {
+          data.cols[x].result++;
         }
       }
     })
@@ -85,7 +94,7 @@ function initData({ porosity, height, width }) {
   for (y = 0; y < height; y++) {
     const row = [];
     for (x = 0; x < width; x++) {
-      row.push(Math.random() < Number(porosity) ? ROCK : EMPTY);
+      row.push(Math.random() > Number(porosity) ? ROCK : EMPTY);
     }
     grid.push(row);
   }
@@ -236,8 +245,8 @@ const PercolationFrame = ({ data, params }) => {
           data.status === status.pending
             ? 'transparent'
             : data.status === status.success
-            ? 'green'
-            : 'red'
+            ? '#33e'
+            : '#777'
         }`,
       }}
     >
@@ -251,16 +260,34 @@ const PercolationFrame = ({ data, params }) => {
 };
 
 const PercolationFrameGrid = ({ data, params }) => {
+  const ch = params.height * params.cellSize;
+  const cw = params.width * params.cellSize;
+
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: (params.height * params.cellSize + 10) * params.rows + 20,
-        width: (params.width * params.cellSize + 10) * params.cols + 20,
+        height: (ch + 10) * params.rows + 60,
+        width: (cw + 10) * params.cols + 10,
       }}
     >
-      {data.map((row, y) => (
+      <Flex flexDirection="row">
+        {data.cols.map(c => (
+          <Box
+            sx={{
+              width: [cw],
+              fontSize: 1,
+              textAlign: 'center',
+              fontWeight: 2,
+              m: '5px',
+            }}
+          >
+            {c.p.toFixed(2)}
+          </Box>
+        ))}
+      </Flex>
+      {data.grids.map((row, y) => (
         <div style={{ display: 'flex', flexDirection: 'row' }} key={`row-${y}`}>
           {row.map((cell, x) => (
             <div
@@ -279,6 +306,20 @@ const PercolationFrameGrid = ({ data, params }) => {
           ))}
         </div>
       ))}
+      <Flex flexDirection="row">
+        {data.cols.map(c => (
+          <Box
+            sx={{
+              width: [cw],
+              fontSize: 1,
+              textAlign: 'center',
+              m: '5px',
+            }}
+          >
+            {`${c.result}/${c.total}`}
+          </Box>
+        ))}
+      </Flex>
     </div>
   );
 };
@@ -303,7 +344,7 @@ export const Percolation = () => {
           height: 100,
           cellSize: 5,
           margin: 0,
-          porosity: 0.4,
+          porosity: 0.6,
           shouldComplete: true,
         }}
       >
@@ -323,15 +364,19 @@ function initDataGrid({
   minP,
   stepP,
 }) {
-  return [...Array(rows).keys()].map(r =>
-    [...Array(cols).keys()].map(c =>
-      initData({
-        height,
-        width,
-        porosity: minP + c * stepP,
-      })
-    )
-  );
+  const ck = [...Array(cols).keys()];
+  return {
+    cols: ck.map(c => ({ p: minP + c * stepP, result: 0, total: rows })),
+    grids: [...Array(rows).keys()].map(r =>
+      ck.map(c =>
+        initData({
+          height,
+          width,
+          porosity: minP + c * stepP,
+        })
+      )
+    ),
+  };
 }
 
 export const PercolationGrid = () => {
@@ -349,7 +394,7 @@ export const PercolationGrid = () => {
           margin: 0,
           rows: 10,
           cols: 10,
-          minP: 0.35,
+          minP: 0.5,
           stepP: 0.02,
         }}
       >

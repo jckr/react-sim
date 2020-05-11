@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlexRow, FlexColumn, Model } from 'react-sim';
+import { Model, Grid } from 'react-sim';
 
 // helpers
 
@@ -82,75 +82,6 @@ function initGrid({ height, width, density }) {
     );
 }
 
-export class GameOfLifeFrame extends React.Component {
-  static defaultProps = {
-    size: 12,
-    accessor: d => d,
-  };
-  render() {
-    if (this.props.data === null) {
-      return null;
-    }
-    const { accessor, data, size } = this.props;
-    return (
-      <div>
-        {data.map((row, index) => (
-          <FlexRow key={`r-${index}`} styles={{ height: size }}>
-            {row.map((cell, index) => (
-              <FlexColumn
-                key={`c-${index}`}
-                styles={{
-                  width: size,
-                  overflow: 'hidden',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  // border: "1px solid black"
-                }}
-              >
-                <div
-                  style={{
-                    background: '#000',
-                    borderRadius: accessor(cell) ? 0 : '50%',
-                    width: accessor(cell) ? '100%' : 0,
-                    height: accessor(cell) ? '100%' : 0,
-                    // transition: "all 0.1s"
-                  }}
-                ></div>
-              </FlexColumn>
-            ))}
-          </FlexRow>
-        ))}
-      </div>
-    );
-  }
-}
-
-const Frame = ({ data, size = 12, initData }) => {
-  if (data === null) {
-    return null;
-  }
-  return (
-    <div>
-      {data.map((row, index) => (
-        <div
-          key={`r-${index}`}
-          style={{ display: 'flex', flexDirection: 'row', height: size }}
-        >
-          {row.map((cell, index) => (
-            <div
-              key={`c-${index}`}
-              style={{
-                width: size,
-                background: cell ? '#000' : 'none',
-              }}
-            />
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-};
-
 const GameOfLife = () => (
   <Model
     auto={false}
@@ -171,7 +102,7 @@ const GameOfLife = () => (
       density: 0.15,
     }}
   >
-    <Frame />
+    <Grid />
   </Model>
 );
 
@@ -179,12 +110,12 @@ export const Step2 = () => (
   <Model
     initData={initGrid}
     initialParams={{
-      height: 24,
-      width: 48,
+      height: 10,
+      width: 10,
       density: 0.15,
     }}
   >
-    <Frame />
+    <Grid />
   </Model>
 );
 
@@ -193,12 +124,12 @@ export const Step3 = () => (
     initData={initGrid}
     updateData={updateGridNoComplete}
     initialParams={{
-      height: 24,
-      width: 48,
+      height: 10,
+      width: 10,
       density: 0.15,
     }}
   >
-    <Frame />
+    <Grid />
   </Model>
 );
 
@@ -207,12 +138,12 @@ export const Step4 = () => (
     initData={initGrid}
     updateData={updateGameOfLifeGrid}
     initialParams={{
-      height: 24,
-      width: 48,
+      height: 10,
+      width: 10,
       density: 0.15,
     }}
   >
-    <Frame />
+    <Grid />
   </Model>
 );
 
@@ -234,7 +165,7 @@ export const Step5 = () => (
       density: 0.15,
     }}
   >
-    <Frame />
+    <Grid />
   </Model>
 );
 

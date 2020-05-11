@@ -1,15 +1,13 @@
 import React from 'react';
-import {
-  Checkbox,
-  Input,
-  Play,
-  Radio,
-  Range,
-  Select,
-  Stop,
-  Timer,
-  Toggle
-} from './index';
+import {withControls} from './';
+import CheckboxComponent from './checkbox';
+import InputComponent from './input';
+import RadioComponent from './radio';
+import RangeComponent from './range';
+import SelectComponent from './select';
+import TimerComponent from './timer';
+import ToggleComponent from './toggle';
+
 import { Flex } from 'rebass';
 
 export default class Controls extends React.Component {
@@ -53,20 +51,20 @@ export default class Controls extends React.Component {
 
     switch (controls.type) {
       case 'checkbox':
-        control = <Checkbox {...commonProps} {...controls} />;
+        control = <CheckboxComponent {...commonProps} {...controls} />;
         break;
       case 'input':
-        control = <Input {...commonProps} {...controls} />;
+        control = <InputComponent {...commonProps} {...controls} />;
         break;
       case 'radio':
-        control = <Radio {...commonProps} {...controls} />;
+        control = <RadioComponent {...commonProps} {...controls} />;
         break;
       case 'select':
-        control = <Select {...commonProps} {...controls} />;
+        control = <SelectComponent {...commonProps} {...controls} />;
         break;
       case 'timer':
         control = (
-          <Timer
+          <TimerComponent
             isPlaying={this.props.isPlaying}
             time={this.props.tick}
             updateTime={this.props.updateTime}
@@ -78,10 +76,10 @@ export default class Controls extends React.Component {
         );
         break;
       case 'toggle':
-        control = <Toggle {...commonProps} {...controls} />;
+        control = <ToggleComponent {...commonProps} {...controls} />;
         break;
       default:
-        control = <Range {...commonProps} {...controls} />;
+        control = <RangeComponent {...commonProps} {...controls} />;
     }
     return <Flex mr={2}>{control}</Flex>;
   }
@@ -91,6 +89,14 @@ export default class Controls extends React.Component {
     return <Flex flexDirection='column'>{this.renderControls(controls)}</Flex>;
   }
 }
+
+export const Checkbox = withControls(CheckboxComponent);
+export const Input = withControls(InputComponent);
+export const Radio = withControls(RadioComponent);
+export const Range = withControls(RangeComponent);
+export const Select = withControls(SelectComponent);
+export const Timer = withControls(TimerComponent);
+export const Toggle = withControls(ToggleComponent);
 
 export function hasTimer(controls) {
   // no controls

@@ -1,0 +1,29 @@
+---
+Title: Chaos Game
+---
+
+import {
+  BasicChaosGame,
+  ChaosGame,
+} from '../../components/examples/chaos-game';
+
+# Chaos Game
+
+<BasicChaosGame />
+
+The [Chaos Game](https://en.wikipedia.org/wiki/Chaos_game) is a method to generate a fractal.
+
+We start from an equilateral triangle, and one point chosen at random in the plane.
+At each iteration, we plot a new point which is halfway between the previous point, and one of the vertices of the triangle, chosen at random.
+We continue plot points like these.
+
+Eventually, our figure looks like the [Sierpiński triangle](https://en.wikipedia.org/wiki/Sierpi%C5%84ski_triangle)
+
+<ChaosGame />
+
+But we can generalize this to other polygons.
+In this second version, we can choose a regular polygon with 3 to 12 vertices (so, anything from a triangle to a dodecagon).
+We can also choose whether we use each vertex as an attractor or not. If a vertex is not an attractor, it won't be used to compute the position of new points in iterations.
+
+For larger polygons, if all vertices are used as attractors, the resulting figure looks a bit messy. But if we only pick a few, then shapes will start to emerge.
+

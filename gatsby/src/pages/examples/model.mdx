@@ -1,8 +1,13 @@
 ---
-Title: Default model
+Title: A simple model
 ---
-import {Model, Frame} from 'react-sim';
+import SimpleModel from '../../components/examples/simple-model';
 
-# Default Model
+# A simple model
 
-<Model />
+<SimpleModel />
+
+This model just shows how the various parts of react-sim work together.
+100 cells are arranged on a grid from top-left to bottom-right. A cell is black if its number is less than the current tick.
+
+This model doesn't have a `initData` or an `updateData`, it just works with the value of the `tick`.

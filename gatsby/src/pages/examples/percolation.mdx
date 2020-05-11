@@ -6,4 +6,15 @@ import {Percolation, PercolationGrid} from '../../components/examples/percolatio
 
 # Percolation
 
+A 2D lattice is made of cells which either let liquid go through (porous) or not.
+If we pour liquid on the top of the lattice, will any of it go through? This depends on the porosity of the lattice, i.e. the percentage of cells which are porous.
+
+<Percolation />
+
+Interestingly, the chances of liquid getting through don't vary linearly with the porosity. If porosity is beyond a certain [threshold](https://en.wikipedia.org/wiki/Percolation_threshold), there are very little chances that the liquid gets through, and beyond that threshold it becomes very likely.
+For our 2D lattice with liquid being able to go in all 4 directions, the threshold is around _0.59_.
+
+To see how dramatically the chances of liquid percolating increase once we're past the threshold, let's simulate 100 pours at a time:
+On that grid, every column has the same porosity index.
+
 <PercolationGrid />

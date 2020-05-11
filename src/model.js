@@ -250,7 +250,7 @@ export class Model extends React.Component {
 
     switch (children.length) {
       case 0:
-        return withFrame(Frame)();
+        return null;
       case 1:
         const child = children[0];
         return React.cloneElement(
