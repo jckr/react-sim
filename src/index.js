@@ -12,10 +12,10 @@ export {
   Timer,
   Toggle,
 } from './controls';
-export { default as Frame } from './frame';
+export { default as CanvasFrame, CanvasFrameComponent } from './canvas-frame';
 export { default as FlexRow } from './flex-row';
 export { default as FlexColumn } from './flex-column';
-export { default as Grid } from './grid';
+export { default as Grid, GridComponent } from './grid';
 export { default as InputComponent } from './input';
 export { default as Model, withTheme, withFrame, withControls } from './model';
 export { default as RadioComponent } from './radio';
