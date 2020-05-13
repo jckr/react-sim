@@ -1,7 +1,8 @@
 import React from 'react';
 import {Flex, Box} from 'rebass';
+import {withFrame} from './';
 
-const Grid = (
+export const GridComponent = (
   { data, size = 12, accessor = d => (d ? '#000' : 'none') },
   cellProps = {},
   ...props
@@ -16,7 +17,7 @@ const Grid = (
             sx={{
               ...(props ? props.sx : {}),
               width: [size],
-              bg: accessor(cell),
+              bg: accessor(cell, x, y),
             }}
           />
         ))}
@@ -24,5 +25,7 @@ const Grid = (
     ))}
   </Flex>
 );
+
+const Grid = withFrame(GridComponent);
 
 export default Grid;

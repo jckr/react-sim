@@ -1,0 +1,45 @@
+---
+Title: Frame Helpers
+---
+
+Frame helpers are building blocks to help you create frames quicker.
+You 100% can build Frames without them but they make certain patterns in Frames easier.
+
+They are similar to the [pre-defined types](./controls/pre-defined-types) for [controls](./controls).
+
+The Frame Helpers are:
+
+- [Grid](./frame-helpers/grid),
+- [CanvasFrame](./frame-helpers/canvas-frame)
+- [TimeSeries](./frame-helpers/time-series)
+- [Counter](./frame-helpers/time-series)
+- [Indicator](./frame-helpers/time-series)
+
+To use a Frame Helper in your project, import it from `react-sim`:
+
+```jsx
+import { Grid, CanvasFrame, TimeSeries, Counter, Indicator } from 'react-sim';
+```
+
+Frame helpers are already connected with the Model, so if you use a Frame helper anywhere within a Model, it will receive the following props from that Model:
+
+- cachedData,
+- data,
+- initData,
+- params,
+- results,
+- tick,
+- setData
+
+It's also possible to get the corresponding component, i.e. without these props automatically provided by the Model.
+Just add Component to your `import`:
+
+```jsx
+import {
+  GridComponent,
+  CanvasFrameComponent,
+  TimeSeriesComponent,
+  CounterComponent,
+  IndicatorComponent,
+} from 'react-sim';
+```

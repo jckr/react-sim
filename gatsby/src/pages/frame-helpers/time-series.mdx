@@ -1,0 +1,35 @@
+---
+Title: Time Series, Counter, Indicator
+---
+import {TimeSeriesExample} from '../../components/examples/frame-helpers-examples.js';
+
+`Time Series` is a [frame helper](./frame-helpers) with which you can plot some changes in your data object during your simulation.
+
+<TimeSeriesExample />
+
+In this example, we are throwing 2 dice 100 times, and we are plotting the average value of the roll during the process.
+We are also looking at the distribution of the rolls.
+
+# Series parameter
+
+`TimeSeries`, `Counter` and `Indicator` all rely on a parameter called `series`. `TimeSeries` and `Counter` can take either an array of series or a single series, `Indicator` only takes a single series.
+
+`series` is an object with three properties:
+
+- `label` (string): describes the series,
+- `color` (string): color of the series,
+- `accessor` (function): function that turns a data object into the value that you want to plot.
+
+In `TimeSeries`, the accessor function is going to be called on every item in `cachedData` and the result will be plotted.
+In `Counter` or `Indicator`, the accessor function will be called on `data` and a single number will be shown per series.
+
+`TimeSeries` takes these other parameters:
+
+- `stacked` (boolean, default to false) - if true, represents the time series as full-height, stacked area charts. If false, the series are line charts.
+- `height`, `width`, `padding` (numbers) - dimensions of the chart.
+
+`Counter` also takes:
+
+- `height`, `width`, `padding` (numbers) - dimensions of the indicators card.
+
+`Counter` is really a collection of `Indicator` components. The `Indicator` component is also available individually.

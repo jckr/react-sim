@@ -1,0 +1,23 @@
+---
+Title: Grid
+---
+
+import {Step4} from '../../components/examples/game-of-life';
+
+
+Grid is a [frame helper](./frame-helpers) which displays any 2-dimensional matrix of data as a grid of colored squares.
+
+<Step4 />
+
+It's used in examples like [Game of Life](./examples/game-of-life), [Simple Model](./examples/simple-model) or [Activators/inhibitors](./examples/activators-inhibitors).
+
+# Properties
+
+- data (Array): it expects data to be a 2-dimensional array of data.
+- accessor (function): how to determine how to color each cell. The inputs of the function are:
+  cell (content of the cell), x , y. The output is: a color. The default value is:
+  `cell => cell ? 0 : 'none' : '#000'`
+- size (string | integer, default: 12): how big the squares will be in pixels.
+- cellProps: any extra prop to pass to each individual square.
+- any other prop will be passed to the Grid.
+
