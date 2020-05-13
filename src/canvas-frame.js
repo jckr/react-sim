@@ -3,14 +3,17 @@ import { withFrame } from './';
 
 export const CanvasFrameComponent = (props) => {
   const canvasRef = useRef(null);
-  const { params } = props;
+  const { params = {} } = props;
+
+  const width = props.width === undefined ? params.width : props.width;
+  const height = props.height === undefined ? params.height : props.height;
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
 
     if (props.draw) {
-      props.draw({canvas, ctx, roundRectangle, circle, ...props});
+      props.draw({ canvas, ctx, roundRectangle, circle, ...props });
     }
   });
 
@@ -42,12 +45,21 @@ export const CanvasFrameComponent = (props) => {
   };
 
   const circle = ({ x, y, r }) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.closePath();
   };
 
-  return <canvas width={params.width} height={params.height} ref={canvasRef} />;
+  return (
+    <canvas
+      width={width}
+      height={height}
+      ref={canvasRef}
+    />
+  );
 };
 
 const CanvasFrame = withFrame(CanvasFrameComponent);

@@ -8,7 +8,6 @@ const Model = props => (
   </Flex>
 );
 
-
 const Frame = ({tick}) => {
   const data = Array(10).fill(0).map((r, y) =>
     Array(10).fill(0).map((c, x) => 10 * y + x > tick ? 0 : 1)

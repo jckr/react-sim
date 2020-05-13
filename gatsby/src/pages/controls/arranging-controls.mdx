@@ -8,7 +8,6 @@ import {
   ControlAsComponent,
 } from '../../components/examples/controls-examples';
 
-
 # Arranging controls
 
 ## Presenting default controls on several rows and columns
@@ -78,7 +77,15 @@ You've seen in [custom controls](./custom-controls) how you can make your own co
 You can also import the pre-defined types:
 
 ```jsx
-import {Checkbox, Input, Radio, Range, Select, Timer, Toggle} from 'react-sim';
+import {
+  Checkbox,
+  Input,
+  Radio,
+  Range,
+  Select,
+  Timer,
+  Toggle,
+} from 'react-sim';
 ```
 
 You can now use these as Components and arrange them freely.
@@ -103,7 +110,10 @@ const MyCustomRange = ({ params, setParams }) => {
 const CustomRange = withControls(MyCustomRange);
 
 export const ControlAsComponent = () => (
-  <Model showTimer={false} initialParams={{ 'my-param': 50 }}>
+  <Model
+    showTimer={false}
+    initialParams={{ 'my-param': 50 }}
+  >
     <Flex flexDirection="column">
       <CustomFrame />
       <CustomRange />
@@ -112,4 +122,3 @@ export const ControlAsComponent = () => (
 );
 }
 ```
-

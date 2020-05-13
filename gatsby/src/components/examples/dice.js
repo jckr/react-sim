@@ -6,57 +6,37 @@ import { useThemeUI } from 'theme-ui';
 const roll = () => Math.ceil(Math.random() * 6);
 
 export function updateDice({ data, tick, params: { nbDice } }) {
-  // if the user went back in time, we don't update the dataset
-  if (data[tick]) {
-    return data;
+  const lastTotals = data.totals;
+
+  // we roll the dice...
+  let total = 0;
+  const rolls = [];
+  for (let i = 0; i < nbDice; i++) {
+    rolls.push(roll());
+    total += rolls[i];
   }
 
-  // else, we add new data points.
+  // and update the totals
+  const updatedTotals = {
+    ...lastTotals,
+    [total]: (lastTotals[total] || 0) + 1,
+  };
 
-  // in the standard case, the user just went forward by one tick.
-  // but if they went forward by many, we'll have to add that many
-  // datapoints.
+  const average = (data.average * (tick - 1) + data.total) / tick;
 
-  let lastTickWithoutData = tick;
-  while (lastTickWithoutData > 0 && !data[lastTickWithoutData]) {
-    lastTickWithoutData--;
-  }
-
-  for (let i = lastTickWithoutData; i < tick; i++) {
-    const lastTotals = data[data.length - 1].totals;
-
-    // we roll the dice...
-    let total = 0;
-    const rolls = [];
-    for (let i = 0; i < nbDice; i++) {
-      rolls.push(roll());
-      total += rolls[i];
-    }
-
-    // and update the totals
-    const updatedTotals = {
-      ...lastTotals,
-      [total]: (lastTotals[total] || 0) + 1,
-    };
-
-    // then we append our data point to data
-    data.push({ rolls, totals: updatedTotals });
-  }
-
-  // and return it to update the property.
-  return data;
+  return { rolls, average, total, totals: updatedTotals };
 }
 
-function initDice() {
-  return [
-    {
-      rolls: [],
-      totals: {},
-    },
-  ];
+export function initDice({ nbDice }) {
+  return {
+    rolls: [],
+    average: 3.5 * nbDice,
+    total: 0,
+    totals: {},
+  };
 }
 
-const Die = ({ value }) => {
+export const Die = ({ value }) => {
   const dotStyle = {
     background: '#000',
     width: 3,
@@ -137,9 +117,7 @@ export class DiceFrame extends React.Component {
     const maxValue = minValue * 6;
     const nbValues = maxValue - minValue + 1;
 
-    const lastDataPoint = data[tick] || { rolls: [], totals: {} };
-
-    const { rolls, totals } = lastDataPoint;
+    const { rolls, totals } = data;
     let max = 0;
     const bars = Array(nbValues)
       .fill(0)

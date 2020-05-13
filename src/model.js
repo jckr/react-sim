@@ -1,7 +1,7 @@
 import React from 'react';
 import { useThemeUI, ThemeProvider } from 'theme-ui';
 import { system } from '@theme-ui/presets';
-import { FlexColumn, FlexRow, Controls, Frame } from './';
+import { FlexColumn, FlexRow, Controls } from './';
 import { hasTimer } from './controls';
 import { forms } from './constants';
 
@@ -18,6 +18,7 @@ export class Model extends React.Component {
     initialParams: {},
     initialTick: 0,
     delay: 0,
+    loop: false,
     minTime: 0,
     maxTime: 100,
     noCache: false,
@@ -57,9 +58,27 @@ export class Model extends React.Component {
   componentDidMount() {
     this.initData();
   }
-  componentDidUpdate() {
-    if (this.props.start && this.state.canPlay) {
-      this.play();
+  componentDidUpdate(prevState) {
+    // if the isplaying prop is changed ie by something external to Model
+    if (this.props.isPlaying !== prevState.isPlaying) {
+      if (this.props.isPlaying) {
+        if (this.state.canPlay) {
+          this.play();
+          return;
+        }
+      } else {
+        this.pause();
+        return;
+      }
+    }
+    // if canPlay changes
+    if (this.state.canPlay !== prevState.canPlay) {
+      if (!this.state.canPlay && this.props.loop) {
+        this.setState(
+          () => ({ canPlay: true, isPlaying: true }),
+          this.initData
+        );
+      }
     }
   }
   componentWillUnmount() {
@@ -89,6 +108,9 @@ export class Model extends React.Component {
       tick,
       data
     });
+    if (this.state.isPlaying) {
+      this.play();
+    }
   };
 
   play = () => {
@@ -126,6 +148,7 @@ export class Model extends React.Component {
         tick >= this.state.params.maxTime)
     ) {
       this.setState(() => ({
+        canPlay: false,
         isPlaying: false
       }));
       return false;
