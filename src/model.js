@@ -294,17 +294,11 @@ export class Model extends React.Component {
     let result = false;
     React.Children.forEach(children, (child) => {
       if (!result) {
-        const ctd = child.type.displayName || '';
-        const ctn = child.type.name || '';
-        const ct = typeof child.type === 'string' ? child.type : '';
+        const componentName = getDisplayName(child);
 
         if (
-          ctd === 'Controls' ||
-          ctn === 'Controls' ||
-          ct === 'Controls' ||
-          ctd.startsWith('withControls') ||
-          ctn.startsWith('withControls') ||
-          ct.startsWith('controls')
+          componentName === 'Controls' ||
+          componentName.startsWith('withControls')
         ) {
           result = true;
         }
@@ -422,7 +416,7 @@ export function withFrame(Component) {
       </FrameContext.Consumer>
     );
   }
-  const componentName = Component.displayName || Component.name || 'Component';
+  const componentName = getDisplayName(Component);
   FrameComponent.displayName = `withFrame(${componentName})`;
   return FrameComponent;
 }
@@ -446,7 +440,7 @@ export function withControls(Component) {
       </ControlsContext.Consumer>
     );
   }
-  const componentName = Component.displayName || Component.name || 'Component';
+  const componentName = getDisplayName(Component);
   ControlsComponent.displayName = `withControls(${componentName})`;
   return ControlsComponent;
 }
@@ -461,6 +455,12 @@ function ThemedModel(props) {
   } finally {
     return <Model theme={theme} {...props} />;
   }
+}
+
+function getDisplayName(primitive) {
+  return typeof primitive === 'string'
+    ? primitive
+    : primitive.displayName || primitive.name || 'Component';
 }
 
 export default ThemedModel;

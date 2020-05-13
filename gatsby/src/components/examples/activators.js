@@ -1,6 +1,5 @@
-import React from "react";
-import { FlexRow, FlexColumn, Model } from "react-sim";
-import { GameOfLifeFrame } from "./game-of-life";
+import React from 'react';
+import { FlexRow, FlexColumn, Model, Grid } from 'react-sim';
 
 // helpers
 
@@ -81,25 +80,25 @@ const Activators = () => (
     auto="false"
     controls={[
       [
-        { param: "w", minValue: 0, maxValue: 1, label: "weight", step: 0.01 },
+        { param: 'w', minValue: 0, maxValue: 1, label: 'weight', step: 0.01 },
         {
-          param: "innerRadius",
+          param: 'innerRadius',
           minValue: 1,
           maxValue: 10,
-          label: "Inner Radius"
+          label: 'Inner Radius',
         },
         {
-          param: "outerRadius",
+          param: 'outerRadius',
           minValue: 1,
           maxValue: 10,
-          label: "Outer Radius"
-        }
+          label: 'Outer Radius',
+        },
       ],
       [
-        { param: "height", minValue: 5, maxValue: 100, label: "Height" },
-        { param: "width", minValue: 5, maxValue: 100, label: "Width" },
-        { param: "density", minValue: 0, maxValue: 1, step: 0.1 }
-      ]
+        { param: 'height', minValue: 5, maxValue: 100, label: 'Height' },
+        { param: 'width', minValue: 5, maxValue: 100, label: 'Width' },
+        { param: 'density', minValue: 0, maxValue: 1, step: 0.1 },
+      ],
     ]}
     initData={initData}
     initialParams={{
@@ -108,12 +107,12 @@ const Activators = () => (
       density: 0.5,
       innerRadius: 3,
       outerRadius: 6,
-      w: 0.35
+      w: 0.35,
     }}
     updateData={update}
     maxTime={200}
   >
-    <GameOfLifeFrame size={10} accessor={d => d.value} />
+    <Grid size={10} accessor={d => d.value} />
   </Model>
 );
 
