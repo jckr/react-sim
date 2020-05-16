@@ -17,9 +17,13 @@ export const CanvasFrameComponent = (props) => {
     }
   });
 
-  const roundRectangle = ({ x, y, width, height, r = 1, tl, tr, br, bl }) => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+  const roundRectangle = (
+    { x, y, width, height, r = 1, tl, tr, br, bl },
+    ctx
+  ) => {
+    if (ctx === undefined) {
+      ctx = canvasRef.current.getContext('2d');
+    }
 
     const topLeft = tl || r;
     const topRight = tr || r;
@@ -44,22 +48,17 @@ export const CanvasFrameComponent = (props) => {
     ctx.closePath();
   };
 
-  const circle = ({ x, y, r }) => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+  const circle = ({ x, y, r }, ctx) => {
+    if (ctx === undefined) {
+      ctx = canvasRef.current.getContext('2d');
+    }
 
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.closePath();
   };
 
-  return (
-    <canvas
-      width={width}
-      height={height}
-      ref={canvasRef}
-    />
-  );
+  return <canvas width={width} height={height} ref={canvasRef} />;
 };
 
 const CanvasFrame = withFrame(CanvasFrameComponent);
