@@ -15,7 +15,7 @@ export const v = [
   [0, -1],
   [1, 0],
   [0, 1],
-  [-1, 0]
+  [-1, 0],
 ];
 
 export const getDir = v.reduce((prev, curr, i) => {
@@ -75,6 +75,7 @@ export function getShortestPath({ grid, start, end }) {
   const width = grid[0].length;
 
   const visited = initVisited(grid);
+  delete visited[end];
   // paths - for each node, shortest path to reach that node from start
   const paths = {};
   const next = [start];
@@ -109,14 +110,14 @@ export function getLongestPath({ grid, start, end }) {
   }
   const width = grid[0].length;
 
-  const stack = getShortestPath({
+  let stack = getShortestPath({
     grid,
     start,
-    end
-  });
+    end,
+  }) || [start];
 
-  const visited = initVisited(grid, stack);
-  const longestPath = [stack.shift()];
+  let visited = initVisited(grid, stack);
+  let longestPath = [stack.shift()];
 
   // the general idea is that we start from the shortest path from start
   // to end.
@@ -126,68 +127,82 @@ export function getLongestPath({ grid, start, end }) {
   // we continue until we run out of pair of points we can add to that path.
 
   while (stack.length) {
-    const lastInLongestPath = longestPath[longestPath.length - 1];
-    visited[lastInLongestPath] = true;
-    const nextInStack = stack.shift();
-
-    // last in path to next in stack form a segment.
-    // we are trying to see if the 2 points to the right, or 2 points to the left are
-    // valid. if so, we'll add them to the stack.
-
-    // ie - last in path = l, next in stack = n, valid = ., invalid = x
-    // xxxxxx xxxxxxx xxxxxxx xxxxxxx
-    // x.n..x x.....x x.....x x.x...x
-    // x.lx.x x..ln.x xxl...x x.nl..x
-    // x....x x..x..x x.n...x x.....x
-    // xxxxxx xxxxxxx xxxxxxx xxxxxxx
-    //
-    // in each of these 4 examples, 2 points to the left of ln are both valid.
-    // so we can push them to the stack
-    // only one of the 2 points to the right of ln are valid. so we can't push them to the stack
-    // not 100% sure of that, but i think with how we build the path, having 2 points to right
-    // valid and 2 points to left valid is exclusive.
-    // valid points = not visited, not off bounds
-
-    const dx = nextInStack[0] - lastInLongestPath[0];
-    const dy = nextInStack[1] - lastInLongestPath[1];
-
-    const rightPoints = [
-      [lastInLongestPath[0] - dy, lastInLongestPath[1] - dx],
-      [nextInStack[0] - dy, nextInStack[1] - dx]
-    ];
-    const leftPoints = [
-      [lastInLongestPath[0] + dy, lastInLongestPath[1] + dx],
-      [nextInStack[0] + dy, nextInStack[1] + dx]
-    ];
-
-    if (
-      isValid(...rightPoints[0], visited, height, width) &&
-      isValid(...rightPoints[1], visited, height, width)
-    ) {
-      stack.unshift(nextInStack);
-      stack.unshift(rightPoints[1]);
-      stack.unshift(rightPoints[0]);
-      visited[rightPoints[0]] = true;
-      visited[rightPoints[1]] = true;
-    } else {
-      if (
-        isValid(...leftPoints[0], visited, height, width) &&
-        isValid(...leftPoints[1], visited, height, width)
-      ) {
-        stack.unshift(nextInStack);
-        stack.unshift(leftPoints[1]);
-        stack.unshift(leftPoints[0]);
-        visited[leftPoints[0]] = true;
-        visited[leftPoints[1]] = true;
-      } else {
-        // we can't add either both right points or both left points to stack.
-        // Great! we add nextInStack to the path, and continue.
-        longestPath.push(nextInStack);
-      }
-    }
+    const updatedPath = extendPath({
+      height,
+      longestPath,
+      stack,
+      visited,
+      width,
+    });
+    stack = updatedPath.stack;
+    visited = updatedPath.visited;
+    longestPath = updatedPath.longestPath;
   }
 
   return longestPath;
+}
+
+export function extendPath({ height, longestPath, stack, visited, width }) {
+  const lastInLongestPath = longestPath[longestPath.length - 1];
+  visited[lastInLongestPath] = true;
+  const nextInStack = stack.shift();
+
+  // last in path to next in stack form a segment.
+  // we are trying to see if the 2 points to the right, or 2 points to the left are
+  // valid. if so, we'll add them to the stack.
+
+  // ie - last in path = l, next in stack = n, valid = ., invalid = x
+  // xxxxxx xxxxxxx xxxxxxx xxxxxxx
+  // x.n..x x.....x x.....x x.x...x
+  // x.lx.x x..ln.x xxl...x x.nl..x
+  // x....x x..x..x x.n...x x.....x
+  // xxxxxx xxxxxxx xxxxxxx xxxxxxx
+  //
+  // in each of these 4 examples, 2 points to the left of ln are both valid.
+  // so we can push them to the stack
+  // only one of the 2 points to the right of ln are valid. so we can't push them to the stack
+  // not 100% sure of that, but i think with how we build the path, having 2 points to right
+  // valid and 2 points to left valid is exclusive.
+  // valid points = not visited, not off bounds
+
+  const dx = nextInStack[0] - lastInLongestPath[0];
+  const dy = nextInStack[1] - lastInLongestPath[1];
+
+  const rightPoints = [
+    [lastInLongestPath[0] - dy, lastInLongestPath[1] - dx],
+    [nextInStack[0] - dy, nextInStack[1] - dx],
+  ];
+  const leftPoints = [
+    [lastInLongestPath[0] + dy, lastInLongestPath[1] + dx],
+    [nextInStack[0] + dy, nextInStack[1] + dx],
+  ];
+
+  if (
+    isValid(...rightPoints[0], visited, height, width) &&
+    isValid(...rightPoints[1], visited, height, width)
+  ) {
+    stack.unshift(nextInStack);
+    stack.unshift(rightPoints[1]);
+    stack.unshift(rightPoints[0]);
+    visited[rightPoints[0]] = true;
+    visited[rightPoints[1]] = true;
+  } else {
+    if (
+      isValid(...leftPoints[0], visited, height, width) &&
+      isValid(...leftPoints[1], visited, height, width)
+    ) {
+      stack.unshift(nextInStack);
+      stack.unshift(leftPoints[1]);
+      stack.unshift(leftPoints[0]);
+      visited[leftPoints[0]] = true;
+      visited[leftPoints[1]] = true;
+    } else {
+      // we can't add either both right points or both left points to stack.
+      // Great! we add nextInStack to the path, and continue.
+      longestPath.push(nextInStack);
+    }
+  }
+  return { stack, visited, longestPath };
 }
 
 function getActionsFromGrid(grid) {
@@ -217,7 +232,7 @@ function getActionsFromGrid(grid) {
   );
 }
 
-export function getActionGrid({ grid, path, direction }) {
+export function getActionGrid({ grid, path = [], direction, stack = [] }) {
   // we have on one hand, grid which is the position of the snake,
   // and on the other, path which is the longest path from the cell
   // which is in front of the snake to the one behind its tail.
@@ -225,15 +240,19 @@ export function getActionGrid({ grid, path, direction }) {
   // what we want is a lookup table that, for every coordinate that the
   // head could find itself on, suggest the corresponding, safe action.
 
+  const totalPath = [...path, ...stack];
   const actionGrid = grid.map(row =>
     row.map(cell => (cell ? direction : undefined))
   );
-
+  if (totalPath.length < 2) {
+    return actionGrid;
+  }
+  const head = totalPath[0];
   let node;
 
-  for (let i = 1; i < path.length; i++) {
-    const prev = path[i - 1];
-    node = path[i];
+  for (let i = 1; i < totalPath.length; i++) {
+    const prev = totalPath[i - 1];
+    node = totalPath[i];
     const dx = node[0] - prev[0];
     const dy = node[1] - prev[1];
     const [c, r] = prev;
@@ -244,11 +263,16 @@ export function getActionGrid({ grid, path, direction }) {
   // of path
 
   // it goes towards the tail of the snake. in our case it's direction
+  if (direction) {
+    const [c, r] = node;
 
-  const [c, r] = node;
-  actionGrid[r][c] = direction;
-
+    actionGrid[r][c] = direction;
+  }
   return actionGrid;
+}
+
+export function isFullGrid(actionGrid) {
+  return actionGrid.every(row => row.every(cell => cell !== undefined));
 }
 
 export function positionFruit(grid) {
@@ -267,4 +291,10 @@ export function positionFruit(grid) {
   }
   const randomPosition = Math.floor(Math.random() * eligiblePositions.length);
   return eligiblePositions[randomPosition];
+}
+
+export function addToGrid(grid, path) {
+  const updatedGrid = grid.map(row => row.map(cell => cell));
+  path.forEach(([c, r]) => (updatedGrid[r][c] = 1));
+  return updatedGrid;
 }

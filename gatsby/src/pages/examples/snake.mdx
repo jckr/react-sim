@@ -1,9 +1,18 @@
 ---
 Title: Snake
 ---
-import Snake from '../../components/examples/snake/index';
 
+import Snake, { SnakeGrid } from '../../components/examples/snake/index';
 
 # Snake
 
 <Snake />
+
+This model tries to win the game of [Snake](<https://en.wikipedia.org/wiki/Snake_(video_game_genre)>).
+
+A snake moves on a 2d grid. It can go straight, turn left or right. If it hits the borders of the grid or a part of its body, the game is over. If the snake eats a fruit, it grows in size. The goal of the game is to eat all the fruits, until the snake covers the entirety of the grid.
+
+The way the model works is by finding a circuit which is safe for the snake to use. If we can find a circuit that covers the whole grid, then the snake can loop on that circuit endlessly and never collide with anything else than with a fruit.
+How do we find such a circuit? We start by finding the _shortest path_ between the head and the tail of the snake. Then, we see how we can extend this path step by step. This other model shows how this works:
+
+<SnakeGrid />
