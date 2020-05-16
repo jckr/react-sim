@@ -259,10 +259,14 @@ export class Model extends React.Component {
     });
   };
   setParams = (params, resetOnChange) => {
-    this.setState(() => ({ params: { ...this.state.params, ...params } }));
-    if (resetOnChange) {
-      this.initData();
-    }
+    this.setState(
+      () => ({ params: { ...this.state.params, ...params } }),
+      () => {
+        if (resetOnChange) {
+          this.initData();
+        }
+      }
+    );
   };
 
   renderFrame = (injectedProps) => {

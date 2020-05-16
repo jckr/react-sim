@@ -15,6 +15,7 @@ function Radio({ label, name, options, value, vertical, setValue, ...props }) {
               value={option}
               checked={value === option}
               onClick={() => setValue(option)}
+              readOnly
             />
             {option}
           </Label>
