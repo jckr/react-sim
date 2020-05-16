@@ -22,9 +22,8 @@
     "test:watch": "react-scripts test --env=jsdom",
     "predeploy": "cd example && yarn install && yarn run build",
     "deploy": "gh-pages -d example/build",
-    "link-react": "./link-react.sh",
     "gatsby-build": "cd gatsby && yarn install && cd node_modules/react && yarn link && cd ../react-dom && yarn link && cd ../../.. && yarn install && yarn link react && yarn link react-dom && yarn build && cd gatsby && yarn build",
-    "gatsby-test": "yarn gatsby-build && yarn test"
+    "gatsby-test": "yarn gatsby-build && cd gatsby && yarn test"
   },
   "peerDependencies": {
     "react": "^16.13.1",
