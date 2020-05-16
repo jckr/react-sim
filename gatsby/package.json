@@ -11,6 +11,8 @@
     "@theme-ui/presets": "^0.3.0",
     "@theme-ui/prism": "^0.3.0",
     "@theme-ui/sidenav": "^0.3.1",
+    "babel-jest": "^26.0.1",
+    "babel-preset-gatsby": "^0.4.2",
     "emotion-theming": "^10.0.27",
     "gatsby": "^2.20.25",
     "gatsby-image": "^2.3.4",
@@ -23,15 +25,19 @@
     "gatsby-plugin-theme-ui": "^0.3.0",
     "gatsby-source-filesystem": "^2.2.4",
     "gatsby-transformer-sharp": "^2.4.6",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^26.0.1",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet": "^6.0.0",
     "react-sim": "link:..",
+    "react-test-renderer": "^16.13.1",
     "rebass": "^4.0.7",
     "theme-ui": "^0.3.1"
   },
   "devDependencies": {
+    "jest-canvas-mock": "^2.2.0",
     "prettier": "2.0.4"
   },
   "keywords": [
@@ -45,7 +51,7 @@
     "start": "gatsby clean && gatsby develop",
     "serve": "gatsby serve --prefix-paths",
     "clean": "gatsby clean",
-    "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header renders correctly 1`] = `
+<header
+  className="css-1kdis29"
+>
+  <button
+    className="css-1n1s1hs"
+    onClick={[Function]}
+    title="Toggle Menu"
+  >
+    <svg
+      className="css-1k1p0eg"
+      fill="currentcolor"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"
+      />
+    </svg>
+  </button>
+  <a
+    className="css-vurnku"
+    href="/"
+  >
+    React-sim
+  </a>
+  <div
+    className="css-1ntkiwo"
+  />
+  <a
+    className="css-9cwl6c"
+    href="https://github.com/jckr/react-sim"
+  >
+    GitHub
+  </a>
+</header>
+`;
