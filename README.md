@@ -2,7 +2,7 @@
 
 > Boilerplate components to create a model simulation with React
 
-[![NPM](https://img.shields.io/npm/v/react-sim.svg)](https://www.npmjs.com/package/react-sim) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/react-sim.svg)](https://www.npmjs.com/package/react-sim) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) ![test](https://github.com/jckr/react-sim/workflows/test/badge.svg)
 
 ## Install
 
