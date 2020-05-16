@@ -1,18 +1,23 @@
 import React from 'react';
-import { Play, FlexRow, FlexColumn, Model } from 'react-sim';
+import { Play, Model } from 'react-sim';
 import { useThemeUI } from 'theme-ui';
+import { Flex } from 'rebass';
+
 // helpers
 
-const roll = () => Math.ceil(Math.random() * 6);
+const roll = random => Math.ceil(random() * 6);
 
-export function updateDice({ data, tick, params: { nbDice } }) {
+export function updateDice(
+  { data, tick, params: { nbDice } },
+  random = Math.random
+) {
   const lastTotals = data.totals;
 
   // we roll the dice...
   let total = 0;
   const rolls = [];
   for (let i = 0; i < nbDice; i++) {
-    rolls.push(roll());
+    rolls.push(roll(random));
     total += rolls[i];
   }
 
@@ -78,26 +83,28 @@ const Bar = ({ label, max, nbRolls, nbValues, theme }) => {
   const color = theme?.colors?.primary || '#33f';
 
   return (
-    <FlexColumn>
-      <FlexRow
-        styles={{
+    <Flex flexDirection="column">
+      <Flex
+        flexDirection="row"
+        sx={{
           justifyContent: 'center',
           alignItems: 'flex-end',
           width,
-          height: 50,
+          height: '50px',
         }}
       >
         <div style={{ width: width * 0.8, height, backgroundColor: color }} />
-      </FlexRow>
-      <FlexRow
-        styles={{
+      </Flex>
+      <Flex
+        flexDirection="row"
+        sx={{
           justifyContent: 'center',
-          fontSize: Math.min((500 / 2) * nbValues, 12),
+          fontSize: `${Math.min((500 / 2) * nbValues, 12)}px`,
         }}
       >
         {label}
-      </FlexRow>
-    </FlexColumn>
+      </Flex>
+    </Flex>
   );
 };
 
@@ -129,13 +136,19 @@ export class DiceFrame extends React.Component {
       });
 
     return (
-      <FlexColumn styles={{ justifyContent: 'space-between', height: '140px' }}>
-        <FlexRow>
+      <Flex
+        flexDirection="column"
+        sx={{ justifyContent: 'space-between', height: '140px' }}
+      >
+        <Flex flexDirection="row">
           {rolls.map((value, index) => (
             <Die value={value} key={`k-${index}`} />
           ))}
-        </FlexRow>
-        <FlexRow styles={{ alignItems: 'flex-end', height: '80px' }}>
+        </Flex>
+        <Flex
+          flexDirection="row"
+          sx={{ alignItems: 'flex-end', height: '80px' }}
+        >
           {bars.map(bar => (
             <Bar
               {...bar}
@@ -145,8 +158,8 @@ export class DiceFrame extends React.Component {
               theme={theme}
             />
           ))}
-        </FlexRow>
-      </FlexColumn>
+        </Flex>
+      </Flex>
     );
   }
 }

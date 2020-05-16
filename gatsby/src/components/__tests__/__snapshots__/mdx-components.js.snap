@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MDX components renders correctly 1`] = `
+<pre>
+  <code
+    className="jsx"
+  >
+    const MyModel = () =&gt;
+          &lt;Model /&gt;
+  </code>
+</pre>
+`;

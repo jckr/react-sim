@@ -1,0 +1,1193 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dice data function works 1`] = `
+Object {
+  "average": 17.5,
+  "rolls": Array [],
+  "total": 0,
+  "totals": Object {},
+}
+`;
+
+exports[`Dice data function works 2`] = `
+Object {
+  "average": 0,
+  "rolls": Array [
+    6,
+    2,
+    6,
+    5,
+    6,
+  ],
+  "total": 25,
+  "totals": Object {
+    "25": 1,
+  },
+}
+`;
+
+exports[`Dice data function works 3`] = `
+Object {
+  "average": 12.5,
+  "rolls": Array [
+    6,
+    4,
+    2,
+    5,
+    1,
+  ],
+  "total": 18,
+  "totals": Object {
+    "18": 1,
+    "25": 1,
+  },
+}
+`;
+
+exports[`Dice data function works 4`] = `
+Object {
+  "average": 14.333333333333334,
+  "rolls": Array [
+    2,
+    5,
+    1,
+    6,
+    6,
+  ],
+  "total": 20,
+  "totals": Object {
+    "18": 1,
+    "20": 1,
+    "25": 1,
+  },
+}
+`;
+
+exports[`Dice data function works 5`] = `
+Object {
+  "average": 15.75,
+  "rolls": Array [
+    1,
+    1,
+    5,
+    3,
+    4,
+  ],
+  "total": 14,
+  "totals": Object {
+    "14": 1,
+    "18": 1,
+    "20": 1,
+    "25": 1,
+  },
+}
+`;
+
+exports[`Dice model renders properly 1`] = `
+<div
+  style={
+    Object {
+      "border": "1px solid #000",
+      "borderRadius": "3px",
+      "height": 21,
+      "marginRight": 10,
+      "position": "relative",
+      "width": 21,
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "height": 3,
+        "left": 8,
+        "position": "absolute",
+        "top": 8,
+        "width": 3,
+      }
+    }
+  />
+</div>
+`;
+
+exports[`Dice model renders properly 2`] = `
+<div
+  style={
+    Object {
+      "border": "1px solid #000",
+      "borderRadius": "3px",
+      "height": 21,
+      "marginRight": 10,
+      "position": "relative",
+      "width": 21,
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "height": 3,
+        "left": 3,
+        "position": "absolute",
+        "top": 3,
+        "width": 3,
+      }
+    }
+  />
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "bottom": 3,
+        "height": 3,
+        "position": "absolute",
+        "right": 3,
+        "width": 3,
+      }
+    }
+  />
+</div>
+`;
+
+exports[`Dice model renders properly 3`] = `
+<div
+  style={
+    Object {
+      "border": "1px solid #000",
+      "borderRadius": "3px",
+      "height": 21,
+      "marginRight": 10,
+      "position": "relative",
+      "width": 21,
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "height": 3,
+        "left": 3,
+        "position": "absolute",
+        "top": 3,
+        "width": 3,
+      }
+    }
+  />
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "height": 3,
+        "left": 8,
+        "position": "absolute",
+        "top": 8,
+        "width": 3,
+      }
+    }
+  />
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "bottom": 3,
+        "height": 3,
+        "position": "absolute",
+        "right": 3,
+        "width": 3,
+      }
+    }
+  />
+</div>
+`;
+
+exports[`Dice model renders properly 4`] = `
+<div
+  style={
+    Object {
+      "border": "1px solid #000",
+      "borderRadius": "3px",
+      "height": 21,
+      "marginRight": 10,
+      "position": "relative",
+      "width": 21,
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "height": 3,
+        "left": 3,
+        "position": "absolute",
+        "top": 3,
+        "width": 3,
+      }
+    }
+  />
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "height": 3,
+        "position": "absolute",
+        "right": 3,
+        "top": 3,
+        "width": 3,
+      }
+    }
+  />
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "bottom": 3,
+        "height": 3,
+        "left": 3,
+        "position": "absolute",
+        "width": 3,
+      }
+    }
+  />
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "bottom": 3,
+        "height": 3,
+        "position": "absolute",
+        "right": 3,
+        "width": 3,
+      }
+    }
+  />
+</div>
+`;
+
+exports[`Dice model renders properly 5`] = `
+<div
+  style={
+    Object {
+      "border": "1px solid #000",
+      "borderRadius": "3px",
+      "height": 21,
+      "marginRight": 10,
+      "position": "relative",
+      "width": 21,
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "height": 3,
+        "left": 3,
+        "position": "absolute",
+        "top": 3,
+        "width": 3,
+      }
+    }
+  />
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "height": 3,
+        "position": "absolute",
+        "right": 3,
+        "top": 3,
+        "width": 3,
+      }
+    }
+  />
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "height": 3,
+        "left": 8,
+        "position": "absolute",
+        "top": 8,
+        "width": 3,
+      }
+    }
+  />
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "bottom": 3,
+        "height": 3,
+        "left": 3,
+        "position": "absolute",
+        "width": 3,
+      }
+    }
+  />
+  <div
+    style={
+      Object {
+        "background": "#000",
+        "borderRadius": "100%",
+        "bottom": 3,
+        "height": 3,
+        "position": "absolute",
+        "right": 3,
+        "width": 3,
+      }
+    }
+  />
+</div>
+`;
+
+exports[`Dice model renders properly 6`] = `
+<div
+  className="css-m639qu"
+>
+  <div
+    className="css-1kw0tju"
+  >
+    <div
+      style={
+        Object {
+          "border": "1px solid #000",
+          "borderRadius": "3px",
+          "height": 21,
+          "marginRight": 10,
+          "position": "relative",
+          "width": 21,
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "background": "#000",
+            "borderRadius": "100%",
+            "height": 3,
+            "left": 8,
+            "position": "absolute",
+            "top": 8,
+            "width": 3,
+          }
+        }
+      />
+    </div>
+    <div
+      style={
+        Object {
+          "border": "1px solid #000",
+          "borderRadius": "3px",
+          "height": 21,
+          "marginRight": 10,
+          "position": "relative",
+          "width": 21,
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "background": "#000",
+            "borderRadius": "100%",
+            "height": 3,
+            "left": 8,
+            "position": "absolute",
+            "top": 8,
+            "width": 3,
+          }
+        }
+      />
+    </div>
+    <div
+      style={
+        Object {
+          "border": "1px solid #000",
+          "borderRadius": "3px",
+          "height": 21,
+          "marginRight": 10,
+          "position": "relative",
+          "width": 21,
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "background": "#000",
+            "borderRadius": "100%",
+            "height": 3,
+            "left": 3,
+            "position": "absolute",
+            "top": 3,
+            "width": 3,
+          }
+        }
+      />
+      <div
+        style={
+          Object {
+            "background": "#000",
+            "borderRadius": "100%",
+            "height": 3,
+            "position": "absolute",
+            "right": 3,
+            "top": 3,
+            "width": 3,
+          }
+        }
+      />
+      <div
+        style={
+          Object {
+            "background": "#000",
+            "borderRadius": "100%",
+            "height": 3,
+            "left": 8,
+            "position": "absolute",
+            "top": 8,
+            "width": 3,
+          }
+        }
+      />
+      <div
+        style={
+          Object {
+            "background": "#000",
+            "borderRadius": "100%",
+            "bottom": 3,
+            "height": 3,
+            "left": 3,
+            "position": "absolute",
+            "width": 3,
+          }
+        }
+      />
+      <div
+        style={
+          Object {
+            "background": "#000",
+            "borderRadius": "100%",
+            "bottom": 3,
+            "height": 3,
+            "position": "absolute",
+            "right": 3,
+            "width": 3,
+          }
+        }
+      />
+    </div>
+    <div
+      style={
+        Object {
+          "border": "1px solid #000",
+          "borderRadius": "3px",
+          "height": 21,
+          "marginRight": 10,
+          "position": "relative",
+          "width": 21,
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "background": "#000",
+            "borderRadius": "100%",
+            "height": 3,
+            "left": 3,
+            "position": "absolute",
+            "top": 3,
+            "width": 3,
+          }
+        }
+      />
+      <div
+        style={
+          Object {
+            "background": "#000",
+            "borderRadius": "100%",
+            "height": 3,
+            "left": 8,
+            "position": "absolute",
+            "top": 8,
+            "width": 3,
+          }
+        }
+      />
+      <div
+        style={
+          Object {
+            "background": "#000",
+            "borderRadius": "100%",
+            "bottom": 3,
+            "height": 3,
+            "position": "absolute",
+            "right": 3,
+            "width": 3,
+          }
+        }
+      />
+    </div>
+    <div
+      style={
+        Object {
+          "border": "1px solid #000",
+          "borderRadius": "3px",
+          "height": 21,
+          "marginRight": 10,
+          "position": "relative",
+          "width": 21,
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "background": "#000",
+            "borderRadius": "100%",
+            "height": 3,
+            "left": 3,
+            "position": "absolute",
+            "top": 3,
+            "width": 3,
+          }
+        }
+      />
+      <div
+        style={
+          Object {
+            "background": "#000",
+            "borderRadius": "100%",
+            "height": 3,
+            "position": "absolute",
+            "right": 3,
+            "top": 3,
+            "width": 3,
+          }
+        }
+      />
+      <div
+        style={
+          Object {
+            "background": "#000",
+            "borderRadius": "100%",
+            "bottom": 3,
+            "height": 3,
+            "left": 3,
+            "position": "absolute",
+            "width": 3,
+          }
+        }
+      />
+      <div
+        style={
+          Object {
+            "background": "#000",
+            "borderRadius": "100%",
+            "bottom": 3,
+            "height": 3,
+            "position": "absolute",
+            "right": 3,
+            "width": 3,
+          }
+        }
+      />
+    </div>
+  </div>
+  <div
+    className="css-u42cjd"
+  >
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        5
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        6
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        7
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        8
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        9
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        10
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        11
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        12
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        13
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 50,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        14
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        15
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        16
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        17
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 50,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        18
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        19
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 50,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        20
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        21
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        22
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        23
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        24
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 50,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        25
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        26
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        27
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        28
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        29
+      </div>
+    </div>
+    <div
+      className="css-l3rx45"
+    >
+      <div
+        className="css-1p613lf"
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "red",
+              "height": 0,
+              "width": 15.384615384615385,
+            }
+          }
+        />
+      </div>
+      <div
+        className="css-1xud2bt"
+      >
+        30
+      </div>
+    </div>
+  </div>
+</div>
+`;

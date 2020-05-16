@@ -16,7 +16,7 @@ const Model = props => (
   </Flex>
 );
 
-const updateAttractors = ({ angleOffset, nbAttractors, height, width }) => {
+export const updateAttractors = ({ angleOffset, nbAttractors, height, width }) => {
   const center = { x: width / 2, y: height / 2 };
   const radius = (0.95 * Math.min(height, width)) / 2;
   return [...Array(nbAttractors).keys()].map(i => {
@@ -28,8 +28,8 @@ const updateAttractors = ({ angleOffset, nbAttractors, height, width }) => {
   });
 };
 
-function init({ angle, nbAttractors, height, width }) {
-  const angleOffset = angle === undefined ? Math.random() * 2 * Math.PI : angle;
+export function init({ angle, nbAttractors, height, width }, random = Math.random) {
+  const angleOffset = angle === undefined ? random() * 2 * Math.PI : angle;
   const attractors = updateAttractors({
     angleOffset,
     nbAttractors,
@@ -37,11 +37,11 @@ function init({ angle, nbAttractors, height, width }) {
     width,
   });
   const o = {
-    x: Math.random() * width,
-    y: Math.random() * height,
+    x: random() * width,
+    y: random() * height,
   };
-  const background = `hsla(${Math.floor(Math.random() * 360)}, 30%, 7%, 1)`;
-  const color = `hsla(${Math.floor(Math.random() * 360)}, 77%, 45%, 1)`;
+  const background = `hsla(${Math.floor(random() * 360)}, 30%, 7%, 1)`;
+  const color = `hsla(${Math.floor(random() * 360)}, 77%, 45%, 1)`;
   return {
     attractors,
     background,
@@ -51,7 +51,7 @@ function init({ angle, nbAttractors, height, width }) {
   };
 }
 
-function updateData({ data, params, tick }) {
+export function updateData({ data, params, tick }, random = Math.random) {
   const { nbAttractors } = params;
   if (data.attractors.length !== nbAttractors) {
     data.attractors = updateAttractors(params);
@@ -65,7 +65,7 @@ function updateData({ data, params, tick }) {
       }, [])
     : [...Array(nbAttractors).keys()];
   const direction =
-    (data.prevDirection + rules[Math.floor(Math.random() * rules.length)]) %
+    (data.prevDirection + rules[Math.floor(random() * rules.length)]) %
     nbAttractors;
   data.prevDirection = direction;
   const lastPoint = data.points[data.points.length - 1];
@@ -78,31 +78,7 @@ function updateData({ data, params, tick }) {
   return data;
 }
 
-const Frame = ({ data, tick, params }) => {
-  const canvasRef = useRef(null);
-  const { height, width } = params;
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = data.background;
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.fillRect(0, 0, width, height);
-
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = data.color;
-
-    for (let i = 0; i < tick; i++) {
-      ctx.globalAlpha = 0.8;
-      const point = data.points[i];
-      ctx.beginPath();
-      ctx.arc(point.x, point.y, params.r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  });
-  return <canvas height={height} width={width} ref={canvasRef} />;
-};
+export const Frame = props => <CanvasFrame draw={draw} {...props} />;
 
 function draw({ ctx, data, params, tick, circle }) {
   const { height, width } = params;
@@ -141,11 +117,11 @@ export const BasicChaosGame = () => (
       r: 1,
     }}
   >
-    <CanvasFrame draw={draw} />
+    <Frame />
   </Model>
 );
 
-const CustomControls = ({ params, setParams }) => {
+export const CustomControls = ({ params, setParams }) => {
   const nbToggles = params.nbAttractors;
   const nbRows = Math.ceil(nbToggles / 5);
   const toggle = a =>
@@ -192,7 +168,6 @@ const CustomControls = ({ params, setParams }) => {
 };
 
 const Controls = withControls(CustomControls);
-const HOCFrame = withFrame(Frame);
 export const ChaosGame = () => (
   <Model
     ticksPerAnimation={100}
@@ -209,7 +184,7 @@ export const ChaosGame = () => (
     }}
   >
     <Flex flexDirection="column">
-      <CanvasFrame draw={draw} />
+      <Frame />
       <Controls />
     </Flex>
   </Model>

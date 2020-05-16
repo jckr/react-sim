@@ -40,7 +40,10 @@ export function update({ data, tick, params, complete }) {
   return grid;
 }
 
-function initData({ height, width, density, innerRadius, outerRadius }) {
+export function initData(
+  { height, width, density, innerRadius, outerRadius },
+  random = Math.random
+) {
   const data = [];
   for (let row = 0; row < height; row++) {
     const cells = [];
@@ -66,7 +69,7 @@ function initData({ height, width, density, innerRadius, outerRadius }) {
         }
       }
 
-      const value = Math.random() < density;
+      const value = random() < density;
 
       cells.push({ value, innerNeighbors, outerNeighbors });
     }
@@ -75,6 +78,9 @@ function initData({ height, width, density, innerRadius, outerRadius }) {
   return data;
 }
 
+export const ActivatorFrame = props => (
+  <Grid size={10} accessor={d => (d.value ? '#000' : 'none')} {...props} />
+);
 const Activators = () => (
   <Model
     auto="false"
@@ -112,7 +118,7 @@ const Activators = () => (
     updateData={update}
     maxTime={200}
   >
-    <Grid size={10} accessor={d => d.value} />
+    <ActivatorFrame />
   </Model>
 );
 

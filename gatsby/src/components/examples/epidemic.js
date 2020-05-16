@@ -9,7 +9,10 @@ const COLORS = {
   dead: '#6a9012',
 };
 
-export function updateEpidemic({ data, tick, params, complete }) {
+export function updateEpidemic(
+  { data, tick, params, complete },
+  random = Math.random()
+) {
   let updatedData = JSON.parse(JSON.stringify(data.agents));
   let nbSick = 0,
     nbHealthy = 0,
@@ -32,7 +35,7 @@ export function updateEpidemic({ data, tick, params, complete }) {
       if (tick >= agent.recovery) {
         agent.status = 'recovered';
       } else {
-        if (Math.random() < deathRisk) {
+        if (random() < deathRisk) {
           agent.status = 'dead';
         }
       }
@@ -59,13 +62,13 @@ export function updateEpidemic({ data, tick, params, complete }) {
           // test for contagion
 
           if (agent.status === 'sick' && otherAgent.status === 'healthy') {
-            if (Math.random() <= contaminationRisk) {
+            if (random() <= contaminationRisk) {
               otherAgent.status = 'sick';
               otherAgent.recovery = tick + recoveryTicks;
             }
           }
           if (agent.status === 'healthy' && otherAgent.status === 'sick') {
-            if (Math.random() <= contaminationRisk) {
+            if (random() <= contaminationRisk) {
               agent.status = 'sick';
               agent.recovery = tick + recoveryTicks;
             }
@@ -121,7 +124,7 @@ export function updateEpidemic({ data, tick, params, complete }) {
   };
 }
 
-function chooseMamongN(n, m) {
+function chooseMamongN(n, m, random) {
   const N = [...Array(n).keys()].reduce((prev, curr) => {
     prev[curr] = true;
     return prev;
@@ -129,7 +132,7 @@ function chooseMamongN(n, m) {
   const results = new Set();
 
   for (let i = 0; i < m; i++) {
-    const k = Math.floor(Math.random() * Object.keys(N).length);
+    const k = Math.floor(random * Object.keys(N).length);
     results.add(k);
     delete N[k];
   }
@@ -143,28 +146,31 @@ function findOverlaps(agents, i, r, point) {
   return domain.filter(({ x, y }) => Math.hypot(x - x0, y - y0) < r);
 }
 
-function initData({
-  nbAgents = 200,
-  nbSick = 5,
-  maxSpeed = 30,
-  contaminationRisk = 1,
-  deathRisk = 0.005,
-  recoveryTicks = 20,
-  nbDistancing = 50,
-  r = 3,
-  height = 300,
-  width = 400,
-}) {
-  const sick = chooseMamongN(nbAgents, nbSick);
-  const distancing = chooseMamongN(nbAgents, nbDistancing);
+export function initData(
+  {
+    nbAgents = 200,
+    nbSick = 5,
+    maxSpeed = 30,
+    contaminationRisk = 1,
+    deathRisk = 0.005,
+    recoveryTicks = 20,
+    nbDistancing = 50,
+    r = 3,
+    height = 300,
+    width = 400,
+  },
+  random = Math.random
+) {
+  const sick = chooseMamongN(nbAgents, nbSick, random);
+  const distancing = chooseMamongN(nbAgents, nbDistancing, random);
   const agents = [];
 
   for (let i = 0; i < nbAgents; i++) {
     let x, y;
 
     do {
-      y = r / 2 + Math.random() * (height - r);
-      x = r / 2 + Math.random() * (width - r);
+      y = r / 2 + random() * (height - r);
+      x = r / 2 + random() * (width - r);
     } while (findOverlaps(agents, 0, r, { x, y }).length);
 
     const status = sick.has(i) ? 'sick' : 'healthy';
@@ -172,8 +178,8 @@ function initData({
     const recovery = sick.has(i) ? recoveryTicks : null;
     const isDistancing = distancing.has(i);
     const speed = isDistancing ? 0 : maxSpeed;
-    const vx = speed * (Math.random() * 2 - 1);
-    const vy = speed * (Math.random() * 2 - 1);
+    const vx = speed * (random() * 2 - 1);
+    const vy = speed * (random() * 2 - 1);
     const isBouncing = false;
 
     agents.push({
@@ -279,7 +285,7 @@ const Epidemic = () => (
   >
     <Flex flexDirection="column">
       <ConnectedFrame />
-      <TimeSeries series={series} stacked={true}/>
+      <TimeSeries series={series} stacked={true} />
       <Counter series={series} />
     </Flex>
   </Model>

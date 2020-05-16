@@ -13,6 +13,16 @@ import Img from 'gatsby-image';
  * - `useStaticQuery`: https://www.gatsbyjs.org/docs/use-static-query/
  */
 
+export const imageNames = [
+  'model',
+  'modelState',
+  'modelControls',
+  'modelComponents',
+  'modelHighLevelView',
+  'modelUpdateData',
+  'modelFrame',
+];
+
 const query = graphql`
   fragment fluidImage on File {
     childImageSharp {
@@ -51,10 +61,13 @@ const query = graphql`
   }
 `;
 
+export const ImageComponent = ({ name, data }) => {
+  return <Img fluid={data[name].childImageSharp.fluid} />;
+};
+
 const Image = ({ name }) => {
   const data = useStaticQuery(query);
-
-  return <Img fluid={data[name].childImageSharp.fluid} />;
+  return <ImageComponent data={data} name={name} />;
 };
 
 export default Image;
