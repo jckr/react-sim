@@ -12,15 +12,16 @@ npm install --save react-sim
 
 ## Usage
 
-```jsx
-import React, { Component } from 'react'
+See [documentation](https://jckr.github.io/react-sim/) for [guide](https://jckr.github.io/react-sim/tutorial) and [examples](https://jckr.github.io/react-sim/examples)
 
-import MyComponent from 'react-sim'
-import 'react-sim/dist/index.css'
+```jsx
+import React from 'react'
+
+import {Model} from 'react-sim'
 
 class Example extends Component {
   render() {
-    return <MyComponent />
+    return <Model />
   }
 }
 ```
