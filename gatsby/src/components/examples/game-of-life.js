@@ -72,13 +72,13 @@ export function updateGridNoComplete({ data }) {
   );
 }
 
-function initGrid({ height, width, density }) {
+export function initGrid({ height, width, density }, random = Math.random) {
   return Array(height)
     .fill(0)
     .map(row =>
       Array(width)
         .fill(0)
-        .map(() => Number(Math.random() < density))
+        .map(() => Number(random() < density))
     );
 }
 

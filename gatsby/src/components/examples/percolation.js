@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Flex, Box } from 'rebass';
-import { Model as RawModel } from 'react-sim';
+import { Model as RawModel, CanvasFrame } from 'react-sim';
 
 const Model = props => (
   <Flex sx={{ border: '1px solid #000', p: 2, width: 'fit-content' }}>
@@ -24,7 +24,7 @@ const status = {
   failure: 'FAILURE',
 };
 
-function updateData({ data, params, complete }) {
+export function updateData({ data, params, complete }) {
   const { queue, grid } = data;
   const { height, width } = params;
   let updatedStatus = data.status;
@@ -62,7 +62,7 @@ function updateData({ data, params, complete }) {
   };
 }
 
-function updateDataGrid({ data, params, complete }) {
+export function updateDataGrid({ data, params, complete }) {
   let nbPending = 0;
   data.grids.forEach((row, y) =>
     row.forEach((cell, x) => {
@@ -87,14 +87,14 @@ function updateDataGrid({ data, params, complete }) {
   return data;
 }
 
-function initData({ porosity, height, width }) {
+export function initData({ porosity, height, width }, random = Math.random) {
   const grid = [];
   const queue = [];
   let x, y;
   for (y = 0; y < height; y++) {
     const row = [];
     for (x = 0; x < width; x++) {
-      row.push(Math.random() > Number(porosity) ? ROCK : EMPTY);
+      row.push(random > Number(porosity) ? ROCK : EMPTY);
     }
     grid.push(row);
   }
@@ -127,113 +127,88 @@ function initData({ porosity, height, width }) {
   return { grid, queue, status: status.pending };
 }
 
-function roundRect({ ctx, x, y, width, height, r = 1, tl, tr, br, bl }) {
-  const topLeft = tl || r;
-  const topRight = tr || r;
-  const bottomLeft = bl || r;
-  const bottomRight = br || r;
+export function draw({
+  ctx,
+  params: { cellSize, margin, height, width },
+  data,
+  roundRectangle,
+}) {
+  ctx.fillStyle = 'beige';
+  ctx.fillRect(0, 0, width * cellSize, height * cellSize);
 
-  ctx.beginPath();
-  ctx.moveTo(x + topLeft, y);
-  ctx.lineTo(x + width - topRight, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + topRight);
-  ctx.lineTo(x + width, y + height - bottomRight);
-  ctx.quadraticCurveTo(
-    x + width,
-    y + height,
-    x + width - bottomRight,
-    y + height
-  );
-  ctx.lineTo(x + bottomLeft, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - bottomLeft);
-  ctx.lineTo(x, y + topLeft);
-  ctx.quadraticCurveTo(x, y, x + topLeft, y);
-  ctx.closePath();
-}
+  data.grid.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      const x = colIndex * cellSize;
+      const y = rowIndex * cellSize;
+      if (cell >= ROCK && cell <= ROCK_WITH_ROCKS_ALL_AROUND) {
+        // rock
+        ctx.fillStyle = '#777';
 
-const PercolationFrame = ({ data, params }) => {
-  const { cellSize, margin, height, width } = params;
-  const canvasRef = useRef(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'beige';
-    ctx.fillRect(0, 0, width * cellSize, height * cellSize);
-
-    if (data === null) {
-      return;
-    }
-
-    data.grid.forEach((row, rowIndex) => {
-      row.forEach((cell, colIndex) => {
-        const x = colIndex * cellSize;
-        const y = rowIndex * cellSize;
-        if (cell >= ROCK && cell <= ROCK_WITH_ROCKS_ALL_AROUND) {
-          // rock
-          ctx.fillStyle = '#777';
-
-          roundRect({
-            ctx,
-            x: x + margin,
-            y: y + margin,
-            r: margin,
-            height: cellSize - 2 * margin,
-            width: cellSize - 2 * margin,
-          });
-          ctx.fill();
-          if (
-            cell === ROCK_WITH_ROCK_ON_RIGHT ||
-            cell === ROCK_WITH_ROCK_RIGHT_AND_BELOW ||
-            cell === ROCK_WITH_ROCKS_ALL_AROUND
-          ) {
-            ctx.fillRect(
-              x + cellSize - 2 * margin,
-              y + margin,
-              4 * margin,
-              cellSize - 2 * margin
-            );
-          }
-          if (
-            cell === ROCK_WITH_ROCK_BELOW ||
-            cell === ROCK_WITH_ROCK_RIGHT_AND_BELOW ||
-            cell === ROCK_WITH_ROCKS_ALL_AROUND
-          ) {
-            ctx.fillRect(
-              x + margin,
-              y + cellSize - 2 * margin,
-              cellSize - 2 * margin,
-              4 * margin
-            );
-          }
-          if (cell === ROCK_WITH_ROCKS_ALL_AROUND) {
-            ctx.fillRect(
-              x + cellSize - 2 * margin,
-              y + cellSize - 2 * margin,
-              4 * margin,
-              4 * margin
-            );
-          }
+        roundRectangle({
+          ctx,
+          x: x + margin,
+          y: y + margin,
+          r: margin,
+          height: cellSize - 2 * margin,
+          width: cellSize - 2 * margin,
+        });
+        ctx.fill();
+        if (
+          cell === ROCK_WITH_ROCK_ON_RIGHT ||
+          cell === ROCK_WITH_ROCK_RIGHT_AND_BELOW ||
+          cell === ROCK_WITH_ROCKS_ALL_AROUND
+        ) {
+          ctx.fillRect(
+            x + cellSize - 2 * margin,
+            y + margin,
+            4 * margin,
+            cellSize - 2 * margin
+          );
         }
-        if (cell >= WATER_FROM_TOP) {
-          ctx.lineWidth = cellSize - 2 * margin;
-          ctx.strokeStyle = 'cyan';
-          ctx.lineCap = 'round';
-          ctx.beginPath();
-          ctx.moveTo(x + cellSize / 2, y + cellSize / 2);
-          if (cell === WATER_FROM_TOP) {
-            ctx.lineTo(x + cellSize / 2, Math.max(y - cellSize / 2, 0));
-          }
-          if (cell === WATER_FROM_LEFT) {
-            ctx.lineTo(x - cellSize / 2, y + cellSize / 2);
-          }
-          if (cell === WATER_FROM_RIGHT) {
-            ctx.lineTo(x + (3 * cellSize) / 2, y + cellSize / 2);
-          }
-          ctx.stroke();
+        if (
+          cell === ROCK_WITH_ROCK_BELOW ||
+          cell === ROCK_WITH_ROCK_RIGHT_AND_BELOW ||
+          cell === ROCK_WITH_ROCKS_ALL_AROUND
+        ) {
+          ctx.fillRect(
+            x + margin,
+            y + cellSize - 2 * margin,
+            cellSize - 2 * margin,
+            4 * margin
+          );
         }
-      });
+        if (cell === ROCK_WITH_ROCKS_ALL_AROUND) {
+          ctx.fillRect(
+            x + cellSize - 2 * margin,
+            y + cellSize - 2 * margin,
+            4 * margin,
+            4 * margin
+          );
+        }
+      }
+      if (cell >= WATER_FROM_TOP) {
+        ctx.lineWidth = cellSize - 2 * margin;
+        ctx.strokeStyle = 'cyan';
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(x + cellSize / 2, y + cellSize / 2);
+        if (cell === WATER_FROM_TOP) {
+          ctx.lineTo(x + cellSize / 2, Math.max(y - cellSize / 2, 0));
+        }
+        if (cell === WATER_FROM_LEFT) {
+          ctx.lineTo(x - cellSize / 2, y + cellSize / 2);
+        }
+        if (cell === WATER_FROM_RIGHT) {
+          ctx.lineTo(x + (3 * cellSize) / 2, y + cellSize / 2);
+        }
+        ctx.stroke();
+      }
     });
   });
+}
+
+export const PercolationFrame = ({ data, params }) => {
+  const { cellSize, margin, height, width } = params;
 
   return (
     <div
@@ -250,16 +225,17 @@ const PercolationFrame = ({ data, params }) => {
         }`,
       }}
     >
-      <canvas
+      <CanvasFrame
+        data={data}
         width={width * cellSize}
         height={height * cellSize}
-        ref={canvasRef}
+        draw={draw}
       />
     </div>
   );
 };
 
-const PercolationFrameGrid = ({ data, params }) => {
+export const PercolationFrameGrid = ({ data, params }) => {
   const ch = params.height * params.cellSize;
   const cw = params.width * params.cellSize;
 
@@ -354,7 +330,7 @@ export const Percolation = () => {
   );
 };
 
-function initDataGrid({
+export function initDataGrid({
   width,
   height,
   cellSize,
