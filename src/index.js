@@ -10,7 +10,7 @@ export {
   Range,
   Select,
   Timer,
-  Toggle,
+  Toggle
 } from './controls';
 export { default as CanvasFrame, CanvasFrameComponent } from './canvas-frame';
 export { default as FlexRow } from './flex-row';

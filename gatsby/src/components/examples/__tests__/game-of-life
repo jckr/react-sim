@@ -1,0 +1,38 @@
+import React from 'react';
+import renderer from 'react-test-renderer';
+import {
+  initGrid,
+  updateGameOfLifeGrid,
+  updateGridNoComplete,
+} from '../game-of-life';
+import { Grid } from 'react-sim';
+import Random from '../../helpers/random';
+
+describe('Game of Life', () => {
+  const params = {
+    height: 10,
+    width: 10,
+    density: 0.15,
+  };
+  let data;
+  it('data function works', () => {
+    const rng = new Random();
+    data = initGrid(params, rng.get);
+    expect(data).toMatchSnapshot();
+    const complete = jest.fn();
+    for (let tick = 1; tick < 5; tick++) {
+      data = updateGridNoComplete({ data, tick, params, complete }, rng.get);
+      expect(data).toMatchSnapshot();
+    }
+    for (let tick = 6; tick < 10; tick++) {
+      data = updateGameOfLifeGrid({ data, tick, params, complete }, rng.get);
+      expect(data).toMatchSnapshot();
+    }
+  });
+  it('model renders properly', () => {
+    const tree = renderer
+      .create(<Grid data={data} tick={10} params={params} />)
+      .toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+});

@@ -1,5 +1,8 @@
+import { roundRectangleWithCtx, circleWithCtx } from 'react-sim';
+
 const ctx = {
   fillStyle: null,
+  lineCap: null,
   strokeStyle: null,
   beginPath: jest.fn(),
   closePath: jest.fn(),
@@ -16,7 +19,7 @@ const methods = [
   { name: 'strokeRect', min: 4, max: 4 },
 ];
 
-methods.forEach(({name, min, max}) => {
+methods.forEach(({ name, min, max }) => {
   ctx[`_${name}`] = jest.fn();
   ctx[name] = function () {
     const nbArgs = arguments.length;
@@ -29,5 +32,8 @@ methods.forEach(({name, min, max}) => {
     return ctx[`_${name}`](...arguments);
   };
 });
+
+export const circle = args => circleWithCtx(args, ctx);
+export const roundRectangle = args => roundRectangleWithCtx(args, ctx);
 
 export default ctx;
