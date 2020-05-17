@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`template data function works 1`] = `undefined`;
+
+exports[`template data function works 2`] = `undefined`;
+
+exports[`template data function works 3`] = `undefined`;
+
+exports[`template data function works 4`] = `undefined`;
+
+exports[`template data function works 5`] = `undefined`;
+
+exports[`template model renders properly 1`] = `<canvas />`;
