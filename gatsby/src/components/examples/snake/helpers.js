@@ -25,10 +25,10 @@ export const getDir = v.reduce((prev, curr, i) => {
 
 // helpers
 
-export function getRandomInBounds(min, max) {
+export function getRandomInBounds(min, max, random = Math.random) {
   // returns a random integer within [min, max]
   // (bounds are included)
-  return min + Math.floor(Math.random() * (max + 1 - min));
+  return min + Math.floor(random * (max + 1 - min));
 }
 
 export function isValid(x, y, visited, height, width) {
@@ -275,7 +275,7 @@ export function isFullGrid(actionGrid) {
   return actionGrid.every(row => row.every(cell => cell !== undefined));
 }
 
-export function positionFruit(grid) {
+export function positionFruit(grid, random = Math.random) {
   const eligiblePositions = grid.reduce(
     (results, row, r) =>
       row.reduce((resultRow, cell, c) => {
@@ -289,7 +289,7 @@ export function positionFruit(grid) {
   if (eligiblePositions.length === 0) {
     return null;
   }
-  const randomPosition = Math.floor(Math.random() * eligiblePositions.length);
+  const randomPosition = Math.floor(random * eligiblePositions.length);
   return eligiblePositions[randomPosition];
 }
 

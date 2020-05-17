@@ -17,18 +17,21 @@ import {
 
 // init
 
-function initSnake({
-  directionRandom,
-  directionText,
-  height,
-  width,
-  initialLength,
-  snakePosRandom,
-  xHead,
-  yHead,
-}) {
+export function initSnake(
+  {
+    directionRandom,
+    directionText,
+    height,
+    width,
+    initialLength,
+    snakePosRandom,
+    xHead,
+    yHead,
+  },
+  random = Math.random
+) {
   const direction = directionRandom
-    ? Math.floor(Math.random() * 4)
+    ? Math.floor(random * 4)
     : { up: 0, right: 1, down: 2, left: 3 }[directionText];
 
   // position of snake head
@@ -41,8 +44,8 @@ function initSnake({
   if (snakePosRandom) {
     // bounding box where the snake head can be
 
-    xHead = getRandomInBounds(minX, maxX);
-    yHead = getRandomInBounds(minY, maxY);
+    xHead = getRandomInBounds(minX, maxX, random);
+    yHead = getRandomInBounds(minY, maxY, random);
   } else {
     xHead = Math.min(maxX, Math.max(minX, xHead));
     yHead = Math.min(maxY, Math.max(minY, yHead));
@@ -100,8 +103,8 @@ function initSnake({
   };
 }
 
-export function initSnakeGrid(params) {
-  const { grid, head, tail, direction, snakePath } = initSnake(params);
+export function initSnakeGrid(params, random = Math.random) {
+  const { grid, head, tail, direction, snakePath } = initSnake(params, random);
 
   const { height, width } = params;
   const stack = getShortestPath({ grid, start: head, end: tail });
@@ -124,7 +127,7 @@ export function initSnakeGrid(params) {
   };
 }
 
-export function initSnakeGame(params) {
+export function initSnakeGame(params, random = Math.random) {
   const {
     grid,
     frontOfSnake,
@@ -134,9 +137,9 @@ export function initSnakeGame(params) {
     direction,
     length,
     snakePath,
-  } = initSnake(params);
+  } = initSnake(params, random);
 
-  const fruit = positionFruit(grid);
+  const fruit = positionFruit(grid, random);
 
   const longestPath = getLongestPath({
     grid,
@@ -160,7 +163,7 @@ export function initSnakeGame(params) {
 
 // update
 
-export function updateSnake({ data, params, complete }) {
+export function updateSnake({ data, params, complete }, random = Math.random) {
   const { actionGrid, bestPath, grid, direction, head, fruit, length } = data;
   let updatedActionGrid = actionGrid;
   let updatedBestPath = bestPath;
@@ -207,7 +210,10 @@ export function updateSnake({ data, params, complete }) {
   // checking if fruit is eaten, if so, increasing length - repositioning fruit
   let updatedLength = length;
   let updatedFruit = fruit ? [fruit[0], fruit[1]] : [-1, -1];
-  if (updatedHead[0] === fruit[0] && updatedHead[1] === fruit[1]) {
+  if (
+    updatedHead[0] === updatedFruit[0] &&
+    updatedHead[1] === updatedFruit[1]
+  ) {
     updatedLength = Math.min(height * width, updatedLength + fruitGrowth);
     if (!safeMode) {
       // in safe mode, once we find a path that covers the grid, we stick
@@ -215,7 +221,7 @@ export function updateSnake({ data, params, complete }) {
       // each fruit.
       updatedBestPath = false;
     }
-    updatedFruit = positionFruit(updatedGrid);
+    updatedFruit = positionFruit(updatedGrid, random);
   }
 
   // figuring out if action grid should be updated
