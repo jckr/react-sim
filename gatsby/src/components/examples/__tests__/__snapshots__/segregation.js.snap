@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Segregation data function works 1`] = `undefined`;
+
+exports[`Segregation data function works 2`] = `undefined`;
+
+exports[`Segregation data function works 3`] = `undefined`;
+
+exports[`Segregation data function works 4`] = `undefined`;
+
+exports[`Segregation data function works 5`] = `undefined`;
+
+exports[`Segregation model renders properly 1`] = `<canvas />`;
