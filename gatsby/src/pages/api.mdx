@@ -1,0 +1,70 @@
+---
+Title: API reference
+---
+
+# Model
+
+## Import
+
+```
+import {Model} from 'react-sim';
+```
+
+## State
+
+- data (any): represents the current state of the simulation.
+- tick (integer): a measure of time in the simulation. Each time the simulation updates, ticks increases by one.
+- params (Object): the parameters of the simulation.
+  The difference between `data` and `params` is that `data` is being updated at each simulation tick, without user intervention, through the `updateData` function, whereas `params` is only modified when the user interacts with the [controls](/controls).
+  The built-in parameters are:
+  - delay (number): delay between animation refreshes in miliseconds.
+  - maxTime (integer): the value of `tick` at which the animation stops.
+  - minTime (integer): the value of `tick` when the animation starts.
+  - ticksPerAnimation (integer): the number of simulation ticks per animation refresh. If more than one, the simulation will update several times before it's rendered again.
+- isPlaying (boolean): whether the simulation is running or not.
+
+- results (any): is updated each time the simulation finishes, and contains information on the past runs.
+
+## Properties
+
+- initialTick (number, optional, default 0): the initial value for `tick`.
+- initalParams (object, optional): the initial value for the `params` of the simulation. When the simulation starts, it is used to populate `params` in the state.
+
+The following properties can be used as is, or be passed inside `initialParams` i.e. `<Model delay={100} />` or `<Model initialParams={{delay: 100}} />`.
+`initialParams` takes precedence if both are used. They provide an initial value for the corresponding parts of the state.
+
+- delay (number, optional, default 0): the delay between each animation refresh. If not specified, animations happen as fast as possible (up to 60 times per second).
+- minTime (integer, optional, default 0): the value of `tick` when the animation starts.
+- maxTime (integer, optional, default 100): the value of `tick` at which the animation stops.
+- ticksPerAnimation (integer, optional, default 1): the number of simulation ticks per animation refresh. If more than one, the simulation will update several times before it's rendered again.
+
+- isPlaying (boolean, default false): whether the simulation plays automatically or not. If this is updated by external components, the simulation will stop or resume.
+- loop (boolean, default false): if set to true, the simulation restarts whenever it's stopped playing.
+
+- nocache (boolean, default false): if set to true, the simulation won't cache its data. If data is cached, then the user can go back in time without having to recalculate data.
+
+- controls (control object, optional): describes the UI of the simulation. Controls is how the `params` in the state can be modified.
+- noControls (boolean, optional, default false): if set to true, the default controls won't be shown.
+- showTimer (boolean, optional, default true): if set to false, the default timer won't be displayed.
+- showTime (boolean, optional, default true): if set to false, only the play, stop and step-in button will be displayed, the slider and the indication of time won't be shown.
+- showTimerSlider (boolean, optional, default true): if set to false, the timer slider won't be displayed, though the indication of time may be.
+
+  For more information on controls and the syntax of the control object, see [Controls](/controls).
+
+- initData (function, optional): the function that initializes the `data` of the model, when it first starts or when it's reset.
+  It takes `params` (in the state) as input, and outputs a value for `data` (which it puts in the state).
+- updateData (function, optional): this function updates the `data` at each tick of the simualtion.
+  Its arguments are of the form:
+  ```({cachedData, complete, data, params, pause, stop})```. Its output will replace `data` in the state.
+
+  In the arguments:
+    - `data` represents the current value of data.
+    - `tick` represents the new tick.
+    - `params` represents the current parameters.
+    - `cachedData` is an object so that for each past value of `tick`, `cachedData[tick]` represents the value of `data` at that moment of the simulation.
+    - `complete` is a function that signals the simulation is complete (it will also stop).
+    - `pause` is a function that will stop the simulation from automatically updating and animating.
+    - `stop` is a function that will stop the simulation from automatically updating and animating, and will reset it.
+
+
+
