@@ -278,7 +278,8 @@ exports[`chaos-game model renders properly 1`] = `
       className="css-1kchqep"
     >
       <div
-        className="css-j2ivos"
+        className="css-1kfmgte"
+        onClick={[Function]}
       >
         3
       </div>
@@ -294,7 +295,8 @@ exports[`chaos-game model renders properly 1`] = `
         value={7}
       />
       <div
-        className="css-ao1ee1"
+        className="css-89g11l"
+        onClick={[Function]}
       >
         20
       </div>
