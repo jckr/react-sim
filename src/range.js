@@ -42,7 +42,20 @@ export default class Play extends React.Component {
       maxValue !== undefined &&
       maxValue < Infinity && (
         <Flex flexDirection='row' alignItems='center' sx={{ width: [200] }}>
-          {shouldDisplayMinValue && <Text sx={{fontSize: 1, color: 'gray', width: 'max-content'}}>{minValue}</Text>}
+          {shouldDisplayMinValue && (
+            <Text
+              sx={{
+                color: 'gray',
+                cursor: 'pointer',
+                fontSize: 1,
+                userSelect: 'none',
+                width: 'max-content'
+              }}
+              onClick={() => setValue(Math.max(minValue, value - step))}
+            >
+              {minValue}
+            </Text>
+          )}
           <Slider
             id={name || label}
             name={name || label}
@@ -57,7 +70,21 @@ export default class Play extends React.Component {
             step={step}
             value={value}
           />
-          {shouldDisplayMaxValue && <Text sx={{fontSize: 1, color: 'gray', width: 'max-content', minWidth: [40]}}>{maxValue}</Text>}
+          {shouldDisplayMaxValue && (
+            <Text
+              sx={{
+                color: 'gray',
+                cursor: 'pointer',
+                fontSize: 1,
+                userSelect: 'none',
+                width: 'max-content',
+                minWidth: [40]
+              }}
+              onClick={() => setValue(Math.min(maxValue, value + step))}
+            >
+              {maxValue}
+            </Text>
+          )}
         </Flex>
       );
 

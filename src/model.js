@@ -464,7 +464,7 @@ function ThemedModel(props) {
 function getDisplayName(primitive) {
   return typeof primitive === 'string'
     ? primitive
-    : primitive.displayName || primitive.name || 'Component';
+    : primitive?.displayName || primitive?.name || 'Component';
 }
 
 export default ThemedModel;
