@@ -1,10 +1,7 @@
 import React from 'react';
-import {
-  withControls,
-  withFrame,
-} from 'react-sim';
+import { withControls, withFrame } from 'react-sim';
 
-import { FitContentModel as Model } from './framed-model';
+import Model from './framed-model';
 
 import { Flex, Box } from 'rebass';
 

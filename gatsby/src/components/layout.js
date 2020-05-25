@@ -1,10 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box, Flex } from 'rebass';
 import { Pagination } from '@theme-ui/sidenav';
 import mdxComponents from './mdx-components';
 import Head from './head';
 import Header from './header';
-import Nav from './nav';
 import { ThemeProvider, useThemeUI } from 'theme-ui';
 import { window } from 'global';
 import EditLink from './edit-link';
@@ -14,41 +13,32 @@ const disableFullWidthForHomePage = false;
 
 // derived from rebassjs.org layout file
 
-const Sidebar = props => {
-  let isSmall = false;
-  if (typeof window !== undefined) {
-    const context = useThemeUI();
-    const breakpoints = context?.theme?.breakpoints || ['40em'];
-    const isSmallMQ = window?.matchMedia(`(max-width: ${breakpoints[0]})`) || {
-      matches: false,
-    };
-    isSmall = isSmallMQ.matches;
-  }
+const Sidebar = ({ Toc, isSmall, location, nav, open, setMenu, ...props }) => {
   return (
     <Flex>
       <Box
-        ref={props.nav}
-        open={props.open}
+        ref={nav}
+        open={open}
         onClick={e => {
           if (!isSmall) {
             return;
           }
-          props.setMenu(false);
+          setMenu(false);
         }}
         onBlur={e => {
           if (!isSmall) {
             return;
           }
-          props.setMenu(false);
+          setMenu(false);
         }}
         onFocus={e => {
           if (!isSmall) {
             return;
           }
-          props.setMenu(true);
+          setMenu(true);
         }}
         style={{
-          transform: props.open ? 'translateX(0)' : 'translateX(-100%)',
+          transform: open ? 'translateX(0)' : 'translateX(-100%)',
         }}
         sx={{
           position: ['fixed', 'sticky'],
@@ -80,7 +70,7 @@ const Sidebar = props => {
           },
         }}
       >
-        <Nav />
+        <Toc />
       </Box>
       <Box
         sx={{
@@ -95,8 +85,8 @@ const Sidebar = props => {
       >
         {props.children}
         <EditLink my={5}>Edit this page on GitHub</EditLink>
-        <Nav
-          pathname={props.location?.pathname}
+        <Toc
+          pathname={location?.pathname}
           components={{
             wrapper: Pagination,
           }}
@@ -110,8 +100,19 @@ export default props => {
   const fullwidth =
     disableFullWidthForHomePage && props.location?.pathname === '/';
   const [menu, setMenu] = useState(false);
+  const [isSmall, setIsSmall] = useState(false);
   const nav = useRef(null);
   const { theme } = useThemeUI();
+
+  useEffect(() => {
+    const handleSizeChange = ({ matches }) => setIsSmall(matches);
+    const breakpoints = theme?.breakpoints || ['40em'];
+    const isSmallMQ = window.matchMedia(`(max-width: ${breakpoints[0]})`);
+    isSmallMQ.addListener(handleSizeChange);
+    setIsSmall(isSmallMQ.matches);
+
+    return isSmallMQ.removeListener(handleSizeChange);
+  });
 
   return (
     <ThemeProvider components={mdxComponents} theme={theme}>
@@ -119,7 +120,14 @@ export default props => {
         <Head {...props} />
         <Header fullwidth={fullwidth} menu={menu} setMenu={setMenu} nav={nav} />
         {!fullwidth ? (
-          <Sidebar {...props} nav={nav} open={menu} setMenu={setMenu}>
+          <Sidebar
+            {...props}
+            isSmall={isSmall}
+            Toc={props.Toc}
+            nav={nav}
+            open={menu}
+            setMenu={setMenu}
+          >
             <main id="content">{props.children}</main>
           </Sidebar>
         ) : (

@@ -41,7 +41,7 @@ export default class Play extends React.Component {
     const ControlRow = shouldDisplaySlider &&
       maxValue !== undefined &&
       maxValue < Infinity && (
-        <Flex flexDirection='row' alignItems='center' sx={{ width: [200] }}>
+        <Flex flexDirection='row' alignItems='center' sx={{ width: [158] }}>
           {shouldDisplayMinValue && (
             <Text
               sx={{

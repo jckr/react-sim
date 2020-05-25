@@ -1,8 +1,22 @@
 ---
 Title: Activators / Inhibitors
 ---
+
 import Activators from '../../components/examples/activators';
 
 # Activators / Inhibitors
 
 <Activators />
+
+The [activator-inhibitor](http://www.scholarpedia.org/article/Gierer-Meinhardt_model) model is a simulation of pattern formation such as the fur patterns of animals like the zebra or the giraffe.
+
+In this pattern, cells are arranged in a familar, 2d grid, and can either be activated (colored) or not (left blank).
+
+Each activated cell activates cells in its inner radius, and inhibits cells in its outer radius.
+For instance, if the inner radius is 3, and the outer radius is 6, all the cells within 3 cells of the activated cell are activated, and all cells beyond that and within 6 cells are inhibited.
+
+Each turn, we go through all the cells in the grid, and count how many times they are activated, and how many times they are inhibited.
+The weight coefficient determines the relative power of inhibitors.
+If a cell is activated more than it's inhibited, it becomes (or stays) activated, else it's deactivated.
+
+

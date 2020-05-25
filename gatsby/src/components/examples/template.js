@@ -1,7 +1,7 @@
 import React from 'react';
 import { CanvasFrame } from 'react-sim';
 
-import { FitContentModel as Model } from './framed-model';
+import Model from './framed-model';
 
 
 export const params = {};

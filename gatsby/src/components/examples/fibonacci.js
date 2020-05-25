@@ -1,7 +1,7 @@
 import React from 'react';
 import { CanvasFrame } from 'react-sim';
 
-import { FitContentModel as Model } from './framed-model';
+import Model from './framed-model';
 
 const phi = 0.5 + Math.sqrt(5) / 2;
 
@@ -93,7 +93,7 @@ export const FibonacciSpiralFrame = ({ tick, params }) => {
 };
 
 const FibonacciSpiral = () => (
-  <Model initialParams={{ size: 500 }} delay={100} maxTime={15}>
+  <Model initialParams={{ size: 332 }} delay={100} maxTime={15}>
     <FibonacciSpiralFrame />
   </Model>
 );
@@ -227,11 +227,11 @@ export const FibonacciSquaresFrame = ({ data, tick, params }) => {
 
 const FibonacciSquares = () => (
   <Model
-    initialParams={{ size: 500 }}
+    initialParams={{ size: 350 }}
     initData={initData}
     updateData={updateData}
     delay={400}
-    maxTime={16}
+    maxTime={12}
   >
     <FibonacciSquaresFrame />
   </Model>

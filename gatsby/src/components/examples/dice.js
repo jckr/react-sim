@@ -2,7 +2,7 @@ import React from 'react';
 import { useThemeUI } from 'theme-ui';
 import { Flex } from 'rebass';
 
-import { FitContentModel as Model } from './framed-model';
+import Model from './framed-model';
 
 // helpers
 
@@ -80,7 +80,7 @@ export const Die = ({ value }) => {
 
 const Bar = ({ label, max, nbRolls, nbValues, theme }) => {
   const height = max ? (50 * nbRolls) / max : 0;
-  const width = 500 / nbValues;
+  const width = 350 / nbValues;
   const color = theme?.colors?.primary || '#33f';
 
   return (
@@ -100,7 +100,7 @@ const Bar = ({ label, max, nbRolls, nbValues, theme }) => {
         flexDirection="row"
         sx={{
           justifyContent: 'center',
-          fontSize: `${Math.min((500 / 2) * nbValues, 12)}px`,
+          fontSize: `${Math.min(350 / (1.5 * nbValues), 12)}px`,
         }}
       >
         {label}

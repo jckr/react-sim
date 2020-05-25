@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { Flex, Box, Text } from 'rebass';
-import { Label } from '@rebass/forms';
 import { withFrame } from './';
 
 function getMaxMinDatapoint(
@@ -26,7 +25,7 @@ export const TimeSeriesComponent = ({
   cachedData,
   data,
   height = 80,
-  width = 500,
+  width = 350,
   padding = 10,
   tick,
   params,
@@ -177,7 +176,7 @@ export const IndicatorComponent = ({ data, series }) => {
             mr: 2
           }}
         />
-        <Label>{series.label}</Label>
+        <Text sx={{ fontSize: 0, fontWeight: 'bold' }}>{series.label}</Text>
       </Flex>
       <Text sx={{ fontSize: 5, ml: 3, fontWeight: 'normal' }}>
         {String(series.accessor ? series.accessor(data) : data)}
@@ -190,7 +189,7 @@ export const CounterComponent = ({
   data,
   series,
   height = 50,
-  width = 500,
+  width = 350,
   padding = 10,
   ...props
 }) => {
@@ -201,10 +200,11 @@ export const CounterComponent = ({
       sx={{
         justifyContent: 'space-evenly',
         alignItems: 'center',
+        flexWrap: 'wrap',
         height: [height],
         width: [width],
         padding: [padding],
-        mb: 2
+        my: 3
       }}
       {...props}
     >

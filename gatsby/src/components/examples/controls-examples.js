@@ -2,7 +2,7 @@ import React from 'react';
 import { withControls, withFrame, Range } from 'react-sim';
 import { Flex, Text } from 'rebass';
 
-import { FullWidthModel as Model } from './framed-model';
+import Model from './framed-model';
 
 export const DefaultTimer = () => (
   <Model>
