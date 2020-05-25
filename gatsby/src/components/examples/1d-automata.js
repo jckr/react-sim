@@ -7,13 +7,21 @@ import { Flex, Box } from 'rebass';
 
 export const params = {
   rule: 110,
-  cols: 50,
+  cols: 33,
   rows: 24,
+  firstLine: 'blank',
 };
-export const initData = ({ cols }) => {
+export const initData = ({ cols, firstLine }, random = Math.random) => {
   const data = Array(cols).fill(0);
+
   data[Math.floor(data.length / 2)] = 1;
-  return data;
+  if (firstLine === 'blank') {
+    return data;
+  }
+  if (firstLine === 'full') {
+    return data.map(d => 1);
+  }
+  return data.map(d => (random() > 0.5 ? 1 : 0));
 };
 export const updateData = ({ data, cols, params }) => {
   const { rule } = params;
@@ -37,8 +45,9 @@ export const FrameComponent = ({ data, cachedData, tick, params }) => {
       style={{
         overflow: 'hidden',
         position: 'relative',
-        height: rows * 12,
-        width: cols * 12,
+        height: rows * 10,
+        width: cols * 10,
+        margin: '0 auto',
       }}
     >
       <Flex direction="column" sx={{ position: 'absolute', top: 0 }}>
@@ -48,11 +57,11 @@ export const FrameComponent = ({ data, cachedData, tick, params }) => {
             <Flex
               direction="row"
               key={`row-${ts}`}
-              sx={{ position: 'absolute', top: 12 * rowIndex }}
+              sx={{ position: 'absolute', top: 10 * rowIndex }}
             >
               {cachedData[ts].map((cell, x) => (
                 <Square
-                  size={10}
+                  size={8}
                   color={cell ? '#000' : 'none'}
                   key={`cell-${x}`}
                 />
@@ -94,7 +103,7 @@ const BitControlComponent = ({ bit, params, setParams }) => {
       flexDirection="column"
       onClick={action}
       alignItems="center"
-      sx={{ mr: 2 }}
+      sx={{ mr: 2, cursor: 'pointer' }}
     >
       <Flex flexDirection="row">
         <Square color={left ? '#000' : 'none'} />
@@ -113,12 +122,27 @@ const Automata = () => (
     initialParams={params}
     initData={initData}
     updateData={updateData}
-    controls={{ param: 'rule', maxValue: 255, label: 'Rule' }}
+    controls={
+      ({ param: 'rule', maxValue: 255, label: 'Rule' },
+      {
+        param: 'firstLine',
+        label: 'First line:',
+        type: 'radio',
+        options: ['blank', 'full', 'random'],
+        resetOnChange: true,
+        vertical: true,
+      })
+    }
   >
     <Flex flexDirection="column">
       <Frame />
       <Flex flexDirection="row" sx={{ justifyContent: 'space-between', my: 2 }}>
-        {[0, 1, 2, 3, 4, 5, 6, 7].map(bit => (
+        {[0, 1, 2, 3].map(bit => (
+          <BitControl bit={bit} key={`bit-${bit}`} />
+        ))}
+      </Flex>
+      <Flex flexDirection="row" sx={{ justifyContent: 'space-between', my: 2 }}>
+        {[4, 5, 6, 7].map(bit => (
           <BitControl bit={bit} key={`bit-${bit}`} />
         ))}
       </Flex>

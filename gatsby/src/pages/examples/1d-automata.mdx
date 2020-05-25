@@ -6,3 +6,14 @@ import Automata from '../../components/examples/1d-automata';
 # 1D Automata
 
 <Automata />
+
+[1D cellular automata](https://mathworld.wolfram.com/ElementaryCellularAutomaton.html) are among the simplest of automata.
+Each line consists of a series of cells which are either set (colored) or not.
+
+At each tick, we use a rule to determine whether cells on the next line will be set.
+For each new cell, we consider the three cells above. There are 8 possible combinations - each of these cells can be set or not (so 2x2x2).
+For each of these combinations, the rule determines whether the cell should be set or not. So we have 2<sup>8</sup> rules, or 256.
+
+You can select a rule by adjusting the slider, or by clicking on each of the bits.
+
+This simulation is an interesting example of [custom control components](/controls/custom-controls)
