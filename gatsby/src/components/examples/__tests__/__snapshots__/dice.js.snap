@@ -620,20 +620,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         5
       </div>
@@ -642,20 +642,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         6
       </div>
@@ -664,20 +664,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         7
       </div>
@@ -686,20 +686,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         8
       </div>
@@ -708,20 +708,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         9
       </div>
@@ -730,20 +730,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         10
       </div>
@@ -752,20 +752,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         11
       </div>
@@ -774,20 +774,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         12
       </div>
@@ -796,20 +796,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         13
       </div>
@@ -818,20 +818,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 50,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         14
       </div>
@@ -840,20 +840,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         15
       </div>
@@ -862,20 +862,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         16
       </div>
@@ -884,20 +884,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         17
       </div>
@@ -906,20 +906,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 50,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         18
       </div>
@@ -928,20 +928,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         19
       </div>
@@ -950,20 +950,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 50,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         20
       </div>
@@ -972,20 +972,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         21
       </div>
@@ -994,20 +994,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         22
       </div>
@@ -1016,20 +1016,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         23
       </div>
@@ -1038,20 +1038,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         24
       </div>
@@ -1060,20 +1060,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 50,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         25
       </div>
@@ -1082,20 +1082,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         26
       </div>
@@ -1104,20 +1104,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         27
       </div>
@@ -1126,20 +1126,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         28
       </div>
@@ -1148,20 +1148,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         29
       </div>
@@ -1170,20 +1170,20 @@ exports[`Dice model renders properly 6`] = `
       className="css-l3rx45"
     >
       <div
-        className="css-1p613lf"
+        className="css-180fwul"
       >
         <div
           style={
             Object {
               "backgroundColor": "red",
               "height": 0,
-              "width": 15.384615384615385,
+              "width": 10.76923076923077,
             }
           }
         />
       </div>
       <div
-        className="css-1xud2bt"
+        className="css-1r49g1y"
       >
         30
       </div>
