@@ -6,7 +6,7 @@ import Head from './head';
 import Header from './header';
 import Nav from './nav';
 import { ThemeProvider, useThemeUI } from 'theme-ui';
-
+import { window } from 'global';
 import EditLink from './edit-link';
 import Footer from './footer';
 
@@ -15,12 +15,15 @@ const disableFullWidthForHomePage = false;
 // derived from rebassjs.org layout file
 
 const Sidebar = props => {
-  const context = useThemeUI();
-  const breakpoints = context?.theme?.breakpoints || ['40em'];
-  const isSmallMQ = window?.matchMedia(`(max-width: ${breakpoints[0]})`) || {
-    matches: false,
-  };
-  const isSmall = isSmallMQ.matches;
+  let isSmall = false;
+  if (typeof window !== undefined) {
+    const context = useThemeUI();
+    const breakpoints = context?.theme?.breakpoints || ['40em'];
+    const isSmallMQ = window?.matchMedia(`(max-width: ${breakpoints[0]})`) || {
+      matches: false,
+    };
+    isSmall = isSmallMQ.matches;
+  }
   return (
     <Flex>
       <Box
