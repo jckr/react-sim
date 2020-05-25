@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid } from 'react-sim';
 
-import { FitContentModel as Model } from './framed-model';
+import Model from './framed-model';
 
 // helpers
 
@@ -99,8 +99,8 @@ const GameOfLife = () => (
     delay={100}
     initData={initGrid}
     initialParams={{
-      height: 24,
-      width: 48,
+      height: 28,
+      width: 28,
       density: 0.15,
     }}
   >

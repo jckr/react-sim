@@ -1,5 +1,5 @@
 import React from 'react';
-import {withControls} from './';
+import { withControls } from './';
 import CheckboxComponent from './checkbox';
 import InputComponent from './input';
 import RadioComponent from './radio';
@@ -23,7 +23,11 @@ export default class Controls extends React.Component {
       return controls.map((c, i) => (
         <Flex
           flexDirection={horizontally ? 'row' : 'column'}
-          sx={horizontally ? { mt: 1, alignItems: 'center' } : { my: 1 }}
+          sx={
+            horizontally
+              ? { mt: 1, alignItems: 'center', flexWrap: 'wrap' }
+              : { my: 1 }
+          }
           key={`c-${i}`}
         >
           {/* If original parameter is a nested array, we render nested rows of columns */}

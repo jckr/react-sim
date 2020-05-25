@@ -2,7 +2,7 @@ import React from 'react';
 import { CanvasFrame, Counter, TimeSeries } from 'react-sim';
 import { Flex } from 'rebass';
 
-import { FitContentModel as Model } from './framed-model';
+import Model from './framed-model';
 
 
 export const initData = (params, random = Math.random) => {
@@ -226,10 +226,10 @@ const counterSeries = [
 ];
 
 export const params = {
-  cols: 30,
-  rows: 30,
-  height: 480,
-  width: 480,
+  cols: 20,
+  rows: 20,
+  height: 330,
+  width: 330,
   tolerance: 60,
   proportion: 50,
   showmoves: true,
@@ -246,7 +246,7 @@ const Segregation = () => (
     controls={[
       { param: 'tolerance', label: 'Tolerance' },
       { param: 'proportion', label: 'Proportion' },
-      { param: 'threshold', label: 'Proportion' },
+      { param: 'threshold', label: 'Threshold' },
       { param: 'showmoves', label: 'Show moves', type: 'toggle' },
     ]}
   >

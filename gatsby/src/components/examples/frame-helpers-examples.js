@@ -7,7 +7,7 @@ import {
 } from 'react-sim';
 import { Flex, Text } from 'rebass';
 
-import { FitContentModel as Model } from './framed-model';
+import Model from './framed-model';
 
 import { initDice, updateDice, Die } from './dice';
 

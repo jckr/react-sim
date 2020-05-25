@@ -2,7 +2,7 @@ import React from 'react';
 import { Flex, Box } from 'rebass';
 import { CanvasFrame } from 'react-sim';
 
-import { FitContentModel as Model } from './framed-model';
+import Model from './framed-model';
 
 const EMPTY = 0;
 const ROCK = 1;
@@ -239,12 +239,16 @@ export const PercolationFrameGrid = ({ data, params }) => {
     <div
       style={{
         display: 'flex',
+        margin: '0 auto',
         flexDirection: 'column',
         height: (ch + 10) * params.rows + 60,
         width: (cw + 10) * params.cols + 10,
       }}
     >
-      <Flex flexDirection="row">
+      <Flex
+        flexDirection="row"
+        sx={{ justifyContent: 'space-around', width: '100%' }}
+      >
         {data.cols.map(c => (
           <Box
             sx={{
@@ -252,40 +256,52 @@ export const PercolationFrameGrid = ({ data, params }) => {
               fontSize: 1,
               textAlign: 'center',
               fontWeight: 2,
-              m: '5px',
             }}
           >
             {c.p.toFixed(2)}
           </Box>
         ))}
       </Flex>
-      {data.grids.map((row, y) => (
-        <div style={{ display: 'flex', flexDirection: 'row' }} key={`row-${y}`}>
-          {row.map((cell, x) => (
-            <div
-              style={{
-                height: params.height * params.cellSize,
-                width: params.width * params.cellSize,
-                margin: 5,
-              }}
-            >
-              <PercolationFrame
-                key={`cell-${x}-${y}`}
-                data={cell}
-                params={params}
-              />
-            </div>
-          ))}
-        </div>
-      ))}
-      <Flex flexDirection="row">
+      <Flex
+        sx={{
+          flexDirection: 'column',
+          justifyContent: 'space-around',
+          height: (ch + 10) * params.rows,
+        }}
+      >
+        {data.grids.map((row, y) => (
+          <Flex
+            sx={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+            }}
+            key={`row-${y}`}
+          >
+            {row.map((cell, x) => (
+              <Flex
+                sx={{
+                  height: params.height * params.cellSize,
+                  width: params.width * params.cellSize,
+                }}
+              >
+                <PercolationFrame
+                  key={`cell-${x}-${y}`}
+                  data={cell}
+                  params={params}
+                />
+              </Flex>
+            ))}
+          </Flex>
+        ))}
+      </Flex>
+
+      <Flex flexDirection="row" sx={{ justifyContent: 'space-around' }}>
         {data.cols.map(c => (
           <Box
             sx={{
               width: [cw],
               fontSize: 1,
               textAlign: 'center',
-              m: '5px',
             }}
           >
             {`${c.result}/${c.total}`}
@@ -312,8 +328,8 @@ export const Percolation = () => {
         maxTime={Infinity}
         initData={initData}
         initialParams={{
-          width: 100,
-          height: 100,
+          width: 66,
+          height: 66,
           cellSize: 5,
           margin: 0,
           porosity: 0.6,
@@ -362,8 +378,8 @@ export const PercolationGrid = () => {
           cellSize: 1.5,
           margin: 0,
           rows: 10,
-          cols: 10,
-          minP: 0.5,
+          cols: 8,
+          minP: 0.54,
           stepP: 0.02,
         }}
       >

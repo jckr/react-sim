@@ -91,6 +91,7 @@ const theme = {
       width: '100%',
       th: {
         backgroundColor: 'muted',
+        textAlign: 'left',
         pl: 2,
         pr: 2,
         py: 2,
@@ -109,6 +110,7 @@ const theme = {
         },
       },
       td: {
+        fontSize: 1,
         m: 0,
         pl: 2,
         pr: 2,
@@ -122,6 +124,7 @@ const theme = {
         ':first-of-type': {
           borderLeftWidth: '1px',
         },
+        strong: { wordBreak: ['break-all', 'normal'] },
       },
     },
   },

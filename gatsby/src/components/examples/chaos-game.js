@@ -7,7 +7,7 @@ import {
 } from 'react-sim';
 import { Flex } from 'rebass';
 
-import { FitContentModel as Model } from './framed-model';
+import Model from './framed-model';
 
 export const updateAttractors = ({ angleOffset, nbAttractors, height, width }) => {
   const center = { x: width / 2, y: height / 2 };
@@ -102,8 +102,8 @@ export const BasicChaosGame = () => (
     loop
     updateData={updateData}
     initialParams={{
-      height: 500,
-      width: 500,
+      height: 332,
+      width: 332,
       nbAttractors: 3,
       r: 1,
     }}
@@ -166,8 +166,8 @@ export const ChaosGame = () => (
     initData={init}
     updateData={updateData}
     initialParams={{
-      height: 500,
-      width: 500,
+      height: 332,
+      width: 332,
       nbAttractors: 7,
       angle: 0,
       r: 1,

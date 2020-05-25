@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid} from 'react-sim';
 
-import { FitContentModel as Model } from './framed-model';
+import Model from './framed-model';
 
 export const Frame = ({tick}) => {
   const data = Array(10).fill(0).map((r, y) =>

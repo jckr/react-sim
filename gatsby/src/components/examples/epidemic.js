@@ -2,7 +2,7 @@ import React from 'react';
 import { Flex } from 'rebass';
 import { TimeSeries, Counter, withFrame } from 'react-sim';
 
-import { FitContentModel as Model } from './framed-model';
+import Model from './framed-model';
 
 const COLORS = {
   sick: '#4f8c9d',
@@ -13,7 +13,7 @@ const COLORS = {
 
 export function updateEpidemic(
   { data, tick, params, complete },
-  random = Math.random()
+  random = Math.random
 ) {
   let updatedData = JSON.parse(JSON.stringify(data.agents));
   let nbSick = 0,
@@ -136,7 +136,7 @@ function chooseMamongN(n, m, random) {
   const results = new Set();
 
   for (let i = 0; i < m; i++) {
-    const k = Math.floor(random * Object.keys(N).length);
+    const k = Math.floor(random() * Object.keys(N).length);
     results.add(k);
     delete N[k];
   }
@@ -280,9 +280,9 @@ const Epidemic = () => (
       maxSpeed: 2,
       recoveryTicks: 200,
       nbDistancing: 0,
-      r: 3,
-      height: 300,
-      width: 500,
+      r: 2,
+      height: 332,
+      width: 332,
     }}
     updateData={updateEpidemic}
     maxTime={500}

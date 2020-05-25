@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid } from 'react-sim';
 
-import { FitContentModel as Model } from './framed-model';
+import Model from './framed-model';
 
 // helpers
 
@@ -88,7 +88,6 @@ const Activators = () => (
     auto="false"
     controls={[
       [
-        { param: 'w', minValue: 0, maxValue: 1, label: 'weight', step: 0.01 },
         {
           param: 'innerRadius',
           minValue: 1,
@@ -103,15 +102,14 @@ const Activators = () => (
         },
       ],
       [
-        { param: 'height', minValue: 5, maxValue: 100, label: 'Height' },
-        { param: 'width', minValue: 5, maxValue: 100, label: 'Width' },
+        { param: 'w', minValue: 0, maxValue: 1, label: 'weight', step: 0.01 },
         { param: 'density', minValue: 0, maxValue: 1, step: 0.1 },
       ],
     ]}
     initData={initData}
     initialParams={{
-      height: 30,
-      width: 30,
+      height: 35,
+      width: 35,
       density: 0.5,
       innerRadius: 3,
       outerRadius: 6,

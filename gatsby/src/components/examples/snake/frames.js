@@ -270,6 +270,7 @@ export class SnakeFrame extends React.Component {
       return null;
     }
 
+    const { actionGrid, grid } = data;
     const { width, height, cellSize } = this.props.params;
     return (
       <div
@@ -277,8 +278,8 @@ export class SnakeFrame extends React.Component {
           boxSizing: 'content-box',
           width: width * cellSize,
           height: height * cellSize,
-          border: '2px solid black',
-          padding: cellSize,
+          margin: '0 auto',
+          paddingBottom: cellSize,
         }}
       >
         {this.renderAG()}

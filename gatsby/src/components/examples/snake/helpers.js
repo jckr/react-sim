@@ -262,7 +262,7 @@ export function positionFruit(grid, random = Math.random) {
   if (eligiblePositions.length === 0) {
     return null;
   }
-  const randomPosition = Math.floor(random * eligiblePositions.length);
+  const randomPosition = Math.floor(random() * eligiblePositions.length);
   return eligiblePositions[randomPosition];
 }
 
