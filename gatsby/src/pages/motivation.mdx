@@ -1,0 +1,53 @@
+---
+Title: Motivation & Inspiration
+---
+
+# Motivation
+
+`react-sim` was written to make building interactive models simple.
+
+It is based on three ideas:
+
+- separation of concern,
+- building blocks instead of boiler-plate,
+- integration with other apps.
+
+## Separation of concern
+
+To build an interactive model, a developer must manage several things:
+
+- how the model is initialized,
+- how the data of the model changes over time,
+- how to render a visual representation of the simulation,
+- how to deal with time and animation - can the simulation play and pause, go forward or back in time, etc.
+- handle user interaction.
+
+In `react-sim`, those things can be dealt with _separately_. We don't need to know how the data will update to figure out how to render it.
+When the simulation is initalized, it doesn't need to be aware of how it will animate. So, in react-sim, the code that does any of these tasks is separate. By having all of that logic separated, the code is safer, more legible, easier to maintain and test.
+
+## Less boiler-plate, more building blocks
+
+Another painpoint in creating an interactive model from scratch is that there are common tasks that need to be taken care of for each new project.
+That can be: actually implementing an animation and calling certain functions at regular intervals, which is the core of what `react-sim` does.
+But that also includes: setting up a component that can refresh a canvas, or building a simple UI to control the nodel.
+
+`react-sim` comes with 2 series of building blocks, one for controls and one for display elements, that take care of the most basic and common tasks.
+But it also allows developers to create their own.
+
+## Integration in other apps
+
+`react-sim` produces a React component and works everywhere React does, just like any other React components. They can take parameters and properties from the outside.
+The default UI of `react-sim` uses `rebass`, and so a simulation can appear in an app styled by `rebass` and seamlessly take its theme.
+
+# Inspiration
+
+The three main sources of inspiration for `react-sim` are [Processing](https://processing.org/), [Observable](https://observablehq.com/), and [NetLogo](http://ccl.northwestern.edu/netlogo/).
+
+[Processing](https://processing.org/) sketches are similar to react-sim simulations in that they have a one-off setup function, followed by a draw function called continuously.
+Processing also has a very expressive and concise language focused on building sketches.
+`react-sim` goes further than processing in separating initial setup and iterations by also separating data and rendering, however, it uses standard JavaScript syntax.
+
+[Observable](https://observablehq.com/) also create visual representations of data and makes it easy to add interactive controls. Observable lets the user create visual explanations by combining and arranging visual elements, text and controls. Observable is also a platform where authors can publish their notebooks and fork the work of others.
+`react-sim` doesn't have such a platform or the notebook format, but also lets developers style their work freely and integrate it whereever they want seamlessly.
+
+[NetLogo](http://netlogoweb.org/) is a dedicated programmable modeling environment and its syntax is narrowly focused on building multi-agent models. As a result, even more so than processing, it has a very concise and expressive way to do so. `react-sim` uses JavaScript/React syntax which is more verbose, but more flexible.

@@ -1,6 +1,8 @@
 import React, { useRef, useEffect } from 'react';
-import { Model, CanvasFrame } from 'react-sim';
+import { CanvasFrame } from 'react-sim';
 import { Flex, Box } from 'rebass';
+
+import { FitContentModel as Model } from './framed-model';
 
 const phi = 0.5 + Math.sqrt(5) / 2;
 

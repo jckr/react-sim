@@ -1,0 +1,266 @@
+---
+Title: API reference
+---
+
+import {
+  CanvasFrameAPI,
+  CircleAPI,
+  CommonControlPropsAPI,
+  CounterAPI,
+  DefaultTimerAPI,
+  DrawAPI,
+  GridAPI,
+  IndicatorAPI,
+  ModelPropsAPI,
+  ModelStateAPI,
+  Range,
+  RoundRectangleAPI,
+  SeriesAPI,
+  TimerAPI,
+  TimeSeriesAPI,
+  UpdateDataAPI,
+  WithControlsAPI,
+  WithFrameAPI,
+} from '../components/api';
+
+A single-page reference of all the APIs used throughout `React-Sim`.
+
+- [Model](/api/#model)
+- [withFrame](/api/#withframe)
+- [grid](/api/#grid)
+- [canvasFrame](/api/#canvasframe)
+- [circle](/api/#canvasframe)
+- [roundRectangle](/api/#roundrectangle)
+- [draw](/api/#draw)
+- [timeSeries](/api/#timeseries)
+
+# Model
+
+## Usage
+
+```jsx
+import {Model} from 'react-sim';
+
+function initData = params => { /* ... */ }
+function updateData =
+  ({data, params, tick, ...args}) => { /* ... */ }
+const params = { /* ... */};
+function Frame =
+  ({data, params, tick, ...args}) => <>{ /* ... */ }</>;
+
+export function MyModel = () => <Model
+  initalParams={params}
+  initData={initData}
+  updateData={updateData}
+>
+  <Frame />
+</Model>
+```
+
+## State
+
+<ModelStateAPI />
+
+## Properties
+
+<ModelPropsAPI />
+
+For more information on controls and the syntax of the control object, see [Controls](/controls).
+
+# Frame Helpers
+
+## withFrame
+
+### Usage
+
+```jsx
+import {Model, withFrame} from 'react-sim';
+
+const FrameComponent = props => <>{ /* ... */ }</>;
+const Frame = withFrame(FrameComponent);
+
+export function MyModel = () => <Model>
+  <Frame />
+</Model>
+```
+
+### API
+
+`withFrame` is a wrapper around a [Frame](/frames) component.
+
+Wrapping a component with `withFrame` will expose the connected component to the following properties:
+These properties come from the state of the `Model` this component is a descendant of.
+
+<WithFrameAPI />
+
+For convenience, a component which is a direct child of a `Model` automatically receives these properties without `withFrame`.
+
+```jsx
+import {Model, withFrame} from 'react-sim';
+
+const FrameComponent = props => <>{ /* ... */ }</>;
+const Frame = withFrame(FrameComponent);
+
+export function MyModel = () => <Model>
+  {/* this component has access to frame props */}
+  <FrameComponent />
+  <div>
+    {/* this one doesn't, because it's not a direct child */}
+    <FrameComponent />
+    {/* this component has access to frame props, because it's connected */}
+    <Frame />
+  </div>
+</Model>
+```
+
+## Grid
+
+see [Grid guide](./frame-helpers/grid)
+
+### Usage
+
+```jsx
+  import {Model, Grid} from 'react-sim';
+
+  export function MyModel = () => <Model>
+    <Grid />
+  </Model>
+```
+
+### API
+
+<GridAPI />
+
+### GridComponent
+
+```jsx
+import { GridComponent } from 'react-sim';
+```
+
+`Grid` is wrapped with `withFrame` so it can be used anywhere in the tree. The corresponding, unwrapped component, `GridComponent`, can also be exported from `react-sim`.
+
+## CanvasFrame
+
+see [CanvasFrame guide](./frame-helpers/canvas-frame)
+
+### Usage
+
+```jsx
+  import {Model, CanvasFrame} from 'react-sim';
+
+  function draw({ctx, data, ...args}) => {
+    /* canvas operations */
+  }
+
+  export function MyModel = () => <Model>
+    <CanvasFrame draw={draw} />
+  </Model>
+```
+
+### API
+
+<CanvasFrameAPI />
+
+### Circle
+
+<CircleAPI />
+
+### RoundRectangle
+
+<RoundRectangleAPI />
+
+### Draw
+
+<DrawAPI />
+
+## TimeSeries
+
+see [TimeSeries guide](/frame-helpers/time-series).
+
+### Series
+
+<SeriesAPI />
+
+### TimeSeries
+
+<TimeSeriesAPI />
+
+### Counter
+
+<CounterAPI />
+
+### Indicator
+
+<IndicatorAPI />
+
+## Controls
+
+See [Controls guide](/controls).
+
+### withControls
+
+Components wrapped with `withControls` gain access to the following properties:
+
+<WithControlsAPI />
+
+### Common Controls Properties
+
+Unless otherwise specified, all built-in controls have the following properties:
+
+<CommonControlPropsAPI />
+
+### Range
+
+See the [Range guide](/controls/range).
+
+<RangeAPI />
+
+### Timer
+
+#### Default Timer
+
+See the [Default timer guide](/controls/default-timer).
+
+By default a `Model` comes with a built-in `Timer` control. For this defaut `Timer`, the following props come directly from `Model` (see [Model properties](/api/#model).)
+
+<DefaultTimerAPI />
+
+#### General case
+
+See the [Timer guide](/controls/timer).
+
+If the `Timer` is defined anywhere else, these properties can be passed to the `Timer` directly.
+
+<TimerAPI />
+
+### Checkbox
+
+See the [Checkbox guide.](/controls/checkbox)
+
+Its API is solely the [Common Control Props.](/api/#common-controls-properties)
+
+### Input
+
+See the [Input guide.](/controls/input)
+
+Its API is solely the [Common Control Props.](/api/#common-controls-properties)
+
+### Radio
+
+See the [Radio guide.](/controls/radio)
+
+<RadioAPI />
+
+### Select
+
+See the [Select guide.](/controls/select)
+
+<SelectAPI />
+
+### Toggle
+
+See the [Toggle guide.](/controls/toggle)
+
+Its API is solely the [Common Control Props.](/api/#common-controls-properties)
+
+

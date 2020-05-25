@@ -31,7 +31,7 @@ export function initSnake(
   random = Math.random
 ) {
   const direction = directionRandom
-    ? Math.floor(random * 4)
+    ? Math.floor(random() * 4)
     : { up: 0, right: 1, down: 2, left: 3 }[directionText];
 
   // position of snake head

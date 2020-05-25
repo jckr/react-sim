@@ -1,4 +1,6 @@
-const remarkPlugins = [];
+const remarkPlugins = [
+  require('remark-slug'),
+]
 
 module.exports = {
   siteMetadata: {

@@ -11,13 +11,12 @@ const ControlsContext = React.createContext({});
 
 export class Model extends React.Component {
   static defaultProps = {
-    start: false,
     controls: null,
-    initData: () => [],
+    delay: 0,
+    initData: () => null,
     initialData: null,
     initialParams: {},
     initialTick: 0,
-    delay: 0,
     loop: false,
     minTime: 0,
     maxTime: 100,

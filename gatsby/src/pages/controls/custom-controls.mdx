@@ -3,9 +3,9 @@ Title: Custom Controls
 ---
 
 import { CustomControlExample } from '../../components/examples/controls-examples';
+import {WithControlsAPI} from '../../components/api'
 
 # Custom controls
-
 <CustomControlExample />
 
 _A custom control example_
@@ -18,12 +18,7 @@ You can import `withControls`, and wrap any arbitrary component with it.
 
 When you do that, you expose this component to the following props:
 
-- isPlaying (boolean): tells your custom control if the simulation is playing.
-- params (object): any and all of the simulation parameters.
-- pause (function): call this function to _pause_ the simulation (it stops playing, but is not reset.)
-- play (function): call this function to start or resume playing the simulation.
-- stop (function): call this function to stop the simulation (stops playing, time is reset to default, data of simulation is reset.)
-- updateTime (fuction): call with a number to update the `tick` value in the simulation.
+<WithControlsAPI />
 
 ## Custom controls use cases
 

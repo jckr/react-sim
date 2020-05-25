@@ -1,7 +1,8 @@
 import React from 'react';
-import { Play, Model } from 'react-sim';
 import { useThemeUI } from 'theme-ui';
 import { Flex } from 'rebass';
+
+import { FitContentModel as Model } from './framed-model';
 
 // helpers
 

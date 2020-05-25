@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from 'react';
 import {
-  Model as RawModel,
   withControls,
   withFrame,
   Range,
@@ -10,11 +9,7 @@ import {
 } from 'react-sim';
 import { Flex } from 'rebass';
 
-const Model = props => (
-  <Flex sx={{ border: '1px solid #000', p: 2, width: 'fit-content' }}>
-    <RawModel {...props} />
-  </Flex>
-);
+import { FitContentModel as Model } from './framed-model';
 
 export const updateAttractors = ({ angleOffset, nbAttractors, height, width }) => {
   const center = { x: width / 2, y: height / 2 };

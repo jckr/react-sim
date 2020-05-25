@@ -1,6 +1,9 @@
 import React from 'react';
-import { Model, CanvasFrame, Counter, TimeSeries } from 'react-sim';
+import { CanvasFrame, Counter, TimeSeries } from 'react-sim';
 import { Flex } from 'rebass';
+
+import { FitContentModel as Model } from './framed-model';
+
 
 export const initData = (params, random = Math.random) => {
   const { cols, rows, proportion, tolerance } = params;

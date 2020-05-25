@@ -24,7 +24,7 @@ describe('percolation', () => {
   const rng = new Random();
   const complete = jest.fn();
   it('data function works', () => {
-    data = initData(params, rng);
+    data = initData(params, rng.get);
     expect(data).toMatchSnapshot();
     for (let tick = 1; tick < 5; tick++) {
       data = updateData({ data, tick, params, complete });

@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Model as RawModel,
   CanvasFrame,
   Grid,
   TimeSeries,
@@ -10,13 +9,9 @@ import {
 } from 'react-sim';
 import { Flex, Text } from 'rebass';
 
-import { initDice, updateDice, Die } from './dice';
+import { FitContentModel as Model } from './framed-model';
 
-const Model = props => (
-  <Flex sx={{ border: '1px solid currentcolor', p: 2, width: 'fit-content' }}>
-    <RawModel {...props} />
-  </Flex>
-);
+import { initDice, updateDice, Die } from './dice';
 
 const initDataCF = ({ height, width, balls, speed }) =>
   Array(balls)
@@ -122,7 +117,7 @@ export const TimeSeriesExample = () => (
       <Counter series={series} />
       <Text sx={{ fontSize: 1, fontWeight: 'bold' }}>Roll distribution:</Text>
       <TimeSeries series={stackedSeries} stacked />
-      <Counter series={stackedSeries.slice(0,6)} />
+      <Counter series={stackedSeries.slice(0, 6)} />
       <Counter series={stackedSeries.slice(6)} />
     </Flex>
   </Model>

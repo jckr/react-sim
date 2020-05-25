@@ -28,7 +28,7 @@ export const getDir = v.reduce((prev, curr, i) => {
 export function getRandomInBounds(min, max, random = Math.random) {
   // returns a random integer within [min, max]
   // (bounds are included)
-  return min + Math.floor(random * (max + 1 - min));
+  return min + Math.floor(random() * (max + 1 - min));
 }
 
 export function isValid(x, y, visited, height, width) {
