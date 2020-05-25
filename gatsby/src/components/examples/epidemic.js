@@ -1,6 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { Flex } from 'rebass';
-import { Model, TimeSeries, Counter, withFrame } from 'react-sim';
+import { TimeSeries, Counter, withFrame } from 'react-sim';
+
+import { FitContentModel as Model } from './framed-model';
 
 const COLORS = {
   sick: '#4f8c9d',

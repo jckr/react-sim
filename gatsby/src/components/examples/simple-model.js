@@ -1,12 +1,8 @@
 import React from "react";
-import {Model as RawModel, Grid} from 'react-sim';
+import { Grid} from 'react-sim';
 import {Flex} from 'rebass';
 
-const Model = props => (
-  <Flex sx={{ border: '1px solid #000', p: 2, width: 'fit-content' }}>
-    <RawModel {...props} />
-  </Flex>
-);
+import { FitContentModel as Model } from './framed-model';
 
 export const Frame = ({tick}) => {
   const data = Array(10).fill(0).map((r, y) =>

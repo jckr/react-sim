@@ -1,12 +1,13 @@
 import React from 'react';
 import {
-  Model,
   CanvasFrame,
   withControls,
   withFrame,
   Range,
   Timer,
 } from 'react-sim';
+
+import { FitContentModel as Model } from './framed-model';
 
 import { Flex, Box } from 'rebass';
 
@@ -122,7 +123,7 @@ const Automata = () => (
   >
     <Flex flexDirection="column">
       <Frame />
-      <Flex flexDirection="row" sx={{ justifyContent: 'space-between' }}>
+      <Flex flexDirection="row" sx={{ justifyContent: 'space-between', my: 2 }}>
         {[0, 1, 2, 3, 4, 5, 6, 7].map(bit => (
           <BitControl bit={bit} key={`bit-${bit}`} />
         ))}

@@ -1,5 +1,7 @@
 import React from 'react';
-import { FlexRow, FlexColumn, Model, Grid } from 'react-sim';
+import { FlexRow, FlexColumn, Grid } from 'react-sim';
+
+import { FitContentModel as Model } from './framed-model';
 
 // helpers
 

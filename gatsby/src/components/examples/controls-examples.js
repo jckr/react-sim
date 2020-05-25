@@ -1,12 +1,8 @@
 import React from 'react';
-import { Model as RawModel, withControls, withFrame, Range } from 'react-sim';
+import { withControls, withFrame, Range } from 'react-sim';
 import { Flex } from 'rebass';
 
-const Model = props => (
-  <Flex sx={{ border: '1px solid #000', p: 2 }}>
-    <RawModel {...props} />
-  </Flex>
-);
+import { FullWidthModel as Model } from './framed-model';
 
 export const DefaultTimer = () => (
   <Model>
@@ -288,7 +284,7 @@ const MyCustomRange = ({ params, setParams }) => {
   const setValue = v => setParams({ 'my-param': v });
   return (
     <Range
-    label="My range"
+      label="My range"
       value={value}
       setValue={setValue}
       minValue={0}

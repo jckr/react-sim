@@ -1,12 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { Flex, Box } from 'rebass';
-import { Model as RawModel, CanvasFrame } from 'react-sim';
+import { CanvasFrame } from 'react-sim';
 
-const Model = props => (
-  <Flex sx={{ border: '1px solid #000', p: 2, width: 'fit-content' }}>
-    <RawModel {...props} />
-  </Flex>
-);
+import { FitContentModel as Model } from './framed-model';
 
 const EMPTY = 0;
 const ROCK = 1;
@@ -94,7 +90,7 @@ export function initData({ porosity, height, width }, random = Math.random) {
   for (y = 0; y < height; y++) {
     const row = [];
     for (x = 0; x < width; x++) {
-      row.push(random > Number(porosity) ? ROCK : EMPTY);
+      row.push(random() > Number(porosity) ? ROCK : EMPTY);
     }
     grid.push(row);
   }
