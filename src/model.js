@@ -1,7 +1,8 @@
 import React from 'react';
 import { useThemeUI, ThemeProvider } from 'theme-ui';
 import { system } from '@theme-ui/presets';
-import { FlexColumn, FlexRow, Controls } from './';
+import { Controls } from './';
+import { Flex } from 'rebass';
 import { hasTimer } from './controls';
 import { forms } from './constants';
 
@@ -379,10 +380,10 @@ export class Model extends React.Component {
         <ThemeProvider theme={this.props.theme}>
           <FrameContext.Provider value={frameContext}>
             <ControlsContext.Provider value={controlsContext}>
-              <FlexColumn>
-                <FlexRow>{this.renderFrame(frameContext)}</FlexRow>
+              <Flex flexDirection="column">
+                <Flex>{this.renderFrame(frameContext)}</Flex>
                 {this.renderControls(controlsContext)}
-              </FlexColumn>
+              </Flex>
             </ControlsContext.Provider>
           </FrameContext.Provider>
         </ThemeProvider>

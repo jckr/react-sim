@@ -6,6 +6,7 @@ import mdxComponents from './mdx-components';
 import Head from './head';
 import Header from './header';
 import Nav from './nav';
+import {ThemeProvider, useThemeUI} from 'theme-ui';
 
 import EditLink from './edit-link';
 import Footer from './footer';
@@ -91,8 +92,10 @@ export default props => {
     disableFullWidthForHomePage && props.location?.pathname === '/';
   const [menu, setMenu] = useState(false);
   const nav = useRef(null);
+  const {theme} = useThemeUI();
+
   return (
-    <MDXProvider components={mdxComponents}>
+    <ThemeProvider components={mdxComponents} theme={theme}>
       <div>
         <Head {...props} />
         <Header fullwidth={fullwidth} menu={menu} setMenu={setMenu} nav={nav} />
@@ -105,6 +108,6 @@ export default props => {
         )}
         <Footer />
       </div>
-    </MDXProvider>
+    </ThemeProvider>
   );
 };
