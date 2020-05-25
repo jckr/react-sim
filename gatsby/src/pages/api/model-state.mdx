@@ -1,0 +1,19 @@
+|Name|Description|
+|----|-----------|
+|__data__<br/>any|Represents the current state of the simulation.|
+|__tick__<br/>integer|A measure of time in the simulation. Each time the simulation updates, ticks increases by one.|
+|__params__<br/>Object|The parameters of the simulation.|
+|__isPlaying__<br/>boolean|Whether the simulation is running or not.|
+|__results__<br/>any|Is updated each time the simulation finishes, and contains information on the past runs.|
+
+The difference between `data` and `params` is that `data` is being updated at each simulation tick, without user intervention, through the `updateData` function, whereas `params` is only modified when the user interacts with the [controls](/controls).
+
+The built-in parameters are:
+
+|Name|Description|
+|----|-----------|
+|__delay__<br/>number|delay between animation refreshes in miliseconds.|
+|__maxTime__<br/>integer|the value of `tick` at which the animation stops.|
+|__minTime__<br/>integer|the value of `tick` when the animation starts.|
+|__ticksPerAnimation__<br/>integer|the number of simulation ticks per animation refresh. If more than one, the simulation will update several times before it's rendered again.|
+

@@ -1,0 +1,20 @@
+The [Default timer](/api#default-timer) properties, plus:
+
+| Name                                                | Description                                                               |
+| --------------------------------------------------- | ------------------------------------------------------------------------- |
+| **maxTime**<br/>integer, 100 by default             | At which position the timer ends.                                         |
+| **minTime**<br/>integer, 0 by default               | At which position the timer starts. Can be negative.                      |
+| **label**<br/>string, optional                      | The label which will describe the control.                                |
+| **name**<br/>string, optional                       | The name of the control. If not specified, label is used.                 |
+| **shouldDisplayLabel**<br/>boolean, default true    | Whether the label should be displayed.                                    |
+| **shouldDisplayMaxValue**<br/>boolean, default true | Whether the maximum value should be displayed to the right of the range.  |
+| **shouldDisplayMinValue**<br/>boolean, default true | Whether the minimum value should be displayed to the left of the range.   |
+| **shouldDisplayValue**<br/>boolean, default true    | Whether the value should be displayed next to the label.                  |
+| **showTime**<br/>boolean, true by default           | Whether the time block (i.e. slider and time value) is going to be shown. |
+| **showTimeSlider**<br/>boolean, true by default     | Whether the time slider is going to be shown.                             |
+| **time**<br/>number                                | The current value of time shown on this Timer                             |
+| **updateTime**<br/>function                        | The function that will update this Timer's time when the                  |
+
+Unlike the other built-in controls, Timer does _not_ take a `value` or a `setValue` parameter.
+
+

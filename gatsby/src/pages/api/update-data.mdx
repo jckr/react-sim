@@ -1,0 +1,12 @@
+Its arguments are of the form:
+  `({cachedData, complete, data, params, pause, stop})`. Its output will replace `data` in the state.
+
+|Name|Description|
+|----|-----------|
+|__data__<br/>any|Represents the current value of data.|
+|__tick__<br/>integer|Represents the new tick.|
+|__params__<br/>object|Represents the current parameters.|
+|__cachedData__<br/>object|An object so that for each past value of `tick`, `cachedData[tick]` represents the value of `data` at that moment of the simulation.|
+|__complete__<br/>function|A function that signals the simulation is complete (it will also stop).|
+|__pause__<br/>function|A function that will stop the simulation from automatically updating and animating.|
+|__stop__<br/>function|A function that will stop the simulation from automatically updating and animating, and will reset it.|

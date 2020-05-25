@@ -1,0 +1,39 @@
+import UpdateData from './update-data.mdx';
+
+| Name                                            | Description                                                                                                                     |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **initialTick**<br/>number, optional, default 0 | The initial value for `tick`.                                                                                                   |
+| **initalParams**<br/>object, optional           | The initial value for the `params` of the simulation. When the simulation starts, it is used to populate `params` in the state. |
+
+The following properties can be used as is, or be passed inside `initialParams`,i.e.
+
+```jsx
+<Model delay={100} />
+```
+
+or
+
+```jsx
+<Model initialParams={{ delay: 100 }} />
+```
+
+`initialParams` takes precedence if both are used. They provide an initial value for the corresponding parts of the state.
+
+| Name                                                    | Description                                                                                                                                                                                                 |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **delay**<br/>number, optional, default 0               | The delay between each animation refresh. If not specified, animations happen as fast as possible (up to 60 times per second).                                                                              |
+| **minTime**<br/>integer, optional, default 0            | The value of `tick` when the animation starts                                                                                                                                                               |
+| **maxTime**<br/>integer, optional, default 100          | The value of `tick` at which the animation stops                                                                                                                                                            |
+| **ticksPerAnimation**<br/>integer, optional, default 1  | The number of simulation ticks per animation refresh. If more than one, the simulation will update several times before it's rendered again.                                                                |
+| **isPlaying**<br/>boolean, default false                | Whether the simulation plays automatically or not. If this is updated by external components, the simulation will stop or resume.                                                                           |
+| **loop**<br/>boolean, default false                     | If set to true, the simulation restarts whenever it's stopped playing.                                                                                                                                      |
+| **nocache**<br/>boolean, default false                  | If set to true, the simulation won't cache its data. If data is cached, then the user can go back in time without having to recalculate data.                                                               |
+| **controls**<br/>control object, optional               | Describes the UI of the simulation. Controls is how the `params` in the state can be modified.                                                                                                              |
+| **noControls**<br/>boolean, optional, default false     | If set to true, the default controls won't be shown.                                                                                                                                                        |
+| **showTimer**<br/>boolean, optional, default true       | If set to false, the default timer won't be displayed.                                                                                                                                                      |
+| **showTime**<br/>boolean, optional, default true        | If set to false, only the play, stop and step-in button will be displayed, the slider and the indication of time won't be shown.                                                                            |
+| **showTimerSlider**<br/>boolean, optional, default true | If set to false, the timer slider won't be displayed, though the indication of time may be.                                                                                                                 |
+| **initData**<br/>function, optional                     | The function that initializes the `data` of the model, when it first starts or when it's reset.<br/>It takes `params` (in the state) as input, and outputs a value for `data` (which it puts in the state). |
+| **updateData**<br/>function, optional                   | This function updates the `data` at each tick of the simualtion                                                                                                                                             |
+
+<UpdateData />

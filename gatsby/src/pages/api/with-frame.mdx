@@ -1,0 +1,9 @@
+|Name|Description|
+|----|-----------|
+|__data__<br/>anything|the current state of the simulation|
+|__tick__<br/>integer|the progress in the simulation|
+|__params__<br/>object|all the parameters set by the user/author| which don't change over time without intervention.
+|__cachedData__<br/>object|data from previous `ticks` of the simulation|
+|__results__<br/>array|data from previous completed runs of the simulation|
+|__initData__<br/>function|the Frame can reinitialize data|
+|__setData__<br/>function|the Frame can change the data (so for instance the Frame can be used to let the user enter an initial state of data)|

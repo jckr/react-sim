@@ -2,69 +2,265 @@
 Title: API reference
 ---
 
+import {
+  CanvasFrameAPI,
+  CircleAPI,
+  CommonControlPropsAPI,
+  CounterAPI,
+  DefaultTimerAPI,
+  DrawAPI,
+  GridAPI,
+  IndicatorAPI,
+  ModelPropsAPI,
+  ModelStateAPI,
+  Range,
+  RoundRectangleAPI,
+  SeriesAPI,
+  TimerAPI,
+  TimeSeriesAPI,
+  UpdateDataAPI,
+  WithControlsAPI,
+  WithFrameAPI,
+} from '../components/api';
+
+A single-page reference of all the APIs used throughout `React-Sim`.
+
+- [Model](/api/#model)
+- [withFrame](/api/#withframe)
+- [grid](/api/#grid)
+- [canvasFrame](/api/#canvasframe)
+- [circle](/api/#canvasframe)
+- [roundRectangle](/api/#roundrectangle)
+- [draw](/api/#draw)
+- [timeSeries](/api/#timeseries)
+
 # Model
 
-## Import
+## Usage
 
-```
+```jsx
 import {Model} from 'react-sim';
+
+function initData = params => { /* ... */ }
+function updateData =
+  ({data, params, tick, ...args}) => { /* ... */ }
+const params = { /* ... */};
+function Frame =
+  ({data, params, tick, ...args}) => <>{ /* ... */ }</>;
+
+export function MyModel = () => <Model
+  initalParams={params}
+  initData={initData}
+  updateData={updateData}
+>
+  <Frame />
+</Model>
 ```
 
 ## State
 
-- data (any): represents the current state of the simulation.
-- tick (integer): a measure of time in the simulation. Each time the simulation updates, ticks increases by one.
-- params (Object): the parameters of the simulation.
-  The difference between `data` and `params` is that `data` is being updated at each simulation tick, without user intervention, through the `updateData` function, whereas `params` is only modified when the user interacts with the [controls](/controls).
-  The built-in parameters are:
-  - delay (number): delay between animation refreshes in miliseconds.
-  - maxTime (integer): the value of `tick` at which the animation stops.
-  - minTime (integer): the value of `tick` when the animation starts.
-  - ticksPerAnimation (integer): the number of simulation ticks per animation refresh. If more than one, the simulation will update several times before it's rendered again.
-- isPlaying (boolean): whether the simulation is running or not.
-
-- results (any): is updated each time the simulation finishes, and contains information on the past runs.
+<ModelStateAPI />
 
 ## Properties
 
-- initialTick (number, optional, default 0): the initial value for `tick`.
-- initalParams (object, optional): the initial value for the `params` of the simulation. When the simulation starts, it is used to populate `params` in the state.
+<ModelPropsAPI />
 
-The following properties can be used as is, or be passed inside `initialParams` i.e. `<Model delay={100} />` or `<Model initialParams={{delay: 100}} />`.
-`initialParams` takes precedence if both are used. They provide an initial value for the corresponding parts of the state.
+For more information on controls and the syntax of the control object, see [Controls](/controls).
 
-- delay (number, optional, default 0): the delay between each animation refresh. If not specified, animations happen as fast as possible (up to 60 times per second).
-- minTime (integer, optional, default 0): the value of `tick` when the animation starts.
-- maxTime (integer, optional, default 100): the value of `tick` at which the animation stops.
-- ticksPerAnimation (integer, optional, default 1): the number of simulation ticks per animation refresh. If more than one, the simulation will update several times before it's rendered again.
+# Frame Helpers
 
-- isPlaying (boolean, default false): whether the simulation plays automatically or not. If this is updated by external components, the simulation will stop or resume.
-- loop (boolean, default false): if set to true, the simulation restarts whenever it's stopped playing.
+## withFrame
 
-- nocache (boolean, default false): if set to true, the simulation won't cache its data. If data is cached, then the user can go back in time without having to recalculate data.
+### Usage
 
-- controls (control object, optional): describes the UI of the simulation. Controls is how the `params` in the state can be modified.
-- noControls (boolean, optional, default false): if set to true, the default controls won't be shown.
-- showTimer (boolean, optional, default true): if set to false, the default timer won't be displayed.
-- showTime (boolean, optional, default true): if set to false, only the play, stop and step-in button will be displayed, the slider and the indication of time won't be shown.
-- showTimerSlider (boolean, optional, default true): if set to false, the timer slider won't be displayed, though the indication of time may be.
+```jsx
+import {Model, withFrame} from 'react-sim';
 
-  For more information on controls and the syntax of the control object, see [Controls](/controls).
+const FrameComponent = props => <>{ /* ... */ }</>;
+const Frame = withFrame(FrameComponent);
 
-- initData (function, optional): the function that initializes the `data` of the model, when it first starts or when it's reset.
-  It takes `params` (in the state) as input, and outputs a value for `data` (which it puts in the state).
-- updateData (function, optional): this function updates the `data` at each tick of the simualtion.
-  Its arguments are of the form:
-  ```({cachedData, complete, data, params, pause, stop})```. Its output will replace `data` in the state.
+export function MyModel = () => <Model>
+  <Frame />
+</Model>
+```
 
-  In the arguments:
-    - `data` represents the current value of data.
-    - `tick` represents the new tick.
-    - `params` represents the current parameters.
-    - `cachedData` is an object so that for each past value of `tick`, `cachedData[tick]` represents the value of `data` at that moment of the simulation.
-    - `complete` is a function that signals the simulation is complete (it will also stop).
-    - `pause` is a function that will stop the simulation from automatically updating and animating.
-    - `stop` is a function that will stop the simulation from automatically updating and animating, and will reset it.
+### API
 
+`withFrame` is a wrapper around a [Frame](/frames) component.
+
+Wrapping a component with `withFrame` will expose the connected component to the following properties:
+These properties come from the state of the `Model` this component is a descendant of.
+
+<WithFrameAPI />
+
+For convenience, a component which is a direct child of a `Model` automatically receives these properties without `withFrame`.
+
+```jsx
+import {Model, withFrame} from 'react-sim';
+
+const FrameComponent = props => <>{ /* ... */ }</>;
+const Frame = withFrame(FrameComponent);
+
+export function MyModel = () => <Model>
+  {/* this component has access to frame props */}
+  <FrameComponent />
+  <div>
+    {/* this one doesn't, because it's not a direct child */}
+    <FrameComponent />
+    {/* this component has access to frame props, because it's connected */}
+    <Frame />
+  </div>
+</Model>
+```
+
+## Grid
+
+see [Grid guide](./frame-helpers/grid)
+
+### Usage
+
+```jsx
+  import {Model, Grid} from 'react-sim';
+
+  export function MyModel = () => <Model>
+    <Grid />
+  </Model>
+```
+
+### API
+
+<GridAPI />
+
+### GridComponent
+
+```jsx
+import { GridComponent } from 'react-sim';
+```
+
+`Grid` is wrapped with `withFrame` so it can be used anywhere in the tree. The corresponding, unwrapped component, `GridComponent`, can also be exported from `react-sim`.
+
+## CanvasFrame
+
+see [CanvasFrame guide](./frame-helpers/canvas-frame)
+
+### Usage
+
+```jsx
+  import {Model, CanvasFrame} from 'react-sim';
+
+  function draw({ctx, data, ...args}) => {
+    /* canvas operations */
+  }
+
+  export function MyModel = () => <Model>
+    <CanvasFrame draw={draw} />
+  </Model>
+```
+
+### API
+
+<CanvasFrameAPI />
+
+### Circle
+
+<CircleAPI />
+
+### RoundRectangle
+
+<RoundRectangleAPI />
+
+### Draw
+
+<DrawAPI />
+
+## TimeSeries
+
+see [TimeSeries guide](/frame-helpers/time-series).
+
+### Series
+
+<SeriesAPI />
+
+### TimeSeries
+
+<TimeSeriesAPI />
+
+### Counter
+
+<CounterAPI />
+
+### Indicator
+
+<IndicatorAPI />
+
+## Controls
+
+See [Controls guide](/controls).
+
+### withControls
+
+Components wrapped with `withControls` gain access to the following properties:
+
+<WithControlsAPI />
+
+### Common Controls Properties
+
+Unless otherwise specified, all built-in controls have the following properties:
+
+<CommonControlPropsAPI />
+
+### Range
+
+See the [Range guide](/controls/range).
+
+<RangeAPI />
+
+### Timer
+
+#### Default Timer
+
+See the [Default timer guide](/controls/default-timer).
+
+By default a `Model` comes with a built-in `Timer` control. For this defaut `Timer`, the following props come directly from `Model` (see [Model properties](/api/#model).)
+
+<DefaultTimerAPI />
+
+#### General case
+
+See the [Timer guide](/controls/timer).
+
+If the `Timer` is defined anywhere else, these properties can be passed to the `Timer` directly.
+
+<TimerAPI />
+
+### Checkbox
+
+See the [Checkbox guide.](/controls/checkbox)
+
+Its API is solely the [Common Control Props.](/api/#common-controls-properties)
+
+### Input
+
+See the [Input guide.](/controls/input)
+
+Its API is solely the [Common Control Props.](/api/#common-controls-properties)
+
+### Radio
+
+See the [Radio guide.](/controls/radio)
+
+<RadioAPI />
+
+### Select
+
+See the [Select guide.](/controls/select)
+
+<SelectAPI />
+
+### Toggle
+
+See the [Toggle guide.](/controls/toggle)
+
+Its API is solely the [Common Control Props.](/api/#common-controls-properties)
 
 

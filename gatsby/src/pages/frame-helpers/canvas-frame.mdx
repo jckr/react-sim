@@ -2,6 +2,10 @@
 Title: Canvas Frame
 ---
 import {CanvasFrameExample} from '../../components/examples/frame-helpers-examples.js';
+import CanvasFrameAPI from '../api/canvas-frame.mdx';
+import DrawAPI from '../api/draw.mdx';
+import CircleAPI from '../api/circle.mdx';
+import RoundRectangleAPI from '../api/round-rectangle.mdx';
 
 `CanvasFrame` is a [frame helper](./frame-helpers) that makes it easier to use canvas with react-sim.
 
@@ -13,10 +17,7 @@ It's used in many of the examples such as [Chaos Game](./examples/chaos-game), [
 
 Its properties are:
 
-- all the connected Frame context props (`cachedData`, `data`, `initData`, `params`, `results`, `tick`, `setData` ),
-- draw (function, optional): a function which will be called each time CanvasFrame is updated (ie at each animation cycle).
-- height (number, optional): the height of the canvas. If ignored, CanvasFrame will used params.height.
-- width (number, optional): the width of the canvas. If ignored, CanvasFrame will used params.height.
+<CanvasFrameAPI />
 
 # the draw function
 
@@ -24,31 +25,15 @@ The `draw` function does all the heavy lifting.
 
 Its argument is an object with the following properties:
 
-- all the CanvasFrame properties (data, tick, etc. - see above),
-- canvas (DOM Node): the actual canvas node.
-- ctx: (canvas rendering context): the corresponding 2d context. Exactly what you'd get if you typed `const ctx = canvas.getContext('2d');`.
-- circle (helper function): see below
-- roundRectangle (helper function): see below
+<DrawAPI />
 
 `circle` and `roundRectangle` are helper functions to make it easier to draw circles and rounded rectangles with canvas.
 
 Both take an object as argument with the following properties:
 
-- circle:
-  - x: x coordinate of circle center,
-  - y: y coordinate of circle center,
-  - r: radius of circle
+<CircleAPI />
 
-- roundRectangle:
-  - x: x coordinate of top-left corner of rectangle,
-  - y: y coordinate of top-left corner of rectangle,
-  - width: width of rectangle,
-  - height: height of rectangle,
-  - tl: radius of top-left corner,
-  - tr: radius of top-right corner,
-  - bl: radius of bottom-left corner,
-  - br: radius of botrom-right corner,
-  - r: radius of all unspecified corners.
+<RoundRectangleAPI />
 
 so for example, you can have a `draw` function that would go like this:
 

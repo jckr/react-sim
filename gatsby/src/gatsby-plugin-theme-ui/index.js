@@ -1,5 +1,23 @@
 import { system as base } from '@theme-ui/presets';
 
+// prism colors inspired, but not identical, from theme-ui prism default
+// so they are theme dependent.
+const prism = {
+  '.comment,.prolog,.doctype,.cdata,.punctuation,.operator,.entity,.url': {
+    color: 'gray',
+  },
+  '.comment': { fontStyle: 'italic' },
+  '.property, .tag, .constant, .symbol, .deleted, .function, .class-name, .regex, .important, .variable': {
+    color: 'primary',
+  },
+  '.atrule, .attr-value, .keyword, .boolean, .number, .string': {
+    color: 'secondary',
+  },
+  '.selector, .attr-name,  .char, .builtin, .inserted': {
+    color: 'text',
+  },
+};
+
 const theme = {
   ...base,
   colors: {
@@ -67,6 +85,7 @@ const theme = {
         color: 'secondary',
       },
     },
+    pre: prism,
   },
   variants: {
     ...base?.variants,
