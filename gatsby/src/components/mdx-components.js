@@ -1,5 +1,6 @@
 import React from 'react';
 import Prism from '@theme-ui/prism';
+import { useThemeUI } from 'theme-ui'
 
 import { Box } from 'rebass';
 export default {
@@ -13,4 +14,16 @@ export default {
       </Box>
     );
   },
+  table: props => {
+    const { children, ...otherProps } = props;
+    return (
+      <table {...otherProps}>
+        <colgroup>
+          <col width="30%" />
+          <col width="70%" />
+        </colgroup>
+        {children}
+      </table>
+    );
+  }
 };

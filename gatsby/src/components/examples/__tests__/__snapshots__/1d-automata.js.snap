@@ -60,20 +60,10 @@ exports[`1d automata model renders properly 1`] = `
   className="css-1r92v2x"
 >
   <div
-    style={
-      Object {
-        "display": "flex",
-        "flexDirection": "column",
-      }
-    }
+    className="css-l3rx45"
   >
     <div
-      style={
-        Object {
-          "display": "flex",
-          "flexDirection": "row",
-        }
-      }
+      className="css-4cffwv"
     >
       <div
         className="css-l3rx45"
