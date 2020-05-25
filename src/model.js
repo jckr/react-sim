@@ -14,7 +14,7 @@ export class Model extends React.Component {
   static defaultProps = {
     controls: null,
     delay: 0,
-    initData: () => false,
+    initData: () => void(0),
     initialData: null,
     initialParams: {},
     initialTick: 0,
