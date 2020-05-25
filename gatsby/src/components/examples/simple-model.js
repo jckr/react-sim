@@ -1,6 +1,5 @@
 import React from "react";
 import { Grid} from 'react-sim';
-import {Flex} from 'rebass';
 
 import { FitContentModel as Model } from './framed-model';
 

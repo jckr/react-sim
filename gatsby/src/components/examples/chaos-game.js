@@ -1,10 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import {
   withControls,
-  withFrame,
   Range,
   Toggle,
-  Timer,
   CanvasFrame,
 } from 'react-sim';
 import { Flex } from 'rebass';
@@ -94,8 +92,6 @@ function draw({ ctx, data, params, tick, circle }) {
     ctx.fill();
   }
 }
-
-const ChaosFrame = props => <CanvasFrame draw={draw} {...props} />;
 
 export const BasicChaosGame = () => (
   <Model

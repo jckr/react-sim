@@ -1,8 +1,7 @@
 import React from 'react';
 import Prism from '@theme-ui/prism';
-import { useThemeUI } from 'theme-ui'
-
 import { Box } from 'rebass';
+
 export default {
   pre: props => {
     return props.children;

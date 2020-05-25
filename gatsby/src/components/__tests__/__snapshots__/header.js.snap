@@ -22,7 +22,7 @@ exports[`Header renders correctly 1`] = `
   </button>
   <a
     className="css-vurnku"
-    href="/"
+    href="/about"
   >
     React-sim
   </a>

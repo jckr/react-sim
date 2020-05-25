@@ -270,7 +270,6 @@ export class SnakeFrame extends React.Component {
       return null;
     }
 
-    const { actionGrid, grid } = data;
     const { width, height, cellSize } = this.props.params;
     return (
       <div

@@ -101,10 +101,10 @@ const theme = {
         borderRightWidth: 0,
         borderStyle: 'solid',
         borderColor: 'gray',
-        ':first-child': {
+        ':first-of-type': {
           borderLeftWidth: '1px',
         },
-        ':last-child': {
+        ':last-of-type': {
           borderRightWidth: '1px',
         },
       },
@@ -119,7 +119,7 @@ const theme = {
         borderRightWidth: '1px',
         borderStyle: 'solid',
         borderColor: 'gray',
-        ':first-child': {
+        ':first-of-type': {
           borderLeftWidth: '1px',
         },
       },
@@ -138,6 +138,7 @@ const theme = {
       ':hover,:focus,.active': { color: 'primary' },
     },
   },
+  breakpoints: ['40em', '52em', '64em'],
 };
 
 export default theme;

@@ -106,7 +106,6 @@ export function initSnake(
 export function initSnakeGrid(params, random = Math.random) {
   const { grid, head, tail, direction, snakePath } = initSnake(params, random);
 
-  const { height, width } = params;
   const stack = getShortestPath({ grid, start: head, end: tail });
   const visited = initVisited(grid, stack);
   const longestPath = [...snakePath, stack.shift()];
@@ -130,8 +129,6 @@ export function initSnakeGrid(params, random = Math.random) {
 export function initSnakeGame(params, random = Math.random) {
   const {
     grid,
-    frontOfSnake,
-    behindTail,
     head,
     tail,
     direction,

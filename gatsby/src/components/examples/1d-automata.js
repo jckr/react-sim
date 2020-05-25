@@ -1,10 +1,7 @@
 import React from 'react';
 import {
-  CanvasFrame,
   withControls,
   withFrame,
-  Range,
-  Timer,
 } from 'react-sim';
 
 import { FitContentModel as Model } from './framed-model';
