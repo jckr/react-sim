@@ -63,7 +63,7 @@ describe('percolation grid', () => {
   const rng = new Random();
   const complete = jest.fn();
   it('data function works', () => {
-    data = initDataGrid(params, rng);
+    data = initDataGrid(params, rng.get);
     expect(data).toMatchSnapshot();
     for (let tick = 1; tick < 5; tick++) {
       data = updateDataGrid({ data, tick, params, complete });

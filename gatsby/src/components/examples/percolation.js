@@ -326,26 +326,23 @@ export const Percolation = () => {
   );
 };
 
-export function initDataGrid({
-  width,
-  height,
-  cellSize,
-  margin,
-  rows,
-  cols,
-  minP,
-  stepP,
-}) {
+export function initDataGrid(
+  { width, height, cellSize, margin, rows, cols, minP, stepP },
+  random = Math.random
+) {
   const ck = [...Array(cols).keys()];
   return {
     cols: ck.map(c => ({ p: minP + c * stepP, result: 0, total: rows })),
     grids: [...Array(rows).keys()].map(r =>
       ck.map(c =>
-        initData({
-          height,
-          width,
-          porosity: minP + c * stepP,
-        })
+        initData(
+          {
+            height,
+            width,
+            porosity: minP + c * stepP,
+          },
+          random
+        )
       )
     ),
   };
