@@ -59,7 +59,7 @@ export default ({
           <Burger />
         </Button>
       )}
-      <Link variant='nav' href='/about'>React-sim</Link>
+      <Link variant='nav' to='/'>React-sim</Link>
       <Box mx='auto' />
       <Link
         mr={2}

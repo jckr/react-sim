@@ -18,24 +18,7 @@ Array [
   0,
   0,
   0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
   1,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
   0,
   0,
   0,
@@ -57,7 +40,7 @@ Array [
 
 exports[`1d automata model renders properly 1`] = `
 <div
-  className="css-caaeif"
+  className="css-o4uucz"
 >
   <div
     className="css-l3rx45"
@@ -69,15 +52,6 @@ exports[`1d automata model renders properly 1`] = `
         className="css-l3rx45"
         data={
           Array [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
             0,
             0,
             0,
@@ -111,14 +85,6 @@ exports[`1d automata model renders properly 1`] = `
             0,
             0,
             0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
           ]
         }
         results={Array []}
@@ -126,10 +92,11 @@ exports[`1d automata model renders properly 1`] = `
         <div
           style={
             Object {
-              "height": 288,
+              "height": 240,
+              "margin": "0 auto",
               "overflow": "hidden",
               "position": "relative",
-              "width": 600,
+              "width": 330,
             }
           }
         >
@@ -142,7 +109,7 @@ exports[`1d automata model renders properly 1`] = `
           className="css-uofa4f"
         >
           <div
-            className="css-wm33az"
+            className="css-1m3l1s7"
             onClick={[Function]}
           >
             <div
@@ -163,7 +130,7 @@ exports[`1d automata model renders properly 1`] = `
             />
           </div>
           <div
-            className="css-wm33az"
+            className="css-1m3l1s7"
             onClick={[Function]}
           >
             <div
@@ -184,7 +151,7 @@ exports[`1d automata model renders properly 1`] = `
             />
           </div>
           <div
-            className="css-wm33az"
+            className="css-1m3l1s7"
             onClick={[Function]}
           >
             <div
@@ -205,7 +172,7 @@ exports[`1d automata model renders properly 1`] = `
             />
           </div>
           <div
-            className="css-wm33az"
+            className="css-1m3l1s7"
             onClick={[Function]}
           >
             <div
@@ -225,8 +192,12 @@ exports[`1d automata model renders properly 1`] = `
               className="css-307zd0"
             />
           </div>
+        </div>
+        <div
+          className="css-uofa4f"
+        >
           <div
-            className="css-wm33az"
+            className="css-1m3l1s7"
             onClick={[Function]}
           >
             <div
@@ -247,7 +218,7 @@ exports[`1d automata model renders properly 1`] = `
             />
           </div>
           <div
-            className="css-wm33az"
+            className="css-1m3l1s7"
             onClick={[Function]}
           >
             <div
@@ -268,7 +239,7 @@ exports[`1d automata model renders properly 1`] = `
             />
           </div>
           <div
-            className="css-wm33az"
+            className="css-1m3l1s7"
             onClick={[Function]}
           >
             <div
@@ -289,7 +260,7 @@ exports[`1d automata model renders properly 1`] = `
             />
           </div>
           <div
-            className="css-wm33az"
+            className="css-1m3l1s7"
             onClick={[Function]}
           >
             <div
@@ -322,41 +293,140 @@ exports[`1d automata model renders properly 1`] = `
           className="css-1g78tb9"
         >
           <div
-            className="css-l3rx45"
+            className="css-vd9ji2"
+            type="radio"
           >
             <label
               className="css-rqmth"
-              htmlFor="Rule"
             >
-              Rule: 
-              110
+              First line:
             </label>
             <div
-              className="css-190meoe"
+              className="css-l3rx45"
             >
-              <div
-                className="css-46hvup"
-                onClick={[Function]}
+              <label
+                className="css-rqmth"
               >
-                0
-              </div>
-              <input
-                className="css-u6ybtt"
-                id="Rule"
-                max={255}
-                min={0}
-                name="Rule"
-                onChange={[Function]}
-                step={1}
-                type="range"
-                value={110}
-              />
-              <div
-                className="css-xevc"
-                onClick={[Function]}
+                <div
+                  className="css-vurnku"
+                >
+                  <input
+                    checked={true}
+                    className="css-p19g2b"
+                    id="blank"
+                    name="blank"
+                    onClick={[Function]}
+                    readOnly={true}
+                    type="radio"
+                    value="blank"
+                  />
+                  <svg
+                    aria-hidden="true"
+                    className="css-eeu8cr"
+                    fill="currentcolor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+                    />
+                  </svg>
+                  <svg
+                    aria-hidden="true"
+                    className="css-ar9784"
+                    fill="currentcolor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+                    />
+                  </svg>
+                </div>
+                blank
+              </label>
+              <label
+                className="css-rqmth"
               >
-                255
-              </div>
+                <div
+                  className="css-vurnku"
+                >
+                  <input
+                    checked={false}
+                    className="css-p19g2b"
+                    id="full"
+                    name="full"
+                    onClick={[Function]}
+                    readOnly={true}
+                    type="radio"
+                    value="full"
+                  />
+                  <svg
+                    aria-hidden="true"
+                    className="css-eeu8cr"
+                    fill="currentcolor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+                    />
+                  </svg>
+                  <svg
+                    aria-hidden="true"
+                    className="css-ar9784"
+                    fill="currentcolor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+                    />
+                  </svg>
+                </div>
+                full
+              </label>
+              <label
+                className="css-rqmth"
+              >
+                <div
+                  className="css-vurnku"
+                >
+                  <input
+                    checked={false}
+                    className="css-p19g2b"
+                    id="random"
+                    name="random"
+                    onClick={[Function]}
+                    readOnly={true}
+                    type="radio"
+                    value="random"
+                  />
+                  <svg
+                    aria-hidden="true"
+                    className="css-eeu8cr"
+                    fill="currentcolor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+                    />
+                  </svg>
+                  <svg
+                    aria-hidden="true"
+                    className="css-ar9784"
+                    fill="currentcolor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+                    />
+                  </svg>
+                </div>
+                random
+              </label>
             </div>
           </div>
         </div>

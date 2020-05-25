@@ -59,7 +59,7 @@ export const CanvasFrameExample = () => (
     maxTime={500}
     initialParams={{
       height: 200,
-      width: 500,
+      width: 332,
       balls: 200,
       speed: 3,
     }}
