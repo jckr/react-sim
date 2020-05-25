@@ -33,11 +33,6 @@ const ControlFrame = ({
   tick,
   showTime,
 }) => {
-  console.log({
-    params: { delay, minTime, maxTime, ticksPerAnimation, ...otherParams },
-    tick,
-    showTime,
-  });
   return (
     <div>
       {Object.keys(otherParams).length > 0 && (

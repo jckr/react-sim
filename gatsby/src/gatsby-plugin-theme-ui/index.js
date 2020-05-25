@@ -138,6 +138,7 @@ const theme = {
       ':hover,:focus,.active': { color: 'primary' },
     },
   },
+  breakpoints: ['40em', '52em', '64em'],
 };
 
 export default theme;
