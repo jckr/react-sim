@@ -1,5 +1,5 @@
 import React from 'react';
-import { Model } from 'react-sim';
+import Model from '../framed-model';
 import { SnakeFrame } from './frames';
 import {
   initSnakeGame,
@@ -16,7 +16,7 @@ const Snake = () => (
     maxTime={Infinity}
     initData={initSnakeGame}
     initialParams={{
-      cellSize: 25,
+      cellSize: 32,
       fruitGrowth: 4,
       height: 10,
       width: 10,
@@ -39,10 +39,10 @@ export const SnakeGrid = () => (
     maxTime={Infinity}
     initData={initSnakeGrid}
     initialParams={{
-      cellSize: 25,
+      cellSize: 16,
       fruitGrowth: 4,
-      height: 10,
-      width: 10,
+      height: 20,
+      width: 20,
       initialLength: 2,
       snakePosRandom: true,
       directionRandom: true,
