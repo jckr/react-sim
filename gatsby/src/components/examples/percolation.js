@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { Flex, Box } from 'rebass';
 import { CanvasFrame } from 'react-sim';
 
@@ -22,7 +22,7 @@ const status = {
 
 export function updateData({ data, params, complete }) {
   const { queue, grid } = data;
-  const { height, width } = params;
+  const { height } = params;
   let updatedStatus = data.status;
   if (queue.length === 0) {
     updatedStatus = status.failure;
@@ -204,7 +204,7 @@ export function draw({
 }
 
 export const PercolationFrame = ({ data, params }) => {
-  const { cellSize, margin, height, width } = params;
+  const { cellSize, height, width } = params;
 
   return (
     <div

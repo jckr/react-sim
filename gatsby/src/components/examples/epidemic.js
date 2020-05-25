@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { Flex } from 'rebass';
 import { TimeSeries, Counter, withFrame } from 'react-sim';
 
@@ -111,6 +111,8 @@ export function updateEpidemic(
         break;
       case 'dead':
         nbDead++;
+        break;
+      default:
     }
   });
   if (nbSick === 0) {

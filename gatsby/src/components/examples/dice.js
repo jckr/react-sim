@@ -116,7 +116,6 @@ export class DiceFrame extends React.Component {
     }
     const {
       data,
-      tick,
       params: { nbDice },
       theme,
     } = this.props;

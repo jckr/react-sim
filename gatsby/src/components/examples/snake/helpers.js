@@ -83,6 +83,7 @@ export function getShortestPath({ grid, start, end }) {
   let found = false;
   while (next.length && !found) {
     const node = next.shift();
+    /* eslint-disable no-loop-func */
     DIRECTIONS.forEach(d => {
       // step is next node in that direction, from node
       const step = [node[0] + v[d][0], node[1] + v[d][1]];
@@ -205,33 +206,6 @@ export function extendPath({ height, longestPath, stack, visited, width }) {
   return { stack, visited, longestPath };
 }
 
-function getActionsFromGrid(grid) {
-  // we can deduce the direction from content of the grid but why would we
-  // leaving this in place if we decide the user can initiate the snake however
-  // they want
-  return grid.map((row, r) =>
-    row.map((cell, c) => {
-      if (!cell) {
-        return undefined;
-      }
-      // we're guaranteed that non empty cells are never at the edge of grid
-      if (grid[r - 1][c] < cell || grid[r + 1][c] > cell) {
-        return UP;
-      }
-      if (grid[r][c - 1] > cell || grid[r][c + 1] < cell) {
-        return RIGHT;
-      }
-      if (grid[r - 1][c] > cell || grid[r + 1][c] < cell) {
-        return DOWN;
-      }
-      if (grid[r][c - 1] < cell || grid[r][c + 1] > cell) {
-        return LEFT;
-      }
-      return undefined;
-    })
-  );
-}
-
 export function getActionGrid({ grid, path = [], direction, stack = [] }) {
   // we have on one hand, grid which is the position of the snake,
   // and on the other, path which is the longest path from the cell
@@ -247,7 +221,6 @@ export function getActionGrid({ grid, path = [], direction, stack = [] }) {
   if (totalPath.length < 2) {
     return actionGrid;
   }
-  const head = totalPath[0];
   let node;
 
   for (let i = 1; i < totalPath.length; i++) {

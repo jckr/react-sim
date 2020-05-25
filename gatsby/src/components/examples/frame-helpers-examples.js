@@ -1,10 +1,8 @@
 import React from 'react';
 import {
   CanvasFrame,
-  Grid,
   TimeSeries,
   Counter,
-  Indicator,
   withFrame,
 } from 'react-sim';
 import { Flex, Text } from 'rebass';

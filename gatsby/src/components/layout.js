@@ -1,12 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { Box, Flex } from 'rebass';
 import { Pagination } from '@theme-ui/sidenav';
-import { MDXProvider } from '@mdx-js/react';
 import mdxComponents from './mdx-components';
 import Head from './head';
 import Header from './header';
 import Nav from './nav';
-import {ThemeProvider, useThemeUI} from 'theme-ui';
+import { ThemeProvider, useThemeUI } from 'theme-ui';
 
 import EditLink from './edit-link';
 import Footer from './footer';
@@ -49,7 +48,7 @@ const Sidebar = props => (
         pb: 3,
         bg: ['background', 'transparent'],
         transition: 'transform .2s ease-out',
-        transform: [, 'none !important'],
+        transform: [undefined, 'none !important'],
         ul: {
           listStyle: 'none',
           padding: 0,
@@ -92,7 +91,7 @@ export default props => {
     disableFullWidthForHomePage && props.location?.pathname === '/';
   const [menu, setMenu] = useState(false);
   const nav = useRef(null);
-  const {theme} = useThemeUI();
+  const { theme } = useThemeUI();
 
   return (
     <ThemeProvider components={mdxComponents} theme={theme}>

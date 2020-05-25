@@ -1,6 +1,5 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { CanvasFrame } from 'react-sim';
-import { Flex, Box } from 'rebass';
 
 import { FitContentModel as Model } from './framed-model';
 
@@ -80,6 +79,7 @@ export function draw({ ctx, params: { size }, tick }) {
         ctx.closePath();
         y = y - side / phi;
         break;
+      default:
     }
   }
 }
@@ -120,6 +120,7 @@ export const FibonacciSquaresFrame = ({ data, tick, params }) => {
           x = x - n;
           y = y - n;
           break;
+        default:
       }
       const borderWidth = Math.max(
         0.1,
@@ -184,6 +185,7 @@ export const FibonacciSquaresFrame = ({ data, tick, params }) => {
         case 'left':
           y = y + n;
           break;
+        default:
       }
       maxX = Math.max(maxX, x);
       minX = Math.min(minX, x);

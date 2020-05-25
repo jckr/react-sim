@@ -1,6 +1,6 @@
 import React from 'react';
 import { withControls, withFrame, Range } from 'react-sim';
-import { Flex } from 'rebass';
+import { Flex, Text } from 'rebass';
 
 import { FullWidthModel as Model } from './framed-model';
 
@@ -32,17 +32,24 @@ const ControlFrame = ({
   params: { delay, minTime, maxTime, ticksPerAnimation, ...otherParams },
   tick,
   showTime,
-}) => (
-  <div>
-    {Object.keys(otherParams).length > 0 && (
-      <>
-        <label>params:</label>
-        <pre>{JSON.stringify(otherParams, null, 2)}</pre>
-      </>
-    )}
-    {showTime && <pre>{JSON.stringify({ tick }, null, 2)}</pre>}
-  </div>
-);
+}) => {
+  console.log({
+    params: { delay, minTime, maxTime, ticksPerAnimation, ...otherParams },
+    tick,
+    showTime,
+  });
+  return (
+    <div>
+      {Object.keys(otherParams).length > 0 && (
+        <>
+          <Text sx={{ fontSize: 1, fontWeight: 'bold' }}>params:</Text>
+          <pre>{JSON.stringify(otherParams, null, 2)}</pre>
+        </>
+      )}
+      {showTime && <pre>{JSON.stringify({ tick }, null, 2)}</pre>}
+    </div>
+  );
+};
 
 export const CheckBoxExample = () => (
   <Model
