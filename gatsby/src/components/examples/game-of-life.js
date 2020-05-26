@@ -113,7 +113,7 @@ export const Step2 = () => (
     initData={initGrid}
     initialParams={{
       height: 10,
-      width: 10,
+      width: 28,
       density: 0.15,
     }}
   >
@@ -127,7 +127,7 @@ export const Step3 = () => (
     updateData={updateGridNoComplete}
     initialParams={{
       height: 10,
-      width: 10,
+      width: 28,
       density: 0.15,
     }}
   >
@@ -141,7 +141,7 @@ export const Step4 = () => (
     updateData={updateGameOfLifeGrid}
     initialParams={{
       height: 10,
-      width: 10,
+      width: 28,
       density: 0.15,
     }}
   >
@@ -162,8 +162,8 @@ export const Step5 = () => (
     initData={initGrid}
     updateData={updateGameOfLifeGrid}
     initialParams={{
-      height: 24,
-      width: 48,
+      height: 10,
+      width: 28,
       density: 0.15,
     }}
   >
