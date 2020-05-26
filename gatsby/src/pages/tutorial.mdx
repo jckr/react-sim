@@ -70,8 +70,8 @@ So let's change `const GameOfLife = () => <Model />;` into:
 const GameOfLife = () => (
   <Model
     initialParams={{
-      height: 24,
-      width: 48,
+      height: 28,
+      width: 28,
       density: 0.15
     }}
     initData={initGrid}
@@ -104,18 +104,6 @@ const Frame = ({ data = [[]], size = 12, initData }) => (
         ))}
       </div>
     ))}
-    <div
-      style={{
-        cursor: 'pointer',
-        background: '#eee',
-        padding: '8px',
-        margin: '8px 8px 8px 0',
-        width: 'fit-content',
-      }}
-      onClick={initData}
-    >
-      Reset grid
-    </div>
   </div>
 );
 ```
@@ -126,8 +114,8 @@ Now, let's update our model:
 const GameOfLife = () => (
   <Model
     initialParams={{
-      height: 24,
-      width: 48,
+      height: 28,
+      width: 28,
       density: 0.15
     }}
     initData={initGrid}

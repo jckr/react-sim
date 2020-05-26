@@ -1,7 +1,8 @@
-| Name                                              | Description                                                                                                                |
-| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| **type**<br/>string, optional, 'range' by default | The kind of control we're describing. Can be one of: `checkbox`, `input`, `radio`, `range`, `select`, `timer` or `toggle`. |
-| **label**<br/>string, optional                    | The label which will describe the control.                                                                                 |
-| **name**<br/>string, optional                     | The name of the control. If not specified, `label` will be used.                                                           |
-| **setValue**<br/>function                         | This function will be called whenever the control changes to update its value.                                             |
-| **value**<br/>any                                 | The current value of the control.                                                                                          |
+| Name                                                      | Description                                                                                                                |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **type**<br/>string, optional, 'range' by default         | The kind of control we're describing. Can be one of: `checkbox`, `input`, `radio`, `range`, `select`, `timer` or `toggle`. |
+| **label**<br/>string, optional                            | The label which will describe the control.                                                                                 |
+| **name**<br/>string, optional                             | The name of the control. If not specified, `label` will be used.                                                           |
+| **resetOnChange**<br/>boolean, optional, false by default | Whether the model will be reset if the control changes.                                                                                                                           |
+| **setValue**<br/>function                                 | This function will be called whenever the control changes to update its value.                                             |
+| **value**<br/>any                                         | The current value of the control.                                                                                          |

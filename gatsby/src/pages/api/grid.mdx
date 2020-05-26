@@ -1,8 +1,8 @@
-|Name|Description|
-|----|-----------|
-|__data__<br/>Array|It expects data to be a 2-dimensional array of data.|
-|__accessor__<br/>function|How to determine how to color each cell. The inputs of the function are:<br />cell (content of the cell), x , y. The output is: a color. The default value is:<br/>`cell => cell ? 0 : 'none' : '#000'`|
-|__size__<br/>string | integer, default: 12|How big the squares will be in pixels.|
-|__cellProps__<br/>anything|Any extra prop to pass to each individual square|
+| Name                                     | Description                                                                                                                                                                                             |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **data**<br/>Array                       | It expects data to be a 2-dimensional array of data.                                                                                                                                                    |
+| **accessor**<br/>function                | How to determine how to color each cell. The inputs of the function are:<br />cell (content of the cell), x , y. The output is: a color. The default value is:<br/>`cell => cell ? 0 : 'none' : '#000'` |
+| **size**<br/>string/integer, default: 12 | How big the squares will be in pixels.                                                                                                                                                                  |
+| **cellProps**<br/>anything               | Any extra prop to pass to each individual square                                                                                                                                                        |
 
 Any other prop will be passed to the Grid.

@@ -1,0 +1,21 @@
+---
+Title: Boids
+---
+
+import Boids, { ChillBoids } from '../../components/examples/boids';
+
+# Boids
+
+<Boids />
+
+[Boids](https://en.wikipedia.org/wiki/Boids) is one of the best-known agent simulations in computer graphics.
+
+A number of boid agents move in a plane and their movement is governed by three forces:
+
+- alignment: they try to move in the same direction than the boids around them,
+- cohesion: they try to move towards the average position of boids around them,
+- separation: they try to avoid other boids around them.
+
+The boids movement is reminescent of that of flock of birds.
+
+In our implementation, each of these forces can be parameterized: the coefficient is how much this force affects the boid's movement, and the radius is the maximum distance at which neighboring boids are considered.
