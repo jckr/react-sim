@@ -27,3 +27,15 @@ We can also choose whether we use each vertex as an attractor or not. If a verte
 
 For larger polygons, if all vertices are used as attractors, the resulting figure looks a bit messy. But if we only pick a few, then shapes will start to emerge.
 
+One interesting pattern is for polygons with odd number of vertices, if vertices = 2 x n + 3.
+You can try:
+
+- set the first vertex,
+- leave n vertices unset,
+- set the next 2 vertices,
+- leave the last n vertices unset.
+
+So: 1 0 1 1 0 for 5, 1 0 0 1 1 0 0 for 7, 1 0 0 0 1 1 0 0 0 for 9, etc.
+
+
+
