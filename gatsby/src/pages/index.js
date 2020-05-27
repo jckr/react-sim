@@ -1,4 +1,4 @@
 import React from 'react';
 import { Redirect } from '@reach/router';
 
-export default () => <Redirect to={`/about`} />;
+export default () => <Redirect to={`about`} />;
