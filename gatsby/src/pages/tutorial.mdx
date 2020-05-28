@@ -39,7 +39,7 @@ To get our simulation started, we need:
 
 Let's build all this!
 
-# initialize the data
+# Initializing the data
 
 Now, we're going to add a function to initialize our data.
 The data will look like a 2d grid with random 0s or 1s, corresponding to whether a cell is full or not.
@@ -126,7 +126,29 @@ const GameOfLife = () => (
 ```
 
 Nothing super unusual, we literally display a black square if a cell is full and nothing if it isn't.
-We add a little Reset button at the end so users can reset the data.
+
+This frame is actually a common pattern, so there's a [frame helper](/frame-helpers) for it: [Grid.](/frame-helpers/grid).
+We can simply substitute our Frame by Grid, like so:
+
+```jsx
+import React from 'react';
+import {Grid, Model} from 'react-sim';
+
+// ...
+
+const GameOfLife = () => (
+  <Model
+    initialParams={{
+      height: 28,
+      width: 28,
+      density: 0.15
+    }}
+    initData={initGrid}
+  >
+    <Grid />
+  </Model>
+)
+```
 
 <Step2 />
 
