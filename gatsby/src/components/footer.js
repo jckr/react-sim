@@ -17,8 +17,7 @@ export default props =>
         mx: 'auto',
         px: 3,
       }}>
-      <Link href='/' variant='nav'>React-Sim</Link>
-      <Link href='/about' variant='nav'>Docs</Link>
+      <Link to='/' variant='nav'>React-Sim</Link>
       <Link href='https://github.com/jckr/react-sim' variant='nav'>GitHub</Link>
     </Box>
   </Box>
