@@ -3,6 +3,19 @@ import { Grid } from 'react-sim';
 
 import Model from './framed-model';
 
+const stale = `0000010000000000010000000000
+0000000100010010000000000000
+1110001000000000000000000001
+1010000000000000000000000000
+0000000000100000000010110000
+0100000101010100000000000001
+0000000000010100000001000001
+0000000011100100000000100001
+0000010000000000000000010000
+0000000000010100000000000100`
+  .split('\n')
+  .map(d => d.split('').map(Number));
+
 // helpers
 
 function countNeighbors(x, y, grid) {
@@ -123,7 +136,7 @@ export const Step2 = () => (
 
 export const Step3 = () => (
   <Model
-    initData={initGrid}
+    initData={() => stale}
     updateData={updateGridNoComplete}
     initialParams={{
       height: 10,
@@ -137,7 +150,7 @@ export const Step3 = () => (
 
 export const Step4 = () => (
   <Model
-    initData={initGrid}
+    initData={() => stale}
     updateData={updateGameOfLifeGrid}
     initialParams={{
       height: 10,
