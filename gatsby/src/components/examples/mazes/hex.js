@@ -1,4 +1,4 @@
-import { HALF_SQRT3, getColRow } from './helpers';
+import { HALF_SQRT3, drawLink, getColRow } from './helpers';
 
 export const getNeighborsHex = (id, cols, rows) => {
   const { col, row } = getColRow(id, cols);
@@ -51,7 +51,7 @@ export const initDataHex = ({ cellSize, height, width }) => {
     prev[id] = {
       id,
       ...getColRow(id, cols),
-      neighbors: getNeighbors[grid](id, cols, rows),
+      neighbors: getNeighborsHex(id, cols, rows),
     };
     return prev;
   }, {});
@@ -91,3 +91,5 @@ export const drawItemHex = ({ cell, ctx, cellSize, wallColor, wallSize }) => {
   ctx.stroke();
   return;
 };
+
+export const drawLinkHex = drawLink(getCoordsHex);

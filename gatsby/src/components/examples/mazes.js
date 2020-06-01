@@ -4,11 +4,15 @@ import { CanvasFrame } from 'react-sim';
 import Model from './framed-model';
 
 import { drawItemSquare, drawLinkSquare, initDataSquare } from './mazes/square';
-import { drawItemHex, initDataHex } from './mazes/hex';
-import { drawItemTriangle, initDataTriangle } from './mazes/triangle';
+import { drawItemHex, drawLinkHex, initDataHex } from './mazes/hex';
+import {
+  drawItemTriangle,
+  drawLinkTriangle,
+  initDataTriangle,
+} from './mazes/triangle';
 import { drawItemCircle, drawLinkCircle, initDataCircle } from './mazes/circle';
 
-const grids = ['square', 'hexagonal', 'triangle'];
+const grids = ['square', 'hexagonal', 'triangular', 'circle'];
 
 export const params = {
   width: 332,
@@ -20,7 +24,7 @@ export const params = {
   wallColor: '#000',
   pathColor: '#fff',
   maxTime: Infinity,
-  ticksPerAnimation: 20,
+  ticksPerAnimation: 1,
 };
 
 export const initData = (
@@ -51,9 +55,7 @@ export const updateData = (
   // regardless of disposition of the grid
   let options = [];
   let currentCell;
-  if (params.grid === 'circke') {
-    complete();
-  }
+
   if (visited.size === Object.values(cells).length || stack.length === 0) {
     complete();
   } else {
@@ -86,11 +88,19 @@ export const draw = ({
 }) => {
   // likewise, the overall idea to draw the maze is the same
   // regardless of its layout
-
   if (tick === 0) {
     ctx.clearRect(0, 0, height, width);
     Object.values(cells).forEach(cell =>
-      drawCell({ cell, ctx, grid, ...otherData, ...otherParams })
+      drawCell({
+        cell,
+        circle,
+        ctx,
+        grid,
+        height,
+        width,
+        ...otherData,
+        ...otherParams,
+      })
     );
   } else {
     for (let i = tick - ticksPerAnimation; i < tick; i++) {
@@ -99,6 +109,8 @@ export const draw = ({
         circle,
         ctx,
         grid,
+        height,
+        width,
         link: links[i],
         ...otherData,
         ...otherParams,
@@ -129,9 +141,14 @@ export const drawLink = ({ cells, ctx, circle, grid, link, ...other }) => {
   if (link === undefined) {
     return;
   }
-  if (grid === 'square' || grid === 'hexagonal' || grid === 'triangular') {
-    // links for "rectangular" grids are the same though.
+  if (grid === 'square') {
     drawLinkSquare({ cells, ctx, circle, link, ...other });
+  }
+  if (grid === 'hexagonal') {
+    drawLinkHex({ cells, ctx, circle, link, ...other });
+  }
+  if (grid === 'triangular') {
+    drawLinkTriangle({ cells, ctx, circle, link, ...other });
   }
   if (grid === 'circle') {
     drawLinkCircle({ cells, ctx, circle, link, ...other });

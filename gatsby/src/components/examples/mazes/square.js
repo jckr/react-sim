@@ -1,4 +1,4 @@
-import { getColRow } from './helpers';
+import { getColRow, drawLink } from './helpers';
 
 export const getNeighborsSquare = (id, cols, rows) => {
   const { col, row } = getColRow(id, cols);
@@ -50,6 +50,7 @@ export const initDataSquare = (
 };
 
 export const getCoordsSquare = ({ cell, cellSize, wallSize }) => {
+  const { col, row } = cell;
   return [
     wallSize / 2 + (col + 0.5) * cellSize,
     wallSize / 2 + (row + 0.5) * cellSize,
@@ -63,8 +64,7 @@ export const drawItemSquare = ({
   wallColor,
   wallSize,
 }) => {
-  const center = getCoords({ cell, grid, ...other });
-  const { cellSize, wallColor, wallSize } = other;
+  const center = getCoordsSquare({ cell, cellSize, wallSize });
   ctx.strokeStyle = wallColor;
   ctx.lineWidth = wallSize;
   ctx.strokeRect(
@@ -75,33 +75,4 @@ export const drawItemSquare = ({
   );
 };
 
-export const drawLinkSquare = ({
-  cells,
-  ctx,
-  circle,
-  link,
-  pathColor,
-  pathSize,
-}) => {
-  const startCell = cells[link[0]];
-  const endCell = cells[link[1]];
-
-  const start = getCoords({ cell: startCell, cellSize, grid, wallSize });
-  const end = getCoords({ cell: endCell, cellSize, grid, wallSize });
-
-  ctx.strokeStyle = pathColor;
-  ctx.fillStyle = pathColor;
-
-  circle({ x: start[0], y: start[1], r: pathSize / 2 });
-  ctx.fill();
-  circle({ x: end[0], y: end[1], r: pathSize / 2 });
-  ctx.fill();
-
-  ctx.lineWidth = pathSize;
-
-  ctx.beginPath();
-  ctx.moveTo(...start);
-  ctx.lineTo(...end);
-  ctx.closePath();
-  ctx.stroke();
-};
+export const drawLinkSquare = drawLink(getCoordsSquare);

@@ -1,4 +1,4 @@
-import { HALF_SQRT3, getColRow } from './helpers';
+import { HALF_SQRT3, drawLink, getColRow } from './helpers';
 
 export const getNeighborsTriangle = (id, cols, rows) => {
   const { col, row } = getColRow(id, cols);
@@ -37,7 +37,7 @@ export const initDataTriangle = ({ cellSize, height, width }) => {
     prev[id] = {
       id,
       ...getColRow(id, cols),
-      neighbors: getNeighbors[grid](id, cols, rows),
+      neighbors: getNeighborsTriangle(id, cols, rows),
     };
     return prev;
   }, {});
@@ -69,7 +69,6 @@ export const drawItemTriangle = ({
   wallColor,
   wallSize,
 }) => {
-  const center = getCoordsTriangle({ cell, grid, wallSize });
   ctx.strokeStyle = wallColor;
   ctx.lineWidth = wallSize;
   const { col, row } = cell;
@@ -107,3 +106,5 @@ export const drawItemTriangle = ({
   ctx.stroke();
   return;
 };
+
+export const drawLinkTriangle = drawLink(getCoordsTriangle);
