@@ -4,6 +4,8 @@ import { CanvasFrame } from 'react-sim';
 import Model from './framed-model';
 
 const HALF_SQRT3 = Math.sqrt(3) / 2;
+const P = Math.PI;
+const P2 = Math.PI * 2;
 const grids = ['square', 'hexagonal', 'triangular'];
 
 const getColRow = (id, cols) => {
@@ -15,7 +17,7 @@ const getColRow = (id, cols) => {
 export const params = {
   width: 332,
   height: 332,
-  grid: 'square',
+  grid: 'circle',
   cellSize: 10,
   pathSize: 5,
   wallSize: 2,
@@ -101,15 +103,127 @@ const getNeighbors = {
   },
 };
 
-export const initData = ({ cellSize, height, width, grid }) => {
+export const isBetween = (angle, start, end) => {
+  if ((start + P2) % P2 === (end + P2) % P2) {
+    return true;
+  }
+  let a = (P2 + angle - start) % P2;
+  let e = (P2 + end - start) % P2;
+  return a < e;
+};
+
+export const initData = (
+  { cellSize, height, width, grid },
+  random = Math.random
+) => {
+  if (grid === 'circle') {
+    debugger;
+    const layers = Math.floor(Math.min(height, width) / cellSize);
+    const cells = {
+      '0-0': {
+        id: '0-0',
+        layer: 0,
+        cell: 0,
+        startAngle: 0,
+        endAngle: P2,
+        neighbors: [],
+      },
+    };
+    let nbSegmentsPreviousLayer = 1;
+    for (let l = 1; l < layers; l++) {
+      const circumference = (l + 0.5) * P * cellSize;
+      const nbSegments = Math.floor(circumference / cellSize);
+      let runningAngle = (P2 * random()) / nbSegments;
+      let previousLayerSegmentIdx = 0;
+      let previousLayerSegmentId = `${l - 1}-${previousLayerSegmentIdx}`;
+      let previousLayerSegment = cells[previousLayerSegmentId];
+
+      // in order to determine the neighbors of cells of this layer with
+      // the cells in the previous layers, we start by looking for the
+      // first cell in the previous layer which angles are across our
+      // starting angle.
+
+      // this cell will be a neighbor with the first cell of our new layer.
+
+      while (
+        !isBetween(
+          runningAngle,
+          previousLayerSegment.startAngle,
+          previousLayerSegment.endAngle
+        )
+      ) {
+        previousLayerSegmentIdx =
+          (previousLayerSegmentIdx + 1) % nbSegmentsPreviousLayer;
+        previousLayerSegmentId = `${l - 1}-${previousLayerSegmentIdx}`;
+        previousLayerSegment = cells[previousLayerSegmentId];
+      }
+
+      for (let s = 0; s < nbSegments; s++) {
+        const endAngle = runningAngle + P2 / nbSegments;
+        const id = `${l}-${s}`;
+        // siblings are cells on the same layer of the current segment.
+        // they are always neighbors to the current cell.
+
+        const siblings =
+          nbSegments === 2
+            ? [`${l}-${(s + 1) % nbSegments}`]
+            : [
+                `${l}-${(nbSegments + s - 1) % nbSegments}`,
+                `${l}-${(s + 1) % nbSegments}`,
+              ];
+        const cell = {
+          id,
+          layer: l,
+          cell: s,
+          startAngle: runningAngle,
+          endAngle,
+          neighbors: [...siblings],
+        };
+
+        // next, we are trying to find the neighbors in the previous layer
+
+        // the current previousLayerSegmentId is always a neighbor to this cell
+        cell.neighbors.push(previousLayerSegmentId);
+        cells[previousLayerSegmentId].neighbors.push(id);
+
+        // now, is the next segment on the previous layer also a neighbor?
+        if (isBetween(previousLayerSegment[1], runningAngle, endAngle)) {
+          previousLayerSegmentIdx++;
+          previousLayerSegmentId = `${l - 1}-${previousLayerSegmentIdx}`;
+          cell.neighbors.push(previousLayerSegmentId);
+          cells[previousLayerSegmentId].neighbors.push(id);
+        }
+        cells[id] = cell;
+        runningAngle = endAngle;
+      }
+      nbSegmentsPreviousLayer = nbSegments;
+    }
+    console.log(cells);
+    return {
+      cells,
+      links: [],
+      visited: new Set(['0-0']),
+      currentCell: '0-0',
+      stack: ['0-0'],
+    };
+  }
   if (grid === 'square') {
     const rows = Math.floor(height / cellSize);
     const cols = Math.floor(width / cellSize);
     const nbCells = rows * cols;
-    const cells = [...Array(nbCells).keys()].map(id => ({
-      id,
-      neighbors: getNeighbors[grid](id, cols, rows),
-    }));
+    // we're building an object where:
+    // the key is an id that goes from 0 to nbCells,
+    // the content is a cell object that contains:
+    // id, id of neighbors, plus column and row # for that cell
+
+    const cells = [...Array(nbCells).keys()].reduce((prev, id) => {
+      prev[id] = {
+        id,
+        ...getColRow(id, cols),
+        neighbors: getNeighbors[grid](id, cols, rows),
+      };
+      return prev;
+    }, {});
     return {
       rows,
       cols,
@@ -125,10 +239,20 @@ export const initData = ({ cellSize, height, width, grid }) => {
     const cols = Math.floor(width / (2 * cellSize * HALF_SQRT3) - 0.5);
     const nbCells = rows * cols;
 
-    const cells = [...Array(nbCells).keys()].map(id => ({
-      id,
-      neighbors: getNeighbors[grid](id, cols, rows),
-    }));
+    // same as for squares:
+    // we're building an object where:
+    // the key is an id that goes from 0 to nbCells,
+    // the content is a cell object that contains:
+    // id, id of neighbors, plus column and row # for that cell
+
+    const cells = [...Array(nbCells).keys()].reduce((prev, id) => {
+      prev[id] = {
+        id,
+        ...getColRow(id, cols),
+        neighbors: getNeighbors[grid](id, cols, rows),
+      };
+      return prev;
+    }, {});
 
     return {
       rows,
@@ -144,10 +268,22 @@ export const initData = ({ cellSize, height, width, grid }) => {
     const rows = Math.floor(height / (cellSize * HALF_SQRT3));
     const cols = Math.floor((2 * width) / cellSize) - 1;
     const nbCells = rows * cols;
-    const cells = [...Array(nbCells).keys()].map(id => ({
-      id,
-      neighbors: getNeighbors[grid](id, cols, rows),
-    }));
+
+    // same as for squares:
+    // we're building an object where:
+    // the key is an id that goes from 0 to nbCells,
+    // the content is a cell object that contains:
+    // id, id of neighbors, plus column and row # for that cell
+
+    const cells = [...Array(nbCells).keys()].reduce((prev, id) => {
+      prev[id] = {
+        id,
+        ...getColRow(id, cols),
+        neighbors: getNeighbors[grid](id, cols, rows),
+      };
+      return prev;
+    }, {});
+
     return {
       rows,
       cols,
@@ -167,7 +303,10 @@ export const updateData = (
   // regardless of disposition of the grid
   let options = [];
   let currentCell;
-  if (visited.size === cells.length || stack.length === 0) {
+  if (params.grid === 'circke') {
+    complete();
+  }
+  if (visited.size === Object.values(cells).length || stack.length === 0) {
     complete();
   } else {
     while (options.length === 0 && stack.length) {
@@ -199,7 +338,7 @@ export const draw = ({
 }) => {
   if (tick === 0) {
     ctx.clearRect(0, 0, height, width);
-    cells.forEach(cell =>
+    Object.values(cells).forEach(cell =>
       drawCell({ ctx, grid, id: cell.id, ...otherData, ...otherParams })
     );
   } else {
