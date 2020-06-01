@@ -3,21 +3,17 @@ import { CanvasFrame } from 'react-sim';
 
 import Model from './framed-model';
 
-const HALF_SQRT3 = Math.sqrt(3) / 2;
-const P = Math.PI;
-const P2 = Math.PI * 2;
-const grids = ['square', 'hexagonal', 'triangular'];
+import { drawItemSquare, drawLinkSquare, initDataSquare } from './mazes/square';
+import { drawItemHex, initDataHex } from './mazes/hex';
+import { drawItemTriangle, initDataTriangle } from './mazes/triangle';
+import { drawItemCircle, drawLinkCircle, initDataCircle } from './mazes/circle';
 
-const getColRow = (id, cols) => {
-  const col = id % cols;
-  const row = (id - col) / cols;
-  return [col, row];
-};
+const grids = ['square', 'hexagonal', 'triangle'];
 
 export const params = {
   width: 332,
   height: 332,
-  grid: 'circle',
+  grid: 'square',
   cellSize: 10,
   pathSize: 5,
   wallSize: 2,
@@ -27,279 +23,31 @@ export const params = {
   ticksPerAnimation: 20,
 };
 
-const getNeighbors = {
-  hexagonal: (id, cols, rows) => {
-    const [col, row] = getColRow(id, cols);
-    const neighbors = [];
-    if (col) {
-      neighbors.push(id - 1);
-    }
-    if (col < cols - 1) {
-      neighbors.push(id + 1);
-    }
-    if (row) {
-      neighbors.push(id - cols);
-      if (row % 2) {
-        if (col < cols - 1) {
-          neighbors.push(id - cols + 1);
-        }
-      } else {
-        if (col > 0) {
-          neighbors.push(id - cols - 1);
-        }
-      }
-    }
-    if (row < rows - 1) {
-      neighbors.push(id + cols);
-      if (row % 2) {
-        if (col < cols - 1) {
-          neighbors.push(id + cols + 1);
-        }
-      } else {
-        if (col > 0) {
-          neighbors.push(id + cols - 1);
-        }
-      }
-    }
-    return neighbors;
-  },
-  square: (id, cols, rows) => {
-    const [col, row] = getColRow(id, cols);
-    const neighbors = [];
-    if (col) {
-      neighbors.push(id - 1);
-    }
-    if (col < cols - 1) {
-      neighbors.push(id + 1);
-    }
-    if (row) {
-      neighbors.push(id - cols);
-    }
-    if (row < rows - 1) {
-      neighbors.push(id + cols);
-    }
-    return neighbors;
-  },
-  triangular: (id, cols, rows) => {
-    const [col, row] = getColRow(id, cols);
-    const neighbors = [];
-    if (col) {
-      neighbors.push(id - 1);
-    }
-    if (col < cols - 1) {
-      neighbors.push(id + 1);
-    }
-    if ((col + row) % 2) {
-      // triangle pointing down
-      if (row) {
-        neighbors.push(id - cols);
-      }
-    } else {
-      if (row < rows - 1) {
-        neighbors.push(id + cols);
-      }
-    }
-    return neighbors;
-  },
-};
-
-export const isBetween = (angle, start, end) => {
-  if ((start + P2) % P2 === (end + P2) % P2) {
-    return true;
-  }
-  let a = (P2 + angle - start) % P2;
-  let e = (P2 + end - start) % P2;
-  return a < e;
-};
-
 export const initData = (
   { cellSize, height, width, grid },
   random = Math.random
 ) => {
+  // the way the dataset is initialized depends on the
+  // grid mode.
+
   if (grid === 'circle') {
-    debugger;
-    const layers = Math.floor(Math.min(height, width) / cellSize);
-    const cells = {
-      '0-0': {
-        id: '0-0',
-        layer: 0,
-        cell: 0,
-        startAngle: 0,
-        endAngle: P2,
-        neighbors: [],
-      },
-    };
-    let nbSegmentsPreviousLayer = 1;
-    for (let l = 1; l < layers; l++) {
-      const circumference = (l + 0.5) * P * cellSize;
-      const nbSegments = Math.floor(circumference / cellSize);
-      let runningAngle = (P2 * random()) / nbSegments;
-      let previousLayerSegmentIdx = 0;
-      let previousLayerSegmentId = `${l - 1}-${previousLayerSegmentIdx}`;
-      let previousLayerSegment = cells[previousLayerSegmentId];
-
-      // in order to determine the neighbors of cells of this layer with
-      // the cells in the previous layers, we start by looking for the
-      // first cell in the previous layer which angles are across our
-      // starting angle.
-
-      // this cell will be a neighbor with the first cell of our new layer.
-
-      while (
-        !isBetween(
-          runningAngle,
-          previousLayerSegment.startAngle,
-          previousLayerSegment.endAngle
-        )
-      ) {
-        previousLayerSegmentIdx =
-          (previousLayerSegmentIdx + 1) % nbSegmentsPreviousLayer;
-        previousLayerSegmentId = `${l - 1}-${previousLayerSegmentIdx}`;
-        previousLayerSegment = cells[previousLayerSegmentId];
-      }
-
-      for (let s = 0; s < nbSegments; s++) {
-        const endAngle = runningAngle + P2 / nbSegments;
-        const id = `${l}-${s}`;
-        // siblings are cells on the same layer of the current segment.
-        // they are always neighbors to the current cell.
-
-        const siblings =
-          nbSegments === 2
-            ? [`${l}-${(s + 1) % nbSegments}`]
-            : [
-                `${l}-${(nbSegments + s - 1) % nbSegments}`,
-                `${l}-${(s + 1) % nbSegments}`,
-              ];
-        const cell = {
-          id,
-          layer: l,
-          cell: s,
-          startAngle: runningAngle,
-          endAngle,
-          neighbors: [...siblings],
-        };
-
-        // next, we are trying to find the neighbors in the previous layer
-
-        // the current previousLayerSegmentId is always a neighbor to this cell
-        cell.neighbors.push(previousLayerSegmentId);
-        cells[previousLayerSegmentId].neighbors.push(id);
-
-        // now, is the next segment on the previous layer also a neighbor?
-        if (isBetween(previousLayerSegment[1], runningAngle, endAngle)) {
-          previousLayerSegmentIdx++;
-          previousLayerSegmentId = `${l - 1}-${previousLayerSegmentIdx}`;
-          cell.neighbors.push(previousLayerSegmentId);
-          cells[previousLayerSegmentId].neighbors.push(id);
-        }
-        cells[id] = cell;
-        runningAngle = endAngle;
-      }
-      nbSegmentsPreviousLayer = nbSegments;
-    }
-    console.log(cells);
-    return {
-      cells,
-      links: [],
-      visited: new Set(['0-0']),
-      currentCell: '0-0',
-      stack: ['0-0'],
-    };
+    return initDataCircle({ cellSize, height, width }, random);
   }
   if (grid === 'square') {
-    const rows = Math.floor(height / cellSize);
-    const cols = Math.floor(width / cellSize);
-    const nbCells = rows * cols;
-    // we're building an object where:
-    // the key is an id that goes from 0 to nbCells,
-    // the content is a cell object that contains:
-    // id, id of neighbors, plus column and row # for that cell
-
-    const cells = [...Array(nbCells).keys()].reduce((prev, id) => {
-      prev[id] = {
-        id,
-        ...getColRow(id, cols),
-        neighbors: getNeighbors[grid](id, cols, rows),
-      };
-      return prev;
-    }, {});
-    return {
-      rows,
-      cols,
-      cells,
-      links: [],
-      visited: new Set([0]),
-      currentCell: 0,
-      stack: [0],
-    };
+    return initDataSquare({ cellSize, height, width });
   }
   if (grid === 'hexagonal') {
-    const rows = Math.floor((4 * height) / (6 * cellSize) - 0.5);
-    const cols = Math.floor(width / (2 * cellSize * HALF_SQRT3) - 0.5);
-    const nbCells = rows * cols;
-
-    // same as for squares:
-    // we're building an object where:
-    // the key is an id that goes from 0 to nbCells,
-    // the content is a cell object that contains:
-    // id, id of neighbors, plus column and row # for that cell
-
-    const cells = [...Array(nbCells).keys()].reduce((prev, id) => {
-      prev[id] = {
-        id,
-        ...getColRow(id, cols),
-        neighbors: getNeighbors[grid](id, cols, rows),
-      };
-      return prev;
-    }, {});
-
-    return {
-      rows,
-      cols,
-      cells,
-      links: [],
-      visited: new Set([0]),
-      currentCell: 0,
-      stack: [0],
-    };
+    return initDataHex({ cellSize, height, width });
   }
   if (grid === 'triangular') {
-    const rows = Math.floor(height / (cellSize * HALF_SQRT3));
-    const cols = Math.floor((2 * width) / cellSize) - 1;
-    const nbCells = rows * cols;
-
-    // same as for squares:
-    // we're building an object where:
-    // the key is an id that goes from 0 to nbCells,
-    // the content is a cell object that contains:
-    // id, id of neighbors, plus column and row # for that cell
-
-    const cells = [...Array(nbCells).keys()].reduce((prev, id) => {
-      prev[id] = {
-        id,
-        ...getColRow(id, cols),
-        neighbors: getNeighbors[grid](id, cols, rows),
-      };
-      return prev;
-    }, {});
-
-    return {
-      rows,
-      cols,
-      cells,
-      links: [],
-      visited: new Set([0]),
-      currentCell: 0,
-      stack: [0],
-    };
+    return initDataTriangle({ cellSize, height, width });
   }
 };
 export const updateData = (
   { data: { cells, links, stack, visited, ...otherData }, params, complete },
   random = Math.random
 ) => {
-  // algorithm to parse the graph is the same
+  // the algorithm to parse the graph is the same
   // regardless of disposition of the grid
   let options = [];
   let currentCell;
@@ -336,14 +84,18 @@ export const draw = ({
   circle,
   ctx,
 }) => {
+  // likewise, the overall idea to draw the maze is the same
+  // regardless of its layout
+
   if (tick === 0) {
     ctx.clearRect(0, 0, height, width);
     Object.values(cells).forEach(cell =>
-      drawCell({ ctx, grid, id: cell.id, ...otherData, ...otherParams })
+      drawCell({ cell, ctx, grid, ...otherData, ...otherParams })
     );
   } else {
     for (let i = tick - ticksPerAnimation; i < tick; i++) {
       drawLink({
+        cells,
         circle,
         ctx,
         grid,
@@ -355,134 +107,34 @@ export const draw = ({
   }
 };
 
-export const getCoords = ({ id, grid, ...other }) => {
+export const drawCell = ({ cell, ctx, grid, ...other }) => {
+  // but how each cell is drawn depends on the layout
+  if (grid === 'circle') {
+    drawItemCircle({ cell, ctx, ...other });
+  }
   if (grid === 'hexagonal') {
-    const { cellSize, wallSize, cols } = other;
-    const [col, row] = getColRow(id, cols);
-    return [
-      wallSize / 2 + ((row % 2 ? 1 : 0.5) + col) * HALF_SQRT3 * cellSize * 2,
-      wallSize / 2 + (1 + 1.5 * row) * cellSize,
-    ];
+    drawItemHex({ cell, ctx, ...other });
   }
   if (grid === 'square') {
-    const { cellSize, cols, wallSize } = other;
-    const [col, row] = getColRow(id, cols);
-    return [
-      wallSize / 2 + (col + 0.5) * cellSize,
-      wallSize / 2 + (row + 0.5) * cellSize,
-    ];
+    drawItemSquare({ cell, ctx, ...other });
   }
   if (grid === 'triangular') {
-    const { cellSize, cols, wallSize } = other;
-    const [col, row] = getColRow(id, cols);
-    return [
-      wallSize / 2 + ((col + 1) * cellSize) / 2,
-      wallSize / 2 +
-        (row + ((row + col) % 2 ? 1 / 3 : 2 / 3)) * HALF_SQRT3 * cellSize,
-    ];
+    drawItemTriangle({ cell, ctx, ...other });
   }
   return null;
 };
 
-export const drawCell = ({ ctx, grid, id, ...other }) => {
-  if (grid === 'hexagonal') {
-    const center = getCoords({ id, grid, ...other });
-    const { cellSize, wallColor, wallSize } = other;
-    ctx.strokeStyle = wallColor;
-    ctx.lineWidth = wallSize;
-
-    ctx.beginPath();
-    ctx.moveTo(center[0], center[1] - cellSize);
-    ctx.lineTo(center[0] - HALF_SQRT3 * cellSize, center[1] - 0.5 * cellSize);
-    ctx.lineTo(center[0] - HALF_SQRT3 * cellSize, center[1] + 0.5 * cellSize);
-    ctx.lineTo(center[0], center[1] + cellSize);
-    ctx.lineTo(center[0] + HALF_SQRT3 * cellSize, center[1] + 0.5 * cellSize);
-    ctx.lineTo(center[0] + HALF_SQRT3 * cellSize, center[1] - 0.5 * cellSize);
-    ctx.closePath();
-    ctx.stroke();
-    return;
-  }
-  if (grid === 'square') {
-    const center = getCoords({ id, grid, ...other });
-    const { cellSize, wallColor, wallSize } = other;
-    ctx.strokeStyle = wallColor;
-    ctx.lineWidth = wallSize;
-    ctx.strokeRect(
-      center[0] - 0.5 * cellSize,
-      center[1] - 0.5 * cellSize,
-      cellSize,
-      cellSize
-    );
-    return;
-  }
-  if (grid === 'triangular') {
-    const center = getCoords({ id, grid, ...other });
-    const { cellSize, cols, wallColor, wallSize } = other;
-    ctx.strokeStyle = wallColor;
-    ctx.lineWidth = wallSize;
-    const [col, row] = getColRow(id, cols);
-    const isPointingDown = (col + row) % 2;
-
-    ctx.beginPath();
-    if (isPointingDown) {
-      ctx.moveTo(
-        wallSize / 2 + (col * cellSize) / 2,
-        wallSize / 2 + row * cellSize * HALF_SQRT3
-      );
-      ctx.lineTo(
-        wallSize / 2 + ((col + 2) * cellSize) / 2,
-        wallSize / 2 + row * cellSize * HALF_SQRT3
-      );
-      ctx.lineTo(
-        wallSize / 2 + ((col + 1) * cellSize) / 2,
-        wallSize / 2 + (row + 1) * cellSize * HALF_SQRT3
-      );
-    } else {
-      ctx.moveTo(
-        wallSize / 2 + (col * cellSize) / 2,
-        wallSize / 2 + (row + 1) * cellSize * HALF_SQRT3
-      );
-      ctx.lineTo(
-        wallSize / 2 + ((col + 2) * cellSize) / 2,
-        wallSize / 2 + (row + 1) * cellSize * HALF_SQRT3
-      );
-      ctx.lineTo(
-        wallSize / 2 + ((col + 1) * cellSize) / 2,
-        wallSize / 2 + row * cellSize * HALF_SQRT3
-      );
-    }
-    ctx.closePath();
-    ctx.stroke();
-    return;
-  }
-  return null;
-};
-
-export const drawLink = ({ ctx, circle, grid, link, ...other }) => {
+export const drawLink = ({ cells, ctx, circle, grid, link, ...other }) => {
+  // and how each link between 2 cells is drawn depends on layout, too.
   if (link === undefined) {
     return;
   }
   if (grid === 'square' || grid === 'hexagonal' || grid === 'triangular') {
-    const { cellSize, cols, pathColor, pathSize, wallSize } = other;
-
-    const start = getCoords({ id: link[0], cellSize, cols, grid, wallSize });
-    const end = getCoords({ id: link[1], cellSize, cols, grid, wallSize });
-
-    ctx.strokeStyle = pathColor;
-    ctx.fillStyle = pathColor;
-
-    circle({ x: start[0], y: start[1], r: pathSize / 2 });
-    ctx.fill();
-    circle({ x: end[0], y: end[1], r: pathSize / 2 });
-    ctx.fill();
-
-    ctx.lineWidth = pathSize;
-
-    ctx.beginPath();
-    ctx.moveTo(...start);
-    ctx.lineTo(...end);
-    ctx.closePath();
-    ctx.stroke();
+    // links for "rectangular" grids are the same though.
+    drawLinkSquare({ cells, ctx, circle, link, ...other });
+  }
+  if (grid === 'circle') {
+    drawLinkCircle({ cells, ctx, circle, link, ...other });
   }
 };
 
