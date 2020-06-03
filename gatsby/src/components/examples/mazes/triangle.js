@@ -22,7 +22,10 @@ export const getNeighborsTriangle = (id, cols, rows) => {
   return neighbors;
 };
 
-export const initDataTriangle = ({ cellSize, height, width }) => {
+export const initDataTriangle = ({ height, width }) => {
+  const cellSize = Math.max(10, Math.min(10, Math.min(height, width) / 20));
+  const pathSize = 0.5 * cellSize;
+  const wallSize = 0.2 * cellSize;
   const rows = Math.floor(height / (cellSize * HALF_SQRT3));
   const cols = Math.floor((2 * width) / cellSize) - 1;
   const nbCells = rows * cols;
@@ -43,6 +46,9 @@ export const initDataTriangle = ({ cellSize, height, width }) => {
   }, {});
 
   return {
+    cellSize,
+    pathSize,
+    wallSize,
     rows,
     cols,
     cells,

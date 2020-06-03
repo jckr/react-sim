@@ -19,9 +19,12 @@ export const getNeighborsSquare = (id, cols, rows) => {
 };
 
 export const initDataSquare = (
-  { cellSize, height, width, grid },
-  random = Math.random
+  { height, width, grid }
 ) => {
+  const cellSize = Math.max(5, Math.min(10, Math.min(height, width) / 20));
+  const pathSize = 0.8 * cellSize;
+  const wallSize = 0.2 * cellSize;
+
   const rows = Math.floor(height / cellSize);
   const cols = Math.floor(width / cellSize);
   const nbCells = rows * cols;
@@ -39,6 +42,9 @@ export const initDataSquare = (
     return prev;
   }, {});
   return {
+    cellSize,
+    wallSize,
+    pathSize,
     rows,
     cols,
     cells,

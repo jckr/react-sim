@@ -7,7 +7,7 @@ export const getColRow = (id, cols) => {
   return { col, row };
 };
 
-export const norm = (a) => (a + P2) % P2;
+export const norm = a => (a + P2) % P2;
 
 export const average = (a0, a1) => {
   let min = Math.min(norm(a0), norm(a1));
@@ -17,12 +17,24 @@ export const average = (a0, a1) => {
     return norm(min + (max - min) / 2 + P);
   }
   return norm(min + (max - min) / 2);
-
 };
 
 export const getRadius = (layer, cellSize) => {
   return (layer + 0.5) * cellSize;
-}
+};
+
+export const acuteArc = ({ ctx, x, y, r, a0, a1 }) => {
+  // draws the smallest arc between angles a0 and a1;
+  const angle0 = norm(a0);
+  const angle1 = norm(a1);
+
+  const startAngle = Math.min(angle0, angle1);
+  const endAngle = Math.max(angle0, angle1);
+
+  const isClockwise = norm(endAngle - startAngle) > P;
+
+  ctx.arc(x, y, r, startAngle, endAngle, isClockwise);
+};
 
 export const isBetween = (angle, start, end) => {
   if (norm(start) === norm(end)) {

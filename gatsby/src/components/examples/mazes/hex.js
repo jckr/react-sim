@@ -36,7 +36,10 @@ export const getNeighborsHex = (id, cols, rows) => {
   return neighbors;
 };
 
-export const initDataHex = ({ cellSize, height, width }) => {
+export const initDataHex = ({ height, width }) => {
+  const cellSize = Math.max(5, Math.min(10, Math.min(height, width) / 20));
+  const pathSize = 0.8 * cellSize;
+  const wallSize = 0.1 * cellSize;
   const rows = Math.floor((4 * height) / (6 * cellSize) - 0.5);
   const cols = Math.floor(width / (2 * cellSize * HALF_SQRT3) - 0.5);
   const nbCells = rows * cols;
@@ -57,6 +60,9 @@ export const initDataHex = ({ cellSize, height, width }) => {
   }, {});
 
   return {
+    cellSize,
+    pathSize,
+    wallSize,
     rows,
     cols,
     cells,

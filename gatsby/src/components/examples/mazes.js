@@ -1,7 +1,7 @@
 import React from 'react';
-import { CanvasFrame } from 'react-sim';
+import { CanvasFrame, Model } from 'react-sim';
 
-import Model from './framed-model';
+// import Model from './framed-model';
 
 import { drawItemSquare, drawLinkSquare, initDataSquare } from './mazes/square';
 import { drawItemHex, drawLinkHex, initDataHex } from './mazes/hex';
@@ -10,21 +10,26 @@ import {
   drawLinkTriangle,
   initDataTriangle,
 } from './mazes/triangle';
-import { drawItemCircle, drawLinkCircle, initDataCircle } from './mazes/circle';
+import {
+  drawItemCircle,
+  drawLinkCircle,
+  // drawStraightLinkCircle as drawLinkCircle,
+  initDataCircle,
+} from './mazes/circle';
 
 const grids = ['square', 'hexagonal', 'triangular', 'circle'];
 
 export const params = {
+  drawItem: false,
+  useColor: false,
   width: 332,
   height: 332,
   grid: 'square',
   cellSize: 10,
-  pathSize: 5,
-  wallSize: 2,
   wallColor: '#000',
   pathColor: '#fff',
   maxTime: Infinity,
-  ticksPerAnimation: 1,
+  ticksPerAnimation: 20,
 };
 
 export const initData = (
@@ -80,7 +85,7 @@ export const updateData = (
 };
 
 export const draw = ({
-  params: { height, width, grid, ticksPerAnimation, ...otherParams },
+  params: { drawItem, height, width, grid, ticksPerAnimation, wallColor, ...otherParams },
   data: { cells, links, ...otherData },
   tick,
   circle,
@@ -89,6 +94,7 @@ export const draw = ({
   // likewise, the overall idea to draw the maze is the same
   // regardless of its layout
   if (tick === 0) {
+    if (drawItem) {
     ctx.clearRect(0, 0, height, width);
     Object.values(cells).forEach(cell =>
       drawCell({
@@ -98,10 +104,14 @@ export const draw = ({
         grid,
         height,
         width,
-        ...otherData,
         ...otherParams,
+        ...otherData,
       })
     );
+    } else {
+      ctx.fillStyle = wallColor;
+      ctx.fillRect(0, 0, width, height);
+    }
   } else {
     for (let i = tick - ticksPerAnimation; i < tick; i++) {
       drawLink({
@@ -111,9 +121,10 @@ export const draw = ({
         grid,
         height,
         width,
+        tick: i,
         link: links[i],
-        ...otherData,
         ...otherParams,
+        ...otherData,
       });
     }
   }
