@@ -1,10 +1,12 @@
 import { P, P2, acuteArc, isBetween, average, getRadius } from './helpers';
 import { CETR2 } from '../../constants';
 
+const segmentRatio = 3;
+
 export const initDataCircle = ({ height, width }, random = Math.random) => {
   const cellSize = Math.max(5, Math.min(10, Math.min(height, width) / 20));
-  const pathSize = 0.8 * cellSize;
-  const wallSize = 0.1 * cellSize;
+  const pathSize = 0.6 * cellSize;
+  const wallSize = 0.4 * cellSize;
 
   const layers = Math.floor(Math.min(height, width) / 2 / cellSize);
   const cells = {
@@ -13,14 +15,15 @@ export const initDataCircle = ({ height, width }, random = Math.random) => {
       layer: 0,
       cell: 0,
       startAngle: 0,
+      midangle: P,
       endAngle: P2,
       neighbors: [],
     },
   };
   let nbSegmentsPreviousLayer = 1;
   for (let l = 1; l < layers; l++) {
-    const circumference = P * getRadius(l, cellSize);
-    const nbSegments = Math.floor(circumference / cellSize);
+    const circumference = P2 * getRadius(l, cellSize);
+    const nbSegments = Math.floor(circumference / (segmentRatio * cellSize));
     let runningAngle = (P2 * random()) / nbSegments;
     let previousLayerSegmentIdx = 0;
     let previousLayerSegmentId = `${l - 1}-${previousLayerSegmentIdx}`;
@@ -31,7 +34,7 @@ export const initDataCircle = ({ height, width }, random = Math.random) => {
     // starting angle.
 
     // this cell will be a neighbor with the first cell of our new layer.
-
+    let skippedSegments = 0;
     while (
       !isBetween(
         runningAngle,
@@ -46,6 +49,7 @@ export const initDataCircle = ({ height, width }, random = Math.random) => {
 
     for (let s = 0; s < nbSegments; s++) {
       const endAngle = runningAngle + P2 / nbSegments;
+      const midAngle = runningAngle + P2 / (nbSegments * segmentRatio);
       const id = `${l}-${s}`;
       // siblings are cells on the same layer of the current segment.
       // they are always neighbors to the current cell.
@@ -62,18 +66,34 @@ export const initDataCircle = ({ height, width }, random = Math.random) => {
         layer: l,
         cell: s,
         startAngle: runningAngle,
+        midAngle,
         endAngle,
         startAngleDeg: (runningAngle * 180) / P,
         endAngleDeg: (endAngle * 180) / P,
         neighbors: [...siblings],
       };
 
-      // next, we are trying to find the neighbors in the previous layer
-      // the current previousLayerSegmentId is always a neighbor to this cell
-      cell.neighbors.push(previousLayerSegmentId);
-      cells[previousLayerSegmentId].neighbors.push(id);
+      // there are 3 possible scenarios.
+      // 1 - we add a link between previousLayerSegment and current segment.
+      // we would do that if there's enough space to draw a path.
+      // PLS.endAngle would have to be between current midangle and endangle.
 
-      // now, is the next segment on the previous layer also a neighbor?
+      // 2 - we increment previousLayerSegment.
+      // we would do that if PLS.endAngle is less than current endAngle.
+      // ie - if PLS.endangle is between current running angle and current endangle.
+
+      // 3 - we add a link between this new PLS and the current cell.
+      // new PLS.midangle has to be less than endangle.
+      // so between current running and current endangle.
+
+      if (
+        isBetween(cells[previousLayerSegmentId].endAngle, midAngle, endAngle)
+      ) {
+        // scenario 1 - we add a link between current cell and PL
+        cell.neighbors.push(previousLayerSegmentId);
+        cells[previousLayerSegmentId].neighbors.push(id);
+      }
+
       if (
         isBetween(
           cells[previousLayerSegmentId].endAngle,
@@ -84,9 +104,18 @@ export const initDataCircle = ({ height, width }, random = Math.random) => {
         previousLayerSegmentIdx =
           (previousLayerSegmentIdx + 1) % nbSegmentsPreviousLayer;
         previousLayerSegmentId = `${l - 1}-${previousLayerSegmentIdx}`;
-        cell.neighbors.push(previousLayerSegmentId);
-        cells[previousLayerSegmentId].neighbors.push(id);
+        if (
+          isBetween(
+            cells[previousLayerSegmentId].endAngle,
+            runningAngle,
+            endAngle
+          )
+        ) {
+          cell.neighbors.push(previousLayerSegmentId);
+          cells[previousLayerSegmentId].neighbors.push(id);
+        }
       }
+
       cells[id] = cell;
       runningAngle = endAngle;
     }
@@ -145,6 +174,7 @@ export const drawItemCircle = ({
     a1: cell.endAngle,
   });
   ctx.stroke();
+
   ctx.strokeStyle = pathColor;
   ctx.lineWidth = pathSize;
   ctx.beginPath();
@@ -228,12 +258,12 @@ export const drawLinkCircle = ({
       pathSize,
     });
   }
-
+  ctx.save();
   const end = cells[link[1]];
   const [x, y] = [width / 2, height / 2];
   ctx.strokeStyle = pathColor;
   ctx.fillStyle = pathColor;
-
+  ctx.lineCap = 'round';
   ctx.lineWidth = pathSize;
 
   const startMidAngle = (start.startAngle + start.endAngle) / 2;
@@ -246,10 +276,12 @@ export const drawLinkCircle = ({
     const y0 = y + Math.sin(startMidAngle) * getRadius(start.layer, cellSize);
     ctx.lineTo(x0, y0);
     ctx.stroke();
+    ctx.beginPath();
     circle({ x, y, r: pathSize / 2 });
     ctx.fill();
     circle({ x: x0, y: y0, r: pathSize / 2 });
     ctx.fill();
+    ctx.restore();
     return;
   }
 
@@ -273,12 +305,13 @@ export const drawLinkCircle = ({
 
     const x1 = x + Math.cos(endMidAngle) * r;
     const y1 = y + Math.sin(endMidAngle) * r;
+    ctx.beginPath();
 
     circle({ x: x0, y: y0, r: pathSize / 2 });
     ctx.fill();
     circle({ x: x1, y: y1, r: pathSize / 2 });
     ctx.fill();
-
+    ctx.restore();
     return;
   }
 
@@ -305,9 +338,13 @@ export const drawLinkCircle = ({
   ctx.beginPath();
   acuteArc({ ctx, x, y, r: r0, a0: firstEnd.midAngle, a1: midAngle });
   ctx.stroke();
+  ctx.beginPath();
+
   ctx.moveTo(x + Math.cos(midAngle) * r0, y + Math.sin(midAngle) * r0);
   ctx.lineTo(x + Math.cos(midAngle) * r1, y + Math.sin(midAngle) * r1);
   ctx.stroke();
+  ctx.beginPath();
+
   acuteArc({ ctx, x, y, r: r1, a0: midAngle, a1: secondEnd.midAngle });
   ctx.stroke();
 
@@ -321,6 +358,6 @@ export const drawLinkCircle = ({
   ctx.fill();
   circle({ x: x1, y: y1, r: pathSize / 2 });
   ctx.fill();
-
+  ctx.restore();
   return;
 };

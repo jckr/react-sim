@@ -20,7 +20,7 @@ import {
 const grids = ['square', 'hexagonal', 'triangular', 'circle'];
 
 export const params = {
-  drawItem: false,
+  drawItem: true,
   useColor: false,
   width: 332,
   height: 332,
@@ -85,7 +85,7 @@ export const updateData = (
 };
 
 export const draw = ({
-  params: { drawItem, height, width, grid, ticksPerAnimation, wallColor, ...otherParams },
+  params: { drawItem, height, width, grid, ticksPerAnimation, ...otherParams },
   data: { cells, links, ...otherData },
   tick,
   circle,
@@ -93,21 +93,24 @@ export const draw = ({
 }) => {
   // likewise, the overall idea to draw the maze is the same
   // regardless of its layout
+
+  const wallColor = otherParams.wallColor || otherData.wallColor;
+
   if (tick === 0) {
     if (drawItem) {
-    ctx.clearRect(0, 0, height, width);
-    Object.values(cells).forEach(cell =>
-      drawCell({
-        cell,
-        circle,
-        ctx,
-        grid,
-        height,
-        width,
-        ...otherParams,
-        ...otherData,
-      })
-    );
+      ctx.clearRect(0, 0, height, width);
+      Object.values(cells).forEach(cell =>
+        drawCell({
+          cell,
+          circle,
+          ctx,
+          grid,
+          height,
+          width,
+          ...otherParams,
+          ...otherData,
+        })
+      );
     } else {
       ctx.fillStyle = wallColor;
       ctx.fillRect(0, 0, width, height);
@@ -168,21 +171,25 @@ export const drawLink = ({ cells, ctx, circle, grid, link, ...other }) => {
 
 export const Frame = props => <CanvasFrame draw={draw} {...props} />;
 
-const Maze = () => (
-  <Model
-    initialParams={params}
-    initData={initData}
-    updateData={updateData}
-    controls={{
-      type: 'radio',
-      vertical: true,
-      options: grids,
-      param: 'grid',
-      resetOnChange: true,
-    }}
-  >
-    <Frame />
-  </Model>
-);
+const Maze = props => {
+  console.log(props);
+  return (
+    <Model
+      initialParams={params}
+      initData={initData}
+      updateData={updateData}
+      controls={{
+        type: 'radio',
+        vertical: true,
+        options: grids,
+        param: 'grid',
+        resetOnChange: true,
+      }}
+      {...props}
+    >
+      <Frame />
+    </Model>
+  );
+};
 
 export default Maze;
