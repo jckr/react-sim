@@ -164,7 +164,7 @@ export class DiceFrame extends React.Component {
   }
 }
 
-const Dice = () => {
+const Dice = props => {
   const context = useThemeUI();
   const { theme } = context;
   return (
@@ -185,6 +185,7 @@ const Dice = () => {
         initialParams={{
           nbDice: 5,
         }}
+        {...props}
       >
         <DiceFrame theme={theme} />
       </Model>

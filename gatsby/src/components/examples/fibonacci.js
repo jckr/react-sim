@@ -92,8 +92,8 @@ export const FibonacciSpiralFrame = ({ tick, params }) => {
   return <CanvasFrame height={height} width={width} draw={draw} />;
 };
 
-const FibonacciSpiral = () => (
-  <Model initialParams={{ size: 332 }} delay={100} maxTime={15}>
+const FibonacciSpiral = prop => (
+  <Model initialParams={{ size: 332 }} delay={100} maxTime={15} {...props}>
     <FibonacciSpiralFrame />
   </Model>
 );
@@ -225,13 +225,14 @@ export const FibonacciSquaresFrame = ({ data, tick, params }) => {
   );
 };
 
-const FibonacciSquares = () => (
+const FibonacciSquares = props => (
   <Model
     initialParams={{ size: 350 }}
     initData={initData}
     updateData={updateData}
     delay={400}
     maxTime={12}
+    {...props}
   >
     <FibonacciSquaresFrame />
   </Model>

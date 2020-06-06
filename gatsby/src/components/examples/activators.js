@@ -83,7 +83,7 @@ export function initData(
 export const ActivatorFrame = props => (
   <Grid size={10} accessor={d => (d.value ? '#000' : 'none')} {...props} />
 );
-const Activators = () => (
+const Activators = props => (
   <Model
     auto="false"
     controls={[
@@ -117,6 +117,7 @@ const Activators = () => (
     }}
     updateData={update}
     maxTime={200}
+    {...props}
   >
     <ActivatorFrame />
   </Model>

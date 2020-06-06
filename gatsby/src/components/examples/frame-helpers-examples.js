@@ -52,7 +52,7 @@ const draw = ({ ctx, cachedData, data, circle, params, tick }) => {
   });
 };
 
-export const CanvasFrameExample = () => (
+export const CanvasFrameExample = props => (
   <Model
     initData={initDataCF}
     updateData={updateDataGF}
@@ -63,6 +63,7 @@ export const CanvasFrameExample = () => (
       balls: 200,
       speed: 3,
     }}
+    {...props}
   >
     <CanvasFrame draw={draw} />
   </Model>
@@ -101,11 +102,12 @@ const stackedSeries = [...Array(13).keys()].slice(2).map(dots => ({
   accessor: d => d.totals[dots] || 0,
 }));
 
-export const TimeSeriesExample = () => (
+export const TimeSeriesExample = props => (
   <Model
     initData={initDice}
     updateData={updateDice}
     initialParams={{ nbDice: 2 }}
+    {...props}
   >
     <Flex flexDirection="column">
       <Text sx={{ fontSize: 1, fontWeight: 'bold' }}>Roll:</Text>

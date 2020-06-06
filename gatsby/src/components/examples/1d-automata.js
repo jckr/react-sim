@@ -117,7 +117,7 @@ const BitControlComponent = ({ bit, params, setParams }) => {
 
 const BitControl = withControls(BitControlComponent);
 
-const Automata = () => (
+const Automata = props => (
   <Model
     initialParams={params}
     initData={initData}
@@ -133,6 +133,7 @@ const Automata = () => (
         vertical: true,
       })
     }
+    {...props}
   >
     <Flex flexDirection="column">
       <Frame />

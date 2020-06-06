@@ -268,9 +268,8 @@ const series = [
   },
 ];
 
-const Epidemic = () => (
+const Epidemic = props => (
   <Model
-    auto="false"
     initData={initData}
     initialParams={{
       nbAgents: 500,
@@ -286,6 +285,7 @@ const Epidemic = () => (
     }}
     updateData={updateEpidemic}
     maxTime={500}
+    {...props}
   >
     <Flex flexDirection="column">
       <ConnectedFrame />

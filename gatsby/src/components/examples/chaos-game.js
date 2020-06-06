@@ -93,7 +93,7 @@ function draw({ ctx, data, params, tick, circle }) {
   }
 }
 
-export const BasicChaosGame = () => (
+export const BasicChaosGame = props => (
   <Model
     ticksPerAnimation={100}
     maxTime={10000}
@@ -107,6 +107,7 @@ export const BasicChaosGame = () => (
       nbAttractors: 3,
       r: 1,
     }}
+    {...props}
   >
     <Frame />
   </Model>
@@ -159,7 +160,7 @@ export const CustomControls = ({ params, setParams }) => {
 };
 
 const Controls = withControls(CustomControls);
-export const ChaosGame = () => (
+export const ChaosGame = props => (
   <Model
     ticksPerAnimation={100}
     maxTime={20000}
@@ -173,6 +174,7 @@ export const ChaosGame = () => (
       r: 1,
       rules: '1001100',
     }}
+    {...props}
   >
     <Flex flexDirection="column">
       <Frame />

@@ -104,6 +104,14 @@ export default props => {
   const nav = useRef(null);
   const { theme } = useThemeUI();
 
+  if (props.location.search) {
+    return (
+      <ThemeProvider components={mdxComponents} theme={theme}>
+        <main id="content">{props.children}</main>
+      </ThemeProvider>
+    );
+  }
+
   useEffect(() => {
     const handleSizeChange = ({ matches }) => setIsSmall(matches);
     const breakpoints = theme?.breakpoints || ['40em'];

@@ -312,7 +312,7 @@ export const PercolationFrameGrid = ({ data, params }) => {
   );
 };
 
-export const Percolation = () => {
+export const Percolation = props => {
   return (
     <>
       <Model
@@ -335,6 +335,7 @@ export const Percolation = () => {
           porosity: 0.6,
           shouldComplete: true,
         }}
+        {...props}
       >
         <PercolationFrame />
       </Model>
@@ -364,7 +365,7 @@ export function initDataGrid(
   };
 }
 
-export const PercolationGrid = () => {
+export const PercolationGrid = props => {
   return (
     <>
       <Model
@@ -382,6 +383,7 @@ export const PercolationGrid = () => {
           minP: 0.54,
           stepP: 0.02,
         }}
+        {...props}
       >
         <PercolationFrameGrid />
       </Model>
