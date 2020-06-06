@@ -1,0 +1,41 @@
+---
+Title: Maze generation
+---
+
+import Maze from '../../components/examples/mazes';
+
+# Maze generation
+
+<Maze isPlaying controls={null} />
+
+A __perfect maze__ is a diagram where _cells_ can be linked with _paths_, and there is a unique path between any two cells.
+So, if you pick 2 cells in the maze, for instance opposite corners, there is one and only one way to go from one to the other.
+
+The data structure of a maze is really a graph with node and links, and more precisely, a spanning tree.
+To create our mazes, we start from a graph where each cell is a node, linked to its neighbors.
+
+In the example above, each cell has neighbors to the top, right, below and left, unless it sits on an edge.
+In the _data initialization_ part of our model, we create that grid and list all potential neighbors for every cell.
+
+Then, we're going to connect these cells.
+We start with one arbitrary cell, which we mark as visited. Then, we check which of its neighbors is not visited, we randomly choose one, and we create a link between these two cells.
+Next, we'll look at the neighbors of the new cell, randomly pick one, and proceed, until we can't go any further - all neighbors are visited. Then, we backtrack until we find a cell with unvisited neighbors. We pick one at random, continue until we can't, then backtrack.
+At each step of this process, we are going to create one extra path between two neighboring cells.
+So, at each tick, we can _update our data_ and have one extra connection.
+
+We stop when every cell is visited.
+
+Rendering a square maze is pretty straighforward, we can draw a grid and just draw short lines across 2 cells to represent a path.
+
+## Non-square mazes
+
+<Maze />
+
+Creating a maze is really creating a tree from a strongly connected graph. The result doesn't have to look like a square.
+
+Our maze generator can work with a few other shapes. We can have an hexagonal grid, where each cell can have up to 6 neighbors, or a triangular one, where each cell has up to 3.
+We've also added a circular "grid" - concentric circles divided into segments. Each segment has neighbors on the same layer, but may also have neighbors on other layers.
+
+## Other maze algorithms
+
+Here, we've used a simple DFS approach to parse our graph. There are [many other ways](https://www.astrolog.org/labyrnth/algrithm.htm) to turn a graph into a maze!
