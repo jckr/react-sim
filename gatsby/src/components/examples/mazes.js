@@ -17,7 +17,7 @@ import {
   initDataCircle,
 } from './mazes/circle';
 
-const grids = ['square', 'hexagonal', 'triangular', 'circle'];
+export const grids = ['square', 'hexagonal', 'triangular', 'circle'];
 
 export const params = {
   drawItem: true,
