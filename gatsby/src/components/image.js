@@ -67,6 +67,7 @@ export const ImageComponent = ({ name, data }) => {
 
 const Image = ({ name }) => {
   const data = useStaticQuery(query);
+  console.log(data);
   return <ImageComponent data={data} name={name} />;
 };
 
