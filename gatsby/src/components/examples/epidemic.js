@@ -289,8 +289,8 @@ const Epidemic = props => (
   >
     <Flex flexDirection="column">
       <ConnectedFrame />
-      <TimeSeries series={series} stacked={true} />
-      <Counter series={series} />
+      {props.hideSeries ? null : <TimeSeries series={series} stacked={true} />}
+      {props.hideSeries ? null : <Counter series={series} />}
     </Flex>
   </Model>
 );

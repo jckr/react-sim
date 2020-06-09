@@ -390,3 +390,5 @@ export const PercolationGrid = props => {
     </>
   );
 };
+
+export default Percolation;

@@ -311,6 +311,6 @@ const Boids = props => (
 );
 
 export const ChillBoids = props => (
-  <Boids isPlaying noCache noControls {...props} />
+  <Boids isPlaying noControls {...props} />
 );
 export default Boids;

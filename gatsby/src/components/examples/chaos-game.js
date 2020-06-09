@@ -182,3 +182,4 @@ export const ChaosGame = props => (
     </Flex>
   </Model>
 );
+export default ChaosGame;

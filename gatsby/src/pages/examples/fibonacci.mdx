@@ -3,23 +3,23 @@ Title: Fibonacci
 ---
 
 import {
+  FibonacciNumbers,
   FibonacciSpiral,
-  FibonacciSquares,
 } from '../../components/examples/fibonacci';
 
 # Fibonacci sequence
 
 Both of these examples are inspired by the Fibonacci sequence, where:
+
 - F<sub>0</sub> = 0,
 - F<sub>1</sub> = 1,
 - F<sub>n</sub> = F<sub>n - 1</sub> + F<sub>n - 2</sub> for each n > 2.
 
-
 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...
 
-<FibonacciSquares />
+<FibonacciNumbers />
 
-The corresponding `udpateData` function is really simple:
+The corresponding `udpateData` function is as follows:
 
 ```jsx
 function updateData({ data, tick }) {
@@ -34,19 +34,26 @@ function updateData({ data, tick }) {
 }
 ```
 
-We can draw squares with sides corresponding to the number in the sequence:
-
-
-Joining their corners, they form a spiral.
-
 F<sub>n</sub> / F<sub>n-1</sub> converges to φ, the golden ratio - (1 - √5) / 2.
+
+Because of this convergence, the Fibonacci sequence is sometimes associated with spirals.
+We could:
+- draw a square of side F<sub>n</sub>, then
+- draw a square of side F<sub>n+1</sub> to its right, then
+- draw a square of side F<sub>n+2</sub> below these two squares, then
+- draw a square of side F<sub>n+3</sub> to the left of these squares, then
+- a square of side F<sub>n+4</sub> above,
+etc, etc.
+
+and by linking their corners, obtain a [Golden spiral](https://en.wikipedia.org/wiki/Golden_spiral).
+
+But we can also draw a Golden Spiral without even needing to initiate or update data.
 
 We can start from a rectangle φ * k by k rectangle, divide its longer side by φ, draw that square, and keep on dividing the remaining rectangle.
 We'll have squares of same proportions and can also draw a similar spiral.
 
 <FibonacciSpiral />
 
-In this case, we don't even need to provide data, an initData or an updateData function.
 All we need is the number of steps we want to go (tick) and a Frame to render the squares and spiral.
 
 ```jsx
@@ -56,4 +63,3 @@ const FibonacciSpiral = () => (
   </Model>
 );
 ```
-

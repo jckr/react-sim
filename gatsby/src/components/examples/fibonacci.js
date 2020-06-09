@@ -1,6 +1,6 @@
 import React from 'react';
 import { CanvasFrame } from 'react-sim';
-
+import { Flex, Box } from 'rebass';
 import Model from './framed-model';
 
 const phi = 0.5 + Math.sqrt(5) / 2;
@@ -92,7 +92,7 @@ export const FibonacciSpiralFrame = ({ tick, params }) => {
   return <CanvasFrame height={height} width={width} draw={draw} />;
 };
 
-const FibonacciSpiral = prop => (
+const FibonacciSpiral = props => (
   <Model initialParams={{ size: 332 }} delay={100} maxTime={15} {...props}>
     <FibonacciSpiralFrame />
   </Model>
@@ -225,9 +225,24 @@ export const FibonacciSquaresFrame = ({ data, tick, params }) => {
   );
 };
 
+const NumberFrame = ({ data }) => (
+  <Flex sx={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+    {data.map((d, i) => (
+      <Box sx={{ m: 1, p: 2, bg: 'muted', fontSize: 1 }} key={i}>
+        {d}
+      </Box>
+    ))}
+  </Flex>
+);
+const FibonacciNumbers = props => (
+  <Model initData={initData} updateData={updateData} maxTime={20} {...props}>
+    <NumberFrame />
+  </Model>
+);
+
 const FibonacciSquares = props => (
   <Model
-    initialParams={{ size: 350 }}
+    initialParams={{ size: 332 }}
     initData={initData}
     updateData={updateData}
     delay={400}
@@ -238,4 +253,6 @@ const FibonacciSquares = props => (
   </Model>
 );
 
-export { FibonacciSpiral, FibonacciSquares };
+export { FibonacciSpiral, FibonacciSquares, FibonacciNumbers };
+export default FibonacciSpiral;
+

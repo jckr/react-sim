@@ -137,16 +137,16 @@ const Automata = props => (
   >
     <Flex flexDirection="column">
       <Frame />
-      <Flex flexDirection="row" sx={{ justifyContent: 'space-between', my: 2 }}>
+      {props.noControls ? null : <Flex flexDirection="row" sx={{ justifyContent: 'space-between', my: 2 }}>
         {[0, 1, 2, 3].map(bit => (
           <BitControl bit={bit} key={`bit-${bit}`} />
         ))}
-      </Flex>
-      <Flex flexDirection="row" sx={{ justifyContent: 'space-between', my: 2 }}>
+      </Flex>}
+      {props.noControls ? null : <Flex flexDirection="row" sx={{ justifyContent: 'space-between', my: 2 }}>
         {[4, 5, 6, 7].map(bit => (
           <BitControl bit={bit} key={`bit-${bit}`} />
         ))}
-      </Flex>
+      </Flex>}
     </Flex>
   </Model>
 );
