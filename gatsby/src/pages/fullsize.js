@@ -12,6 +12,7 @@ import Maze from '../components/examples/mazes';
 import Percolation from '../components/examples/percolation';
 import Segregation from '../components/examples/segregation';
 import SimpleModel from '../components/examples/simple-model';
+import Snake from '../components/examples/snake';
 
 const extraProps = {
   delay: 500,
@@ -79,6 +80,8 @@ const Page = props => {
       return <Segregation {...extraProps} extraParams={{ tolerance: 50 }} />;
     case 'simple-model':
       return <SimpleModel {...extraProps} maxTime={100} />;
+    case 'snake':
+      return <Snake {...extraProps} />
     default:
       return <div>Usage: have an example name in the search query.</div>;
   }

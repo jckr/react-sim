@@ -25,9 +25,10 @@ const exec = util.promisify(require('child_process').exec);
     fibonacci: { max: 15 },
     'game-of-life': {},
     maze: { max: 250 },
-    percolation: {max: 30},
+    percolation: { max: 30 },
     segregation: {},
     'simple-model': { max: 100 },
+    snake: {},
   };
 
   const example = process.argv[2];
@@ -46,7 +47,7 @@ const exec = util.promisify(require('child_process').exec);
       `convert ${firstImage} palette.gif`,
       `convert -dither none -remap palette.gif *.png ${example}-uncompressed.gif`,
       `gifsicle --optimize=3 --delay=2 --resize 150x150 < ${example}-uncompressed.gif > ${example}.gif`,
-      `cp ${example}.gif ../../src/images/gifs/${example}.gif`,
+      `cp ${example}-uncompressed.gif ../../src/images/gifs/${example}.gif`,
       `cp ${firstImage} ../../src/images/thumbnails/${example}.png`,
     ];
     await exec(commands.join(' && '));
