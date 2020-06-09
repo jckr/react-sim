@@ -1,18 +1,20 @@
 import React from 'react';
 
-import Automata from '../components/examples/1d-automata';
-import Activators from '../components/examples/activators';
-import Boids from '../components/examples/boids';
-import ChaosGame from '../components/examples/chaos-game';
-import Dice from '../components/examples/dice';
-import Epidemic from '../components/examples/epidemic';
-import Fibonacci from '../components/examples/fibonacci';
-import GameOfLife from '../components/examples/game-of-life';
-import Maze from '../components/examples/mazes';
-import Percolation from '../components/examples/percolation';
-import Segregation from '../components/examples/segregation';
-import SimpleModel from '../components/examples/simple-model';
-import Snake from '../components/examples/snake';
+import {
+  Automata,
+  Activators,
+  Boids,
+  ChaosGame,
+  Dice,
+  Epidemic,
+  Fibonacci,
+  GameOfLife,
+  Maze,
+  Percolation,
+  Segregation,
+  SimpleModel,
+  Snake,
+} from '../components/examples/';
 
 const extraProps = {
   delay: 500,
@@ -81,7 +83,7 @@ const Page = props => {
     case 'simple-model':
       return <SimpleModel {...extraProps} maxTime={100} />;
     case 'snake':
-      return <Snake {...extraProps} />
+      return <Snake {...extraProps} />;
     default:
       return <div>Usage: have an example name in the search query.</div>;
   }
