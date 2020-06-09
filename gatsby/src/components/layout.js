@@ -7,6 +7,7 @@ import Header from './header';
 import { ThemeProvider, useThemeUI } from 'theme-ui';
 import { window } from 'global';
 import EditLink from './edit-link';
+import SourceLink from './source-link';
 import Footer from './footer';
 
 const disableFullWidthForHomePage = false;
@@ -14,6 +15,7 @@ const disableFullWidthForHomePage = false;
 // derived from rebassjs.org layout file
 
 const Sidebar = ({ Toc, isSmall, location, nav, open, setMenu, ...props }) => {
+
   return (
     <Flex>
       <Box
@@ -83,6 +85,7 @@ const Sidebar = ({ Toc, isSmall, location, nav, open, setMenu, ...props }) => {
           pb: 5,
         }}
       >
+        <SourceLink>Code for this example</SourceLink>
         {props.children}
         <EditLink my={5}>Edit this page on GitHub</EditLink>
         <Toc
@@ -104,6 +107,14 @@ export default props => {
   const nav = useRef(null);
   const { theme } = useThemeUI();
 
+  if (props.location.search) {
+    return (
+      <ThemeProvider components={mdxComponents} theme={theme}>
+        <main id="content">{props.children}</main>
+      </ThemeProvider>
+    );
+  }
+
   useEffect(() => {
     const handleSizeChange = ({ matches }) => setIsSmall(matches);
     const breakpoints = theme?.breakpoints || ['40em'];
@@ -113,6 +124,7 @@ export default props => {
 
     return isSmallMQ.removeListener(handleSizeChange);
   });
+
 
   return (
     <ThemeProvider components={mdxComponents} theme={theme}>

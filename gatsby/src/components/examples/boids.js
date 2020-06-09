@@ -242,7 +242,7 @@ export const draw = ({
 
 export const Frame = props => <CanvasFrame draw={draw} {...props} />;
 
-const Boids = () => (
+const Boids = props => (
   <Model
     initialParams={params}
     maxTime={Infinity}
@@ -304,22 +304,13 @@ const Boids = () => (
         type: 'toggle',
       },
     ]}
+    {...props}
   >
     <Frame />
   </Model>
 );
 
-export const ChillBoids = () => (
-  <Model
-    initialParams={params}
-    isPlaying
-    maxTime={Infinity}
-    noCache
-    noControls
-    initData={initData}
-    updateData={updateData}
-  >
-    <Frame />
-  </Model>
+export const ChillBoids = props => (
+  <Boids isPlaying noControls {...props} />
 );
 export default Boids;

@@ -97,7 +97,7 @@ export function initGrid({ height, width, density }, random = Math.random) {
     );
 }
 
-const GameOfLife = () => (
+const GameOfLife = props => (
   <Model
     auto={false}
     controls={{
@@ -116,6 +116,7 @@ const GameOfLife = () => (
       width: 28,
       density: 0.15,
     }}
+    {...props}
   >
     <Grid />
   </Model>

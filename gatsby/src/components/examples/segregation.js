@@ -4,7 +4,6 @@ import { Flex } from 'rebass';
 
 import Model from './framed-model';
 
-
 export const initData = (params, random = Math.random) => {
   const { cols, rows, proportion, tolerance } = params;
   const grid = Array(rows)
@@ -236,9 +235,9 @@ export const params = {
   threshold: 99,
 };
 
-const Segregation = () => (
+const Segregation = props => (
   <Model
-    initialParams={params}
+    initialParams={{ ...params, ...props.extraParams }}
     initData={initData}
     updateData={updateData}
     maxTime={50}
@@ -249,6 +248,7 @@ const Segregation = () => (
       { param: 'threshold', label: 'Threshold' },
       { param: 'showmoves', label: 'Show moves', type: 'toggle' },
     ]}
+    {...props}
   >
     <Flex flexDirection="column">
       <Frame />

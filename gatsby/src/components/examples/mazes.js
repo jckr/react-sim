@@ -172,10 +172,9 @@ export const drawLink = ({ cells, ctx, circle, grid, link, ...other }) => {
 export const Frame = props => <CanvasFrame draw={draw} {...props} />;
 
 const Maze = props => {
-  console.log(props);
   return (
     <Model
-      initialParams={params}
+      initialParams={{...params, ...props.extraParams}}
       initData={initData}
       updateData={updateData}
       controls={{

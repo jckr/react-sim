@@ -14,7 +14,7 @@ export class Model extends React.Component {
   static defaultProps = {
     controls: null,
     delay: 0,
-    initData: () => void(0),
+    initData: () => void 0,
     initialData: null,
     initialParams: {},
     initialTick: 0,
@@ -23,6 +23,8 @@ export class Model extends React.Component {
     maxTime: 100,
     noCache: false,
     noControls: false,
+    onComplete: () => {},
+    onAnimate: () => {},
     showTime: true,
     showTimer: true,
     showTimeSlider: true,
@@ -90,6 +92,7 @@ export class Model extends React.Component {
   complete = (result) => {
     const { results } = this.state;
     results.push(result);
+    this.props.onComplete(results);
     this.setState(() => ({ canPlay: false, results }));
   };
 
@@ -232,6 +235,12 @@ export class Model extends React.Component {
         }
       }
     }
+    // if there's a hook on animate let's play it.
+    // TBD what else we need in there
+    this.props.onAnimate({
+      data,
+      tick
+    });
     // finally we update the state. This will refresh frames
 
     this.setState(() => ({
@@ -380,7 +389,7 @@ export class Model extends React.Component {
         <ThemeProvider theme={this.props.theme}>
           <FrameContext.Provider value={frameContext}>
             <ControlsContext.Provider value={controlsContext}>
-              <Flex flexDirection="column">
+              <Flex flexDirection='column'>
                 <Flex>{this.renderFrame(frameContext)}</Flex>
                 {this.renderControls(controlsContext)}
               </Flex>
