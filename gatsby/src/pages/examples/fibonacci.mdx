@@ -2,10 +2,7 @@
 Title: Fibonacci
 ---
 
-import {
-  FibonacciNumbers,
-  FibonacciSpiral,
-} from '../../components/examples/fibonacci';
+import { FibonacciNumbers, Fibonacci } from '../../components/examples/';
 
 # Fibonacci sequence
 
@@ -38,21 +35,22 @@ F<sub>n</sub> / F<sub>n-1</sub> converges to φ, the golden ratio - (1 - √5) /
 
 Because of this convergence, the Fibonacci sequence is sometimes associated with spirals.
 We could:
+
 - draw a square of side F<sub>n</sub>, then
 - draw a square of side F<sub>n+1</sub> to its right, then
 - draw a square of side F<sub>n+2</sub> below these two squares, then
 - draw a square of side F<sub>n+3</sub> to the left of these squares, then
 - a square of side F<sub>n+4</sub> above,
-etc, etc.
+  etc, etc.
 
 and by linking their corners, obtain a [Golden spiral](https://en.wikipedia.org/wiki/Golden_spiral).
 
 But we can also draw a Golden Spiral without even needing to initiate or update data.
 
-We can start from a rectangle φ * k by k rectangle, divide its longer side by φ, draw that square, and keep on dividing the remaining rectangle.
+We can start from a rectangle φ \* k by k rectangle, divide its longer side by φ, draw that square, and keep on dividing the remaining rectangle.
 We'll have squares of same proportions and can also draw a similar spiral.
 
-<FibonacciSpiral />
+<Fibonacci />
 
 All we need is the number of steps we want to go (tick) and a Frame to render the squares and spiral.
 

@@ -1,16 +1,16 @@
 import React from 'react';
-import Model from '../framed-model';
-import { SnakeFrame } from './frames';
+import Model from './framed-model';
+import { SnakeFrame } from './snake/frames';
 import {
   initSnakeGame,
   initSnakeGrid,
   updateSnake,
   updateSnakeGrid,
-} from './data';
+} from './snake/data';
 
 // update
 
-const Snake = () => (
+const Snake = props => (
   <Model
     auto={false}
     maxTime={Infinity}
@@ -26,6 +26,7 @@ const Snake = () => (
       directionRandom: true,
     }}
     updateData={updateSnake}
+    {...props}
   >
     <SnakeFrame />
   </Model>

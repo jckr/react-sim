@@ -21,6 +21,19 @@ export const imageNames = [
   'modelHighLevelView',
   'modelUpdateData',
   'modelFrame',
+  'activators',
+  'automatata',
+  'boids',
+  'chaosGame',
+  'dice',
+  'epidemic',
+  'fibonacci',
+  'gameOfLife',
+  'maze',
+  'percolation',
+  'segregation',
+  'simpleModel',
+  'snake',
 ];
 
 const query = graphql`
@@ -28,6 +41,9 @@ const query = graphql`
     childImageSharp {
       fluid(maxWidth: 1000) {
         ...GatsbyImageSharpFluid
+      }
+      fixed {
+        ...GatsbyImageSharpFixed
       }
     }
   }
@@ -58,16 +74,83 @@ const query = graphql`
     modelFrame: file(relativePath: { eq: "model-frame.png" }) {
       ...fluidImage
     }
+    activators: file(relativePath: { eq: "thumbnails/activators.png" }) {
+      ...fluidImage
+    }
+    automata: file(relativePath: { eq: "thumbnails/automata.png" }) {
+      ...fluidImage
+    }
+    boids: file(relativePath: { eq: "thumbnails/boids.png" }) {
+      ...fluidImage
+    }
+    chaosGame: file(relativePath: { eq: "thumbnails/chaos-game.png" }) {
+      ...fluidImage
+    }
+    dice: file(relativePath: { eq: "thumbnails/dice.png" }) {
+      ...fluidImage
+    }
+    epidemic: file(relativePath: { eq: "thumbnails/epidemic.png" }) {
+      ...fluidImage
+    }
+    fibonacci: file(relativePath: { eq: "thumbnails/fibonacci.png" }) {
+      ...fluidImage
+    }
+    gameOfLife: file(relativePath: { eq: "thumbnails/game-of-life.png" }) {
+      ...fluidImage
+    }
+    mazes: file(relativePath: { eq: "thumbnails/maze.png" }) {
+      ...fluidImage
+    }
+    percolation: file(relativePath: { eq: "thumbnails/percolation.png" }) {
+      ...fluidImage
+    }
+    segregation: file(relativePath: { eq: "thumbnails/segregation.png" }) {
+      ...fluidImage
+    }
+    simpleModel: file(relativePath: { eq: "thumbnails/simple-model.png" }) {
+      ...fluidImage
+    }
+    snake: file(relativePath: { eq: "thumbnails/snake.png" }) {
+      ...fluidImage
+    }
   }
 `;
 
-export const ImageComponent = ({ name, data }) => {
-  return <Img fluid={data[name].childImageSharp.fluid} />;
+export const ImageComponent = ({ name, data, fixed }) => {
+  if (data[name] === undefined) {
+    console.log(`couldn't find ${name}`, data);
+    return null;
+  }
+  if (data[name] === null) {
+    console.log(`${name} returns null`, data);
+    return null;
+  }
+  console.log(data[name]);
+  return fixed ? (
+    <Img fixed={data[name].childImageSharp.fixed} />
+  ) : (
+    <Img fluid={data[name].childImageSharp.fluid} />
+  );
 };
 
-const Image = ({ name }) => {
+export function camel(name) {
+  return name.split('').reduce(
+    (prev, curr) => {
+      if (curr === '-') {
+        prev.shouldCapitalize = true;
+      } else {
+        prev.result += prev.shouldCapitalize ? curr.toUpperCase() : curr;
+        prev.shouldCapitalize = false;
+      }
+      return prev;
+    },
+    { shouldCapitalize: false, result: '' }
+  ).result;
+}
+
+const Image = ({ fixed = false, name }) => {
   const data = useStaticQuery(query);
-  return <ImageComponent data={data} name={name} />;
+  return <ImageComponent data={data} name={camel(name)} fixed={fixed} />;
 };
 
 export default Image;

@@ -1,6 +1,6 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import Automata, { initData, updateData, params } from '../1d-automata';
+import Automata, { initData, updateData, params } from '../automata';
 import Random from '../../helpers/random';
 
 describe('1d automata', () => {
