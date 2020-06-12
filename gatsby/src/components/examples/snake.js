@@ -1,6 +1,6 @@
 import React from 'react';
 import Model from './framed-model';
-import { SnakeFrame } from './snake/frames';
+import SnakeFrame from './snake/canvas';
 import {
   initSnakeGame,
   initSnakeGrid,
