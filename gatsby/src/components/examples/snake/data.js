@@ -127,14 +127,10 @@ export function initSnakeGrid(params, random = Math.random) {
 }
 
 export function initSnakeGame(params, random = Math.random) {
-  const {
-    grid,
-    head,
-    tail,
-    direction,
-    length,
-    snakePath,
-  } = initSnake(params, random);
+  const { grid, head, tail, direction, length, snakePath } = initSnake(
+    params,
+    random
+  );
 
   const fruit = positionFruit(grid, random);
 
@@ -182,7 +178,6 @@ export function updateSnake({ data, params, complete }, random = Math.random) {
 
   // new position of head, based on previous direction
   const updatedHead = [head[0] + v[direction][0], head[1] + v[direction][1]];
-
   if (
     // collision with snake
     updatedGrid[updatedHead[1]][updatedHead[0]] !== 0 ||
@@ -253,6 +248,7 @@ export function updateSnake({ data, params, complete }, random = Math.random) {
   }
   // computing next direction, thanks to the action grid
   const updatedDirection = updatedActionGrid[updatedHead[1]][updatedHead[0]];
+  snakePath.push(updatedHead);
 
   return {
     actionGrid: updatedActionGrid,

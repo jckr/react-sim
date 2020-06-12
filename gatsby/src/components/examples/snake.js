@@ -13,7 +13,7 @@ import {
 const Snake = props => (
   <Model
     auto={false}
-    maxTime={Infinity}
+    maxTime={10000}
     initData={initSnakeGame}
     initialParams={{
       cellSize: 32,
