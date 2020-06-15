@@ -178,6 +178,7 @@ export function updateSnake({ data, params, complete }, random = Math.random) {
 
   // new position of head, based on previous direction
   const updatedHead = [head[0] + v[direction][0], head[1] + v[direction][1]];
+
   if (
     // collision with snake
     updatedGrid[updatedHead[1]][updatedHead[0]] !== 0 ||
@@ -232,27 +233,35 @@ export function updateSnake({ data, params, complete }, random = Math.random) {
         start: updatedFruit,
         end: tail,
       });
-      if (tailToFruit.length + backToTail.length === height * width + 2) {
-        // we found a way to go quickly but safely to the next fruit!
 
+      // cicruit from tail to head to fruit back to tail, removing all dupe
+      // coords
+      const circuitLength = new Set(
+        [...tailToFruit, ...backToTail].map(d => d.join())
+      ).size;
+
+      if (circuitLength === height * width) {
+        // we found a way to go quickly but safely to the next fruit!
         updatedActionGrid = getActionGrid({
           grid,
           path: tailToFruit,
           stack: backToTail,
         });
-
         // no need to reevaluate it until next fruit
         updatedBestPath = true;
       }
     }
   }
   // computing next direction, thanks to the action grid
-  const updatedDirection = updatedActionGrid[updatedHead[1]][updatedHead[0]];
+  const updatedDirection =
+    updatedActionGrid[updatedHead[1]][updatedHead[0]] ?? direction;
+
   snakePath.push(updatedHead);
 
   return {
     actionGrid: updatedActionGrid,
     bestPath: updatedBestPath,
+
     direction: updatedDirection,
     fruit: updatedFruit,
     grid: updatedGrid,

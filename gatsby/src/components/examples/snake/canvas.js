@@ -14,17 +14,12 @@ export const draw = ({
   width,
   roundRectangle,
 }) => {
-  const { snakePath = [], actionGrid, direction = 0, fruit } = data;
+  const { bestPath, snakePath = [], actionGrid, direction = 0, fruit } = data;
   ctx.clearRect(0, 0, width, height);
-  ctx.strokeStyle = '#ccc';
-  // grid
-  for (let i = 0; i < rows; i++) {
-    ctx.strokeRect(0, i * cellSize, width, cellSize);
-  }
-  for (let i = 0; i < cols; i++) {
-    ctx.strokeRect(i * cellSize, 0, cellSize, width);
-  }
+
   // actionGrid
+
+  ctx.strokeStyle = bestPath ? 'rgba(0,0,255,0.5)' : 'rgba(255,0,0,0.5)';
   drawActionGrid({ actionGrid, cellSize, ctx });
   // fruit
   if (fruit) {
@@ -66,25 +61,7 @@ export const draw = ({
       ctx.fillStyle = '#fff';
       const prev = snakePath[i - 1];
       // eyes
-      let orientation;
-      if (prev === undefined) {
-        orientation = direction;
-      } else {
-        if (prev[0] === c0) {
-          if (prev[1] > r0) {
-            orientation = UP;
-          } else {
-            orientation = DOWN;
-          }
-        } else {
-          if (prev[0] > c0) {
-            orientation = LEFT;
-          } else {
-            orientation = RIGHT;
-          }
-        }
-      }
-      switch (orientation) {
+      switch (direction) {
         case UP:
           circle({ x: x - 0.5 * r, y: y - 0.5 * r, r: 2 });
           ctx.fill();
@@ -112,6 +89,16 @@ export const draw = ({
       }
     }
   });
+  ctx.font = `${cellSize - 16}px sans-serif`;
+  ctx.strokeStyle = '#ccc';
+  ctx.fillStyle = '#000';
+  // grid
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      ctx.strokeRect(j * cellSize, i * cellSize, cellSize, cellSize);
+      // ctx.fillText(`${j},${i}`, j * cellSize + 4, (i + 1) * cellSize - 8);
+    }
+  }
 };
 
 export const drawActionGrid = ({ actionGrid, cellSize, ctx }) => {
@@ -168,7 +155,7 @@ export const drawActionGrid = ({ actionGrid, cellSize, ctx }) => {
     );
     ctx.stroke();
   }
-  ctx.strokeStyle = 'rgba(0,0,255,0.5)';
+
   actionGrid.forEach((row, r) => {
     row.forEach((action, c) => {
       switch (action) {

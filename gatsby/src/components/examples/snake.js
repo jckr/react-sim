@@ -16,12 +16,12 @@ const Snake = props => (
     maxTime={10000}
     initData={initSnakeGame}
     initialParams={{
-      cellSize: 32,
+      cellSize: 11,
       fruitGrowth: 4,
-      height: 10,
-      width: 10,
+      height: 30,
+      width: 30,
       initialLength: 2,
-      safeMode: true,
+      safeMode: false,
       snakePosRandom: true,
       directionRandom: true,
     }}
