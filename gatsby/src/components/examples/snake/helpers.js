@@ -203,7 +203,12 @@ export function extendPath({ height, longestPath, stack, visited, width }) {
       longestPath.push(nextInStack);
     }
   }
-  return { stack, visited, longestPath };
+  return {
+    stack,
+    visited,
+    longestPath,
+    considered: [lastInLongestPath, nextInStack],
+  };
 }
 
 export function getActionGrid({ grid, path = [], direction, stack = [] }) {
@@ -253,7 +258,7 @@ export function positionFruit(grid, random = Math.random) {
     (results, row, r) =>
       row.reduce((resultRow, cell, c) => {
         if (cell === 0) {
-          resultRow.push([r, c]);
+          resultRow.push([c, r]);
         }
         return resultRow;
       }, results),

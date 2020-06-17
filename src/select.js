@@ -1,6 +1,6 @@
-import React from 'react'
-import { Label, Select as RBSelect } from '@rebass/forms'
-import { Flex } from 'rebass'
+import React from 'react';
+import { Label, Select as RBSelect } from '@rebass/forms';
+import { Flex } from 'rebass';
 
 function Select({ label, name, options, value, setValue, ...props }) {
   return (
@@ -10,14 +10,20 @@ function Select({ label, name, options, value, setValue, ...props }) {
         id={name || label}
         name={name || label}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(e) => setValue(e.target.value)}
       >
-        {options.map((option) => (
-          <option key={option}>{option}</option>
-        ))}
+        {options.map((option) => {
+          const label = option.label || option;
+          const value = option.value || option;
+          return (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          );
+        })}
       </RBSelect>
     </Flex>
-  )
+  );
 }
 
-export default Select
+export default Select;

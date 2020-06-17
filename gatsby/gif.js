@@ -28,7 +28,7 @@ const exec = util.promisify(require('child_process').exec);
     percolation: { max: 30 },
     segregation: {},
     'simple-model': { max: 100 },
-    snake: {},
+    snake: { max: 100 },
   };
 
   const example = process.argv[2];

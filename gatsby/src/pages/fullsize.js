@@ -83,7 +83,17 @@ const Page = props => {
     case 'simple-model':
       return <SimpleModel {...extraProps} maxTime={100} />;
     case 'snake':
-      return <Snake {...extraProps} />;
+      return (
+        <Snake
+          {...extraProps}
+          extraParams={{
+            delay: 500,
+            maxTime: 100,
+            displayCircuit: false,
+            cellSize: 16.6,
+          }}
+        />
+      );
     default:
       return <div>Usage: have an example name in the search query.</div>;
   }

@@ -2,17 +2,35 @@
 Title: Snake
 ---
 
-import Snake, { SnakeGrid } from '../../components/examples/snake';
+import { Snake, SnakeGrid } from '../../components/examples/';
 
 # Snake
 
 <Snake />
 
-This model tries to win the game of [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre)>).
+This model tries to win the game of [Snake](<https://en.wikipedia.org/wiki/Snake_(video_game_genre)>>).
 
 A snake moves on a 2d grid. It can go straight, turn left or right. If it hits the borders of the grid or a part of its body, the game is over. If the snake eats a fruit, it grows in size. The goal of the game is to eat all the fruits, until the snake covers the entirety of the grid.
 
-The way the model works is by finding a circuit which is safe for the snake to use. If we can find a circuit that covers the whole grid, then the snake can loop on that circuit endlessly and never collide with anything else than with a fruit.
-How do we find such a circuit? We start by finding the _shortest path_ between the head and the tail of the snake. Then, we see how we can extend this path step by step. This other model shows how this works:
+If the snake can stay on a __circuit__ that covers the entirety of the grid, it can just loop that circuit endlessly, eat all the fruits and never collide with itself or the walls.
+
+But it could be very slow to do that.
+
+So instead, the snake tries to find better circuits.
+
+Whenever it eats a fruit, and a new fruit appears, the snake finds __the quickest route__ from its head to the new fruit.
+Then, it tries to find a route that goes from the fruit to its tail, and covers all the free tiles (in other words, the __longest route__ from its fruit to the tail.)
+
+If the snake can find such a route, then there is another safe circuit it can take - only this one will take it to the fruit sooner.
+
+So, it updates its route.
+
+Finding a quickest path between two points on a grid is easy, but how to find the longest path?
+
+We start by finding the _shortest path_ between these two points. Then, we take this path segment by segment and see each time if we can extend it. When we run out of segments where we can extend the path, we have a long path between the two points.
+This other model shows how this works:
 
 <SnakeGrid />
+
+This method is not guaranteed to find _the_ longest path between 2 points - sometimes such a route will leave a couple of cells uncovered. This is why the snake waits to find a circuit that covers every cell in the grid before it updates its circuit.
+

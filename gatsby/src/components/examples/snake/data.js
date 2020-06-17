@@ -106,7 +106,7 @@ export function initSnake(
 export function initSnakeGrid(params, random = Math.random) {
   const { grid, head, tail, direction, snakePath } = initSnake(params, random);
 
-  const stack = getShortestPath({ grid, start: head, end: tail });
+  const stack = getShortestPath({ grid, start: head, end: tail, direction });
   const visited = initVisited(grid, stack);
   const longestPath = [...snakePath, stack.shift()];
 
@@ -127,14 +127,10 @@ export function initSnakeGrid(params, random = Math.random) {
 }
 
 export function initSnakeGame(params, random = Math.random) {
-  const {
-    grid,
-    head,
-    tail,
-    direction,
-    length,
-    snakePath,
-  } = initSnake(params, random);
+  const { grid, head, tail, direction, length, snakePath } = initSnake(
+    params,
+    random
+  );
 
   const fruit = positionFruit(grid, random);
 
@@ -228,6 +224,7 @@ export function updateSnake({ data, params, complete }, random = Math.random) {
       grid,
       start: updatedHead,
       end: updatedFruit,
+      direction,
     });
     if (pathToFruit) {
       const tailToFruit = [...snakePath, ...pathToFruit];
@@ -237,26 +234,35 @@ export function updateSnake({ data, params, complete }, random = Math.random) {
         start: updatedFruit,
         end: tail,
       });
-      if (tailToFruit.length + backToTail.length === height * width + 2) {
-        // we found a way to go quickly but safely to the next fruit!
 
+      // cicruit from tail to head to fruit back to tail, removing all dupe
+      // coords
+      const circuitLength = new Set(
+        [...tailToFruit, ...backToTail].map(d => d.join())
+      ).size;
+
+      if (circuitLength === height * width) {
+        // we found a way to go quickly but safely to the next fruit!
         updatedActionGrid = getActionGrid({
           grid,
           path: tailToFruit,
           stack: backToTail,
         });
-
         // no need to reevaluate it until next fruit
         updatedBestPath = true;
       }
     }
   }
   // computing next direction, thanks to the action grid
-  const updatedDirection = updatedActionGrid[updatedHead[1]][updatedHead[0]];
+  const updatedDirection =
+    updatedActionGrid[updatedHead[1]][updatedHead[0]] ?? direction;
+
+  snakePath.push(updatedHead);
 
   return {
     actionGrid: updatedActionGrid,
     bestPath: updatedBestPath,
+
     direction: updatedDirection,
     fruit: updatedFruit,
     grid: updatedGrid,
@@ -287,6 +293,7 @@ export function updateSnakeGrid({ data, params, complete }) {
   }
   return {
     actionGrid,
+    considered: updatedData.considered,
     direction,
     grid,
     longestPath: updatedData.longestPath,

@@ -3,6 +3,14 @@
 | **type**<br/>string, optional, 'range' by default         | The kind of control we're describing. Can be one of: `checkbox`, `input`, `radio`, `range`, `select`, `timer` or `toggle`. |
 | **label**<br/>string, optional                            | The label which will describe the control.                                                                                 |
 | **name**<br/>string, optional                             | The name of the control. If not specified, `label` will be used.                                                           |
-| **resetOnChange**<br/>boolean, optional, false by default | Whether the model will be reset if the control changes.                                                                                                                           |
+| **param**<br/>string, optional                            | The `param` that this control will update.                                                                                 |
+| **resetOnChange**<br/>boolean, optional, false by default | Whether the model will be reset if the control changes.                                                                    |
+| **setParams**<br/>function, optional                      | See below.                                                                                                                 |
 | **setValue**<br/>function                                 | This function will be called whenever the control changes to update its value.                                             |
 | **value**<br/>any                                         | The current value of the control.                                                                                          |
+
+### setParams
+
+By default, a control, when changed, will take its `value` and use it to update the `param` of the control, as is.
+Instead, a `setParams` function can be created that takes, as input, the `value` of the control, and which will output an object with one or more params as keys.
+With a setParams function, a control can update several params at once, or have a transformation between the value of the control and what is passed to the params.

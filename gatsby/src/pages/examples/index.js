@@ -19,7 +19,7 @@ const ExampleCard = ({ name, title }) => {
     >
       <Link href={`examples/${name}`}>
         {hover ? (
-          <img src={gifs[name]} alt={name} />
+          <img src={gifs[name]} alt={name} height={332} width={332} />
         ) : (
           <Image name={name} fixed />
         )}

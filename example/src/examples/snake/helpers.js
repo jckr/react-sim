@@ -64,7 +64,7 @@ export function initVisited(grid = [[]], path = []) {
   return visited;
 }
 
-export function getShortestPath({ grid, start, end }) {
+export function getShortestPath({ grid, start, end, direction }) {
   // finds shortest path between start and end given status of a grid
   // where visited cells can't be crossed
 
@@ -77,14 +77,27 @@ export function getShortestPath({ grid, start, end }) {
   const visited = initVisited(grid);
   // paths - for each node, shortest path to reach that node from start
   const paths = {};
-  const next = [start];
+  const next = [[...start, direction]];
   paths[start] = [start];
   let found = false;
   while (next.length && !found) {
     const node = next.shift();
-    DIRECTIONS.forEach(d => {
+    const prevDirection = node[2];
+
+    // if the previous direction is known - there are only 3 possible
+    // directions for next step, because a u-turn is impossible. we
+    // want to privilege straight paths, so we're adding the same
+    // direction first.
+    // for all UP, RIGHT, DOWN and LEFT, direction + 1 % 4 and direction + 3 % 4
+    // are going to be directions to the right and to the left respectively.
+    // if we don't know the previous direction, that's fine, we start
+    // with all four.
+    const directions = prevDirection === undefined ? DIRECTIONS :
+      [prevDirection, prevDirection + 1 % 4, prevDirection + 3 % 4];
+
+    directions.forEach(d => {
       // step is next node in that direction, from node
-      const step = [node[0] + v[d][0], node[1] + v[d][1]];
+      const step = [node[0] + v[d][0], node[1] + v[d][1]]];
       const [x, y] = step;
       if (!isValid(x, y, visited, height, width)) {
         return;
@@ -94,8 +107,9 @@ export function getShortestPath({ grid, start, end }) {
       if (x === end[0] && y === end[1]) {
         found = true;
       }
-      // we add each step to our queue. it's important to do BFS here
-      next.push(step);
+      // we add each step (with direction) to our queue.
+      // it's important to do BFS here
+      next.push([...step, d]);
     });
   }
   // out shortest path
