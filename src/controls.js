@@ -93,7 +93,7 @@ export default class Controls extends React.Component {
 
   render() {
     const { controls } = this.props;
-    return <Flex flexDirection='column'>{this.renderControls(controls)}</Flex>;
+    return <Flex flexDirection='column' sx={{touchAction: 'manipulation'}}>{this.renderControls(controls)}</Flex>;
   }
 }
 
