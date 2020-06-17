@@ -1,41 +1,68 @@
 import React from 'react';
-import { CanvasFrame } from 'react-sim';
+import { CanvasFrame, withTheme } from 'react-sim';
 
 import { IS_VERTICAL, UP, RIGHT, DOWN, LEFT, opposite } from './helpers';
 
-const snakeToCellRatio = 0.9;
+const snakeToCellRatio = 0.8;
 
 export const draw = ({
   ctx,
   circle,
   data,
-  params: { cellSize, width: cols, height: rows },
+  params: {
+    cellSize,
+    displayGrid,
+    displayHead,
+    displayCircuit,
+    width: cols,
+    height: rows,
+  },
   height,
   width,
   roundRectangle,
+  theme,
+  tick,
 }) => {
-  const { bestPath, snakePath = [], actionGrid, direction = 0, fruit } = data;
+  const { accent, muted, primary, secondary, gray } = theme.colors;
+  const {
+    bestPath,
+    considered,
+    snakePath = [],
+    actionGrid,
+    direction = 0,
+    fruit,
+  } = data;
   ctx.clearRect(0, 0, width, height);
+  // grid
 
+  if (displayGrid) {
+    ctx.strokeStyle = gray;
+
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        ctx.strokeRect(j * cellSize, i * cellSize, cellSize, cellSize);
+      }
+    }
+  }
   // actionGrid
-
-  ctx.strokeStyle = bestPath ? 'rgba(0,0,255,0.5)' : 'rgba(255,0,0,0.5)';
-  drawActionGrid({ actionGrid, cellSize, ctx });
+  if (displayCircuit) {
+    ctx.strokeStyle = bestPath ? accent : secondary;
+    drawActionGrid({ actionGrid, cellSize, circle, considered, ctx });
+  }
   // fruit
   if (fruit) {
-    ctx.fillStyle = 'red';
-    circle({
-      x: (fruit[0] + 0.5) * cellSize,
-      y: (fruit[1] + 0.5) * cellSize,
-      r: (snakeToCellRatio * cellSize) / 2,
-    });
-    ctx.fill();
+    ctx.fillStyle = secondary;
+    ctx.fillRect(
+      (fruit[0] + 0.2) * cellSize,
+      (fruit[1] + 0.2) * cellSize,
+      0.6 * cellSize,
+      0.6 * cellSize
+    );
   }
   snakePath.forEach((coords, i) => {
     const next = snakePath[i + 1];
     const [c0, r0] = coords;
-    ctx.fillStyle = i % 2 ? 'LightGreen' : 'LimeGreen';
-
+    ctx.fillStyle = primary;
     if (next) {
       // not head
 
@@ -52,56 +79,54 @@ export const draw = ({
       roundRectangle({ x, y, width, height, r: cellSize / 2 });
       ctx.fill();
     } else {
-      // head
-      const x = (c0 + 0.5) * cellSize;
-      const y = (r0 + 0.5) * cellSize;
-      const r = (cellSize * snakeToCellRatio) / 2;
-      circle({ x, y, r });
-      ctx.fill();
-      ctx.fillStyle = '#fff';
-      const prev = snakePath[i - 1];
-      // eyes
-      switch (direction) {
-        case UP:
-          circle({ x: x - 0.5 * r, y: y - 0.5 * r, r: 2 });
-          ctx.fill();
-          circle({ x: x + 0.5 * r, y: y - 0.5 * r, r: 2 });
-          ctx.fill();
-          break;
-        case DOWN:
-          circle({ x: x - 0.5 * r, y: y + 0.5 * r, r: 2 });
-          ctx.fill();
-          circle({ x: x + 0.5 * r, y: y + 0.5 * r, r: 2 });
-          ctx.fill();
-          break;
-        case LEFT:
-          circle({ x: x - 0.5 * r, y: y - 0.5 * r, r: 2 });
-          ctx.fill();
-          circle({ x: x - 0.5 * r, y: y + 0.5 * r, r: 2 });
-          ctx.fill();
-          break;
-        case RIGHT:
-          circle({ x: x + 0.5 * r, y: y - 0.5 * r, r: 2 });
-          ctx.fill();
-          circle({ x: x + 0.5 * r, y: y + 0.5 * r, r: 2 });
-          ctx.fill();
-          break;
+      if (displayHead) {
+        // head
+        const x = (c0 + 0.5) * cellSize;
+        const y = (r0 + 0.5) * cellSize;
+        const r = (cellSize * snakeToCellRatio) / 2;
+        circle({ x, y, r });
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        const prev = snakePath[i - 1];
+        // eyes
+        switch (direction) {
+          case UP:
+            circle({ x: x - 0.5 * r, y: y - 0.5 * r, r: 2 });
+            ctx.fill();
+            circle({ x: x + 0.5 * r, y: y - 0.5 * r, r: 2 });
+            ctx.fill();
+            break;
+          case DOWN:
+            circle({ x: x - 0.5 * r, y: y + 0.5 * r, r: 2 });
+            ctx.fill();
+            circle({ x: x + 0.5 * r, y: y + 0.5 * r, r: 2 });
+            ctx.fill();
+            break;
+          case LEFT:
+            circle({ x: x - 0.5 * r, y: y - 0.5 * r, r: 2 });
+            ctx.fill();
+            circle({ x: x - 0.5 * r, y: y + 0.5 * r, r: 2 });
+            ctx.fill();
+            break;
+          case RIGHT:
+            circle({ x: x + 0.5 * r, y: y - 0.5 * r, r: 2 });
+            ctx.fill();
+            circle({ x: x + 0.5 * r, y: y + 0.5 * r, r: 2 });
+            ctx.fill();
+            break;
+        }
       }
     }
   });
-  ctx.font = `${cellSize - 16}px sans-serif`;
-  ctx.strokeStyle = '#ccc';
-  ctx.fillStyle = '#000';
-  // grid
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
-      ctx.strokeRect(j * cellSize, i * cellSize, cellSize, cellSize);
-      // ctx.fillText(`${j},${i}`, j * cellSize + 4, (i + 1) * cellSize - 8);
-    }
-  }
 };
 
-export const drawActionGrid = ({ actionGrid, cellSize, ctx }) => {
+export const drawActionGrid = ({
+  actionGrid,
+  cellSize,
+  circle,
+  considered,
+  ctx,
+}) => {
   function horizontal(r, c) {
     ctx.beginPath();
     ctx.moveTo(c * cellSize, (r + 0.5) * cellSize);
@@ -155,7 +180,16 @@ export const drawActionGrid = ({ actionGrid, cellSize, ctx }) => {
     );
     ctx.stroke();
   }
-
+  if (considered) {
+    considered.forEach(([x, y]) => {
+      circle({
+        x: (x + 0.5) * cellSize,
+        y: (y + 0.5) * cellSize,
+        r: cellSize / 4,
+      });
+      ctx.stroke();
+    });
+  }
   actionGrid.forEach((row, r) => {
     row.forEach((action, c) => {
       switch (action) {
@@ -222,4 +256,4 @@ const CanvasSnakeFrame = props => {
   );
 };
 
-export default CanvasSnakeFrame;
+export default withTheme(CanvasSnakeFrame);

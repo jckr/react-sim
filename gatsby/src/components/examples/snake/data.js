@@ -106,7 +106,7 @@ export function initSnake(
 export function initSnakeGrid(params, random = Math.random) {
   const { grid, head, tail, direction, snakePath } = initSnake(params, random);
 
-  const stack = getShortestPath({ grid, start: head, end: tail });
+  const stack = getShortestPath({ grid, start: head, end: tail, direction });
   const visited = initVisited(grid, stack);
   const longestPath = [...snakePath, stack.shift()];
 
@@ -224,6 +224,7 @@ export function updateSnake({ data, params, complete }, random = Math.random) {
       grid,
       start: updatedHead,
       end: updatedFruit,
+      direction,
     });
     if (pathToFruit) {
       const tailToFruit = [...snakePath, ...pathToFruit];
@@ -292,6 +293,7 @@ export function updateSnakeGrid({ data, params, complete }) {
   }
   return {
     actionGrid,
+    considered: updatedData.considered,
     direction,
     grid,
     longestPath: updatedData.longestPath,

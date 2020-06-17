@@ -13,17 +13,53 @@ import {
 const Snake = props => (
   <Model
     auto={false}
-    maxTime={10000}
+    maxTime={Infinity}
+    noCache
+    controls={[
+      {
+        type: 'radio',
+        label: 'speed',
+        options: ['normal', 'fast', 'very fast'],
+        param: 'speed',
+        setParams: value =>
+          ({
+            normal: { delay: 100, ticksPerAnimation: 1, speed: 'normal' },
+            fast: { delay: 0, ticksPerAnimation: 1, speed: 'fast' },
+            'very fast': {
+              delay: 0,
+              ticksPerAnimation: 20,
+              speed: 'very fast',
+            },
+          }[value]),
+      },
+      [
+        {
+          type: 'toggle',
+          label: 'Display grid',
+          param: 'displayGrid',
+        },
+        {
+          type: 'toggle',
+          label: 'Display circuit',
+          param: 'displayCircuit',
+        },
+      ],
+    ]}
     initData={initSnakeGame}
     initialParams={{
-      cellSize: 11,
+      cellSize: 16,
+      delay: 100,
+      displayCircuit: true,
+      displayGrid: false,
       fruitGrowth: 4,
-      height: 30,
-      width: 30,
+      height: 20,
+      width: 20,
       initialLength: 2,
       safeMode: false,
+      speed: 'normal',
       snakePosRandom: true,
       directionRandom: true,
+      ...props.extraParams,
     }}
     updateData={updateSnake}
     {...props}
@@ -34,13 +70,15 @@ const Snake = props => (
 
 export default Snake;
 
-export const SnakeGrid = () => (
+export const SnakeGrid = props => (
   <Model
     auto={false}
     maxTime={Infinity}
     initData={initSnakeGrid}
     initialParams={{
       cellSize: 16,
+      displayCircuit: true,
+      displayGrid: true,
       fruitGrowth: 4,
       height: 20,
       width: 20,
@@ -49,6 +87,7 @@ export const SnakeGrid = () => (
       directionRandom: true,
     }}
     updateData={updateSnakeGrid}
+    {...props}
   >
     <SnakeFrame />
   </Model>

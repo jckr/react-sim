@@ -8,6 +8,7 @@ export { default as GridAPI } from '../pages/api/grid.mdx';
 export { default as IndicatorAPI } from '../pages/api/indicator.mdx';
 export { default as ModelPropsAPI } from '../pages/api/model-props.mdx';
 export { default as ModelStateAPI } from '../pages/api/model-state.mdx';
+export { default as OptionsAPI } from '../pages/api/options.mdx';
 export { default as RadioAPI } from '../pages/api/radio.mdx';
 export { default as RangeAPI } from '../pages/api/range.mdx';
 export { default as RoundRectangleAPI } from '../pages/api/round-rectangle.mdx';
