@@ -13,6 +13,7 @@ export function Step(props) {
       viewBox='0 0 16 16'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
+      style={{ display: 'block' }}
     >
       <path
         d='M10.72 7.423C10.72 8.523 11.62 9.423 12.72 9.423C13.82 9.423 14.72 8.523 14.72 7.423C14.72 6.323 13.82 5.423 12.72 5.423C11.62 5.423 10.72 6.323 10.72 7.423Z'
