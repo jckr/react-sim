@@ -9,12 +9,13 @@ export function Stop(props) {
   const content = props.shouldShowReset ? (
     <img
       src={`https://icon.now.sh/refresh/${background.replace('#', '')}`}
-      style={{ transform: 'scaleX(-1)' }}
+      style={{ transform: 'scaleX(-1)', display: 'block' }}
       alt='reset'
     />
   ) : (
     <img
       src={`https://icon.now.sh/stop/${background.replace('#', '')}`}
+      style={{ display: 'block' }}
       alt='stop'
     />
   );
