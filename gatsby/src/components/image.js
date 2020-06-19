@@ -125,7 +125,6 @@ export const ImageComponent = ({ name, data, fixed }) => {
     console.log(`${name} returns null`, data);
     return null;
   }
-  console.log(data[name]);
   return fixed ? (
     <Img fixed={data[name].childImageSharp.fixed} />
   ) : (
