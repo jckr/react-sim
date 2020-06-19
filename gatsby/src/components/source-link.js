@@ -3,7 +3,7 @@ import { Location } from '@reach/router';
 import { Link } from 'rebass';
 
 const base =
-  'https://github.com/jckr/react-sim/blob/master/gatsby/src/components/examples/';
+  'https://github.com/jckr/react-sim/blob/main/gatsby/src/components/examples/';
 
 const getHREF = location => {
   const examplePath = (location.pathname || '').match(/\/examples\/([^/]+)/);
