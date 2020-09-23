@@ -1,6 +1,7 @@
 import React from 'react';
 import TimerButton from './timer-button';
 import { withTheme } from './model';
+import {iconService} from './constants';
 
 export function Stop(props) {
   const { theme } = props;
@@ -8,13 +9,13 @@ export function Stop(props) {
   const icon = 'stop';
   const content = props.shouldShowReset ? (
     <img
-      src={`https://icon.now.sh/refresh/${background.replace('#', '')}`}
+      src={`${iconService}/refresh/${background.replace('#', '')}`}
       style={{ transform: 'scaleX(-1)', display: 'block' }}
       alt='reset'
     />
   ) : (
     <img
-      src={`https://icon.now.sh/stop/${background.replace('#', '')}`}
+      src={`${iconService}/stop/${background.replace('#', '')}`}
       style={{ display: 'block' }}
       alt='stop'
     />

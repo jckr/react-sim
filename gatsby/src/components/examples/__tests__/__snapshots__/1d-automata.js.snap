@@ -446,7 +446,12 @@ exports[`1d automata model renders properly 1`] = `
             >
               <img
                 alt="play_arrow"
-                src="https://icon.now.sh/play_arrow/fff"
+                src="https://microicon-clone.vercel.app//play_arrow/fff"
+                style={
+                  Object {
+                    "display": "block",
+                  }
+                }
               />
             </button>
             <button
@@ -455,9 +460,10 @@ exports[`1d automata model renders properly 1`] = `
             >
               <img
                 alt="reset"
-                src="https://icon.now.sh/refresh/fff"
+                src="https://microicon-clone.vercel.app//refresh/fff"
                 style={
                   Object {
+                    "display": "block",
                     "transform": "scaleX(-1)",
                   }
                 }
@@ -470,6 +476,11 @@ exports[`1d automata model renders properly 1`] = `
               <svg
                 fill="none"
                 height="16"
+                style={
+                  Object {
+                    "display": "block",
+                  }
+                }
                 viewBox="0 0 16 16"
                 width="16"
                 xmlns="http://www.w3.org/2000/svg"
