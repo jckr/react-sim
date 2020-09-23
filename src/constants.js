@@ -12,4 +12,4 @@ export const forms = {
   switch: {}
 };
 
-export const iconService = 'https://microicon-clone.vercel.app/';
+export const iconService = 'https://microicon-clone.vercel.app';
