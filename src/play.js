@@ -1,6 +1,7 @@
 import React from 'react';
 import TimerButton from './timer-button';
 import { withTheme } from './model';
+import { iconService } from './constants';
 
 function Play(props) {
   const { theme } = props;
@@ -8,7 +9,7 @@ function Play(props) {
   const icon = props.isPlaying ? 'pause' : 'play_arrow';
   const content = (
     <img
-      src={`https://icon.now.sh/${icon}/${background.replace('#', '')}`}
+      src={`${iconService}/${icon}/${background.replace('#', '')}`}
       style={{ display: 'block' }}
       alt={icon}
     />

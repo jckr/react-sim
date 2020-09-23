@@ -11,3 +11,5 @@ export const forms = {
   slider: { bg: 'lightgray' },
   switch: {}
 };
+
+export const iconService = 'https://microicon-clone.vercel.app/';
