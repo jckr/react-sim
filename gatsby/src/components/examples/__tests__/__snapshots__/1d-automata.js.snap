@@ -446,7 +446,7 @@ exports[`1d automata model renders properly 1`] = `
             >
               <img
                 alt="play_arrow"
-                src="https://microicon-clone.vercel.app//play_arrow/fff"
+                src="https://microicon-clone.vercel.app/play_arrow/fff"
                 style={
                   Object {
                     "display": "block",
@@ -460,7 +460,7 @@ exports[`1d automata model renders properly 1`] = `
             >
               <img
                 alt="reset"
-                src="https://microicon-clone.vercel.app//refresh/fff"
+                src="https://microicon-clone.vercel.app/refresh/fff"
                 style={
                   Object {
                     "display": "block",
