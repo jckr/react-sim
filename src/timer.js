@@ -1,5 +1,5 @@
-import React from 'react'
-import { Flex } from 'rebass'
+import React from 'react';
+import { Flex } from './ui';
 import Play from './play';
 import Step from './step';
 import Range from './range';
@@ -39,7 +39,7 @@ function Timer({
         />
       )}
     </Flex>
-  )
+  );
 }
 
 export default Timer;

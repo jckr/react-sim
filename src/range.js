@@ -1,6 +1,6 @@
 import React from 'react';
-import { Flex, Text } from 'rebass';
-import { Label, Slider } from '@rebass/forms';
+import { Flex, Text } from './ui';
+
 export default class Play extends React.Component {
   static defaultProps = {
     minValue: 0,
@@ -29,19 +29,23 @@ export default class Play extends React.Component {
       value
     } = this.props;
 
+    const id = name || label;
     const LabelRow =
       (label !== undefined || value !== undefined) &&
       (shouldDisplayLabel || shouldDisplayValue) ? (
-        <Label htmlFor={name || label}>
+        <label htmlFor={id} style={{ display: 'block', marginBottom: 4 }}>
           {shouldDisplayLabel && label && `${label}: `}
           {shouldDisplayValue && value}
-        </Label>
+        </label>
       ) : null;
 
-    const ControlRow = shouldDisplaySlider &&
-      maxValue !== undefined &&
-      maxValue < Infinity && (
-        <Flex flexDirection='row' alignItems='center' sx={{ width: [158] }}>
+    const ControlRow =
+      shouldDisplaySlider && maxValue !== undefined && maxValue < Infinity ? (
+        <Flex
+          flexDirection="row"
+          alignItems="center"
+          sx={{ width: [158] }}
+        >
           {shouldDisplayMinValue && (
             <Text
               sx={{
@@ -56,12 +60,11 @@ export default class Play extends React.Component {
               {minValue}
             </Text>
           )}
-          <Slider
-            id={name || label}
-            name={name || label}
-            sx={{
-              mx: 2
-            }}
+          <input
+            id={id}
+            name={id}
+            type="range"
+            style={{ flex: 1, margin: '0 8px' }}
             max={maxValue}
             min={minValue}
             onChange={(e) => {
@@ -86,10 +89,10 @@ export default class Play extends React.Component {
             </Text>
           )}
         </Flex>
-      );
+      ) : null;
 
     return (
-      <Flex flexDirection='column'>
+      <Flex flexDirection="column">
         {LabelRow}
         {ControlRow}
       </Flex>

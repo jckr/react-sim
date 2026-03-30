@@ -1,27 +1,36 @@
 import React from 'react';
-import { Label, Select as RBSelect } from '@rebass/forms';
-import { Flex } from 'rebass';
+import { Flex } from './ui';
 
 function Select({ label, name, options, value, setValue, ...props }) {
+  const id = name || label;
   return (
-    <Flex flexDirection='column' mr={1} {...props}>
-      {label && <Label htmlFor={name || label}>{label}</Label>}
-      <RBSelect
-        id={name || label}
-        name={name || label}
-        value={value}
+    <Flex flexDirection="column" mr={1} {...props}>
+      {label && (
+        <label htmlFor={id} style={{ fontWeight: 600, marginBottom: 4 }}>
+          {label}
+        </label>
+      )}
+      <select
+        id={id}
+        name={id}
+        value={value ?? ''}
         onChange={(e) => setValue(e.target.value)}
+        style={{
+          border: '1px solid lightgray',
+          padding: '6px 8px',
+          borderRadius: 4
+        }}
       >
         {options.map((option) => {
-          const label = option.label || option;
-          const value = option.value || option;
+          const optLabel = option.label || option;
+          const optValue = option.value || option;
           return (
-            <option key={value} value={value}>
-              {label}
+            <option key={optValue} value={optValue}>
+              {optLabel}
             </option>
           );
         })}
-      </RBSelect>
+      </select>
     </Flex>
   );
 }

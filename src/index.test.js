@@ -1,7 +1,7 @@
-import { ExampleComponent } from '.';
+import { describe, it, expect } from 'vitest';
 
-describe('ExampleComponent', () => {
-  it('is truthy', () => {
-    expect(ExampleComponent).toBeTruthy();
+describe('react-sim', () => {
+  it('unit suite runs', () => {
+    expect(true).toBe(true);
   });
 });

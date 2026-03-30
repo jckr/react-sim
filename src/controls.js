@@ -8,7 +8,7 @@ import SelectComponent from './select';
 import TimerComponent from './timer';
 import ToggleComponent from './toggle';
 
-import { Flex } from 'rebass';
+import { Flex } from './ui';
 
 export default class Controls extends React.Component {
   static defaultProps = {
@@ -18,7 +18,6 @@ export default class Controls extends React.Component {
     if (!controls) {
       return null;
     }
-    // if parameter is an array, we render a series of controls
     if (Array.isArray(controls)) {
       return controls.map((c, i) => (
         <Flex
@@ -30,15 +29,10 @@ export default class Controls extends React.Component {
           }
           key={`c-${i}`}
         >
-          {/* If original parameter is a nested array, we render nested rows of columns */}
           {this.renderControls(c, !horizontally)}
         </Flex>
       ));
     }
-
-    // parameter is a single control
-
-    // we can do something different depending on type
 
     const paramName = controls.param;
     const { params } = this.props;
@@ -93,7 +87,11 @@ export default class Controls extends React.Component {
 
   render() {
     const { controls } = this.props;
-    return <Flex flexDirection='column' sx={{touchAction: 'manipulation'}}>{this.renderControls(controls)}</Flex>;
+    return (
+      <Flex flexDirection="column" sx={{ touchAction: 'manipulation' }}>
+        {this.renderControls(controls)}
+      </Flex>
+    );
   }
 }
 
@@ -106,17 +104,13 @@ export const Timer = withControls(TimerComponent);
 export const Toggle = withControls(ToggleComponent);
 
 export function hasTimer(controls) {
-  // no controls
   if (!controls) {
     return false;
   }
 
-  // array of controls (rows or columns of controls)
   if (Array.isArray(controls)) {
-    // if this is true for one of the children, returns true.
     return controls.some((c) => hasTimer(c));
   }
 
-  // single object
   return controls.type === 'timer';
 }

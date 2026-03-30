@@ -1,5 +1,6 @@
 {
   "name": "react-sim",
+  "private": true,
   "version": "0.0.8",
   "description": "Boilerplate components to create a model simulation with React",
   "author": "jckr",
@@ -9,28 +10,36 @@
   "module": "dist/index.modern.js",
   "source": "src/index.js",
   "engines": {
-    "node": ">=10"
+    "node": ">=22.12.0"
   },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
     "build": "microbundle-crl --no-compress --format modern,cjs",
     "start": "microbundle-crl watch --no-compress --format modern,cjs",
     "prepublish": "run-s build",
+    "build:packages": "npm run build -w react-sim-engine && npm run build -w react-sim-react",
     "test": "run-s test:unit test:lint test:build",
     "test:build": "run-s build",
     "test:lint": "eslint .",
-    "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
-    "test:watch": "react-scripts test --env=jsdom",
+    "test:unit": "vitest run --config vitest.config.mts",
+    "test:engine": "npm test -w react-sim-engine",
+    "test:unit:new": "npm run test:engine",
+    "test:watch": "vitest --config vitest.config.mts",
     "gatsby-build": "cd gatsby && yarn install && cd node_modules/react && yarn link && cd ../react-dom && yarn link && cd ../../.. && yarn install && yarn link react && yarn link react-dom && yarn build && cd gatsby && yarn build",
     "gatsby-test": "yarn gatsby-build && cd gatsby && yarn test"
   },
   "peerDependencies": {
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "devDependencies": {
+    "@rolldown/binding-darwin-arm64": "^1.0.0-rc.10",
     "babel-eslint": "^10.0.3",
     "cross-env": "^7.0.2",
-    "eslint": "^6.8.0",
+    "eslint": "^10.1.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-config-standard-react": "^9.2.0",
@@ -43,16 +52,13 @@
     "microbundle-crl": "^0.13.8",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
-    "react-scripts": "^5.0.1"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
   },
   "files": [
     "dist"
-  ],
-  "dependencies": {
-    "@babel/plugin-proposal-decorators": "^7.8.3",
-    "@rebass/forms": "^4.0.6",
-    "@theme-ui/presets": "^0.3.0",
-    "rebass": "^4.0.7",
-    "theme-ui": "^0.3.1"
-  }
+  ]
 }

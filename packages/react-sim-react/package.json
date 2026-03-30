@@ -1,0 +1,53 @@
+{
+  "name": "react-sim-react",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "files": ["dist"],
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "react-sim-engine": "0.1.0"
+  },
+  "scripts": {
+    "build": "tsup src/Simulation.tsx src/hooks.ts src/SimulationControls.tsx src/controlPrimitives.tsx src/SimulationContext.tsx src/stableCallback.ts --format esm,cjs --dts --clean --external react --external react-dom --external react/jsx-runtime --external react-sim-engine",
+    "test": "vitest run"
+  },
+  "exports": {
+    "./simulation": {
+      "types": "./dist/Simulation.d.ts",
+      "import": "./dist/Simulation.js",
+      "require": "./dist/Simulation.cjs"
+    },
+    "./hooks": {
+      "types": "./dist/hooks.d.ts",
+      "import": "./dist/hooks.js",
+      "require": "./dist/hooks.cjs"
+    },
+    "./controls": {
+      "types": "./dist/SimulationControls.d.ts",
+      "import": "./dist/SimulationControls.js",
+      "require": "./dist/SimulationControls.cjs"
+    },
+    "./control-primitives": {
+      "types": "./dist/controlPrimitives.d.ts",
+      "import": "./dist/controlPrimitives.js",
+      "require": "./dist/controlPrimitives.cjs"
+    },
+    "./context": {
+      "types": "./dist/SimulationContext.d.ts",
+      "import": "./dist/SimulationContext.js",
+      "require": "./dist/SimulationContext.cjs"
+    },
+    "./stable-callback": {
+      "types": "./dist/stableCallback.d.ts",
+      "import": "./dist/stableCallback.js",
+      "require": "./dist/stableCallback.cjs"
+    }
+  }
+}

@@ -1,19 +1,24 @@
-import React from "react";
-import { Label, Switch } from "@rebass/forms";
-import { Flex } from "rebass";
+import React from 'react';
+import { Flex } from './ui';
 
-function Toggle({label, value, setValue, ...props}) {
+function Toggle({ label, value, setValue, ...props }) {
   return (
     <Flex flexDirection="column" mr={1}>
-    {label && <Label htmlFor={label} mb={1}>{label}</Label>}
-    <Switch
-      id={label}
-      checked={value}
-      onClick={() => {
-        setValue(!value)
-      }}
-      {...props}
-    />
+      {label && (
+        <label htmlFor={label} style={{ fontWeight: 600, marginBottom: 8 }}>
+          {label}
+        </label>
+      )}
+      <input
+        type="checkbox"
+        id={label}
+        role="switch"
+        aria-checked={Boolean(value)}
+        checked={Boolean(value)}
+        onChange={() => setValue(!value)}
+        style={{ width: 40, height: 20, cursor: 'pointer' }}
+        {...props}
+      />
     </Flex>
   );
 }

@@ -1,23 +1,25 @@
-import React from 'react'
-import { Label, Checkbox as RBCheckbox } from '@rebass/forms'
-import { Flex } from 'rebass'
+import React from 'react';
+import { Flex } from './ui';
 
 function Checkbox({ label, name, value, setValue, ...props }) {
+  const id = name || label;
   return (
     <Flex mr={1} {...props}>
-      <Label htmlFor={name || label}>
-        <RBCheckbox
-          checked={value}
-          id={name || label}
-          value={value}
-          name={name || label}
-          readOnly
-          onClick={() => setValue(!value)}
+      <label
+        htmlFor={id}
+        style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}
+      >
+        <input
+          type="checkbox"
+          checked={Boolean(value)}
+          id={id}
+          name={id}
+          onChange={() => setValue(!value)}
         />
         {label}
-      </Label>
+      </label>
     </Flex>
-  )
+  );
 }
 
-export default Checkbox
+export default Checkbox;

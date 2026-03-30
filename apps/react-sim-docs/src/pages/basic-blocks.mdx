@@ -1,0 +1,31 @@
+import { CounterDemo } from '../components/CounterDemo';
+import { WorkerCanvasDemo } from '../components/WorkerCanvasDemo';
+
+# Basic blocks
+
+At the core of the engine you provide two functions:
+
+- `initData(params)` to create the initial dataset
+- `updateData({ data, params, tick, cachedData })` to compute the next dataset
+
+Frames/renderers read from the current engine snapshot (`data`, `tick`, `params`) and draw UI or canvas.
+
+## React adapter
+
+- Import **`Simulation`** from **`react-sim-react/simulation`**, **`useSimulationContext`** from **`react-sim-react/hooks`**, and **`StandardControls`** from **`react-sim-react/controls`** (no package root barrel).
+- Wrap your frame in `<Simulation initData={…} updateData={…} config={…}>` — engine options (`initialParams`, `minTime`, `maxTime`, `delayMs`, …) live in the single **`config`** object.
+- Engine types: **`import type { … } from 'react-sim-engine/types'`**; runtime engine: **`import { createSimulationEngine } from 'react-sim-engine'`**; worker host: **`import { createEngineWorkerHost } from 'react-sim-engine/worker'`**.
+- Inside the tree, call **`useSimulationContext<Data, Params, Result>()`** for typed state and actions (`play`, `pause`, `stop`, `seek`, **`stepOnce`**, `setParams`).
+- **Composable controls:** import primitives from **`react-sim-react/control-primitives`** (`PlayPauseButton`, `StopButton`, `StepButton`, …).
+- **Batteries included:** **`StandardControls`** (alias `SimulationControls`) bundles transport + optional param fields — same idea as the old config-driven controls, without rebass/theme-ui.
+
+## In-thread simulation
+
+<CounterDemo />
+
+## Worker-backed simulation
+
+This demo runs tick updates in a Web Worker via comlink, while the main thread only draws to a canvas.
+
+<WorkerCanvasDemo />
+

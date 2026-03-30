@@ -1,0 +1,30 @@
+{
+  "name": "react-sim-docs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run build -w react-sim-engine && npm run build -w react-sim-react && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-sim-react": "0.1.0",
+    "react-sim-engine": "0.1.0"
+  },
+  "devDependencies": {
+    "@mdx-js/rollup": "^2.1.1",
+    "@mdx-js/react": "^2.1.1",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.0.0",
+    "vite": "^8.0.0"
+  }
+}
+

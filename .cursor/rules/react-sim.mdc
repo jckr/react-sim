@@ -1,0 +1,30 @@
+---
+alwaysApply: true
+---
+
+---
+description: TypeScript/React engineering standards for react-sim (no barrels, tight types, idiomatic React)
+globs:
+  - "**/*.{ts,tsx,mts,cts}"
+  - "**/package.json"
+---
+# react-sim engineering standards
+## TypeScript
+- Never use `any`.
+- Never use double assertions like `x as unknown as Y`. Prefer modeling types, generics, discriminated unions, and type guards so assertions are unnecessary.
+- Prefer **type parameters** and **precise public interfaces** so developer-facing APIs are **tight and legible**, not merely “passes typecheck”.
+- `unknown` is acceptable only at true boundaries; immediately narrow (typeof / guards / schema validation) before use.
+- Do not disable ESLint rules unless fixing the underlying issue would require **unreasonable, significant** extra effort; if disabled, leave a short comment explaining why it’s exceptional.
+### Module system / packaging
+- **No barrel files**: do not use `index.ts` / `main.ts` “re-export everything” patterns inside packages.
+- **Public API** is defined at the **package boundary** via `package.json` **`exports`** (and `types`/`main` as appropriate), potentially with **multiple explicit entry points** (this is encouraged).
+- Internal code imports **directly** from the concrete source files within a package.
+- **Ban circular imports** (package-internal and cross-package). Refactor shared types/helpers into a neutral module if needed.
+## React
+- Do not disable React-specific ESLint rules unless truly exceptional; prefer fixing the root cause.
+- Write idiomatic React (hooks, stable callbacks where appropriate, effects with correct cleanup, no conditional hook calls).
+## Scope
+- Apply these rules to **all existing code** in the repo: plan **incremental refactors** until the codebase complies (not “new code only”).
+## Migration notes (for this repo)
+- Remove/replace barrel `index.ts` entrypoints with **`package.json` `exports`** pointing at explicit files.
+- Replace loose assertions and `any` with typed surfaces and generics across `react-sim-engine`, `react-sim-react`, and docs app code.

@@ -1,27 +1,32 @@
 import React from 'react';
-import { Label, Radio as RBRadio } from '@rebass/forms';
-import { Flex } from 'rebass';
+import { Flex } from './ui';
 
 function Radio({ label, name, options, value, vertical, setValue, ...props }) {
   return (
-    <Flex flexDirection='column' mr={1} {...props}>
-      {label && <Label>{label}</Label>}
+    <Flex flexDirection="column" mr={1} {...props}>
+      {label && <span style={{ fontWeight: 600, marginBottom: 4 }}>{label}</span>}
       <Flex flexDirection={vertical ? 'column' : 'row'}>
         {options.map((option) => {
           const optionLabel = option.label || option;
           const optionValue = option.value || option;
+          const inputId = `${name ? `${name}-` : ''}${optionValue}`;
           return (
-            <Label key={optionValue}>
-              <RBRadio
-                name={`${name ? name + '-' : ''}${optionValue}`}
-                id={`${name ? name + '-' : ''}${optionValue}`}
+            <label
+              key={optionValue}
+              htmlFor={inputId}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, marginRight: 8 }}
+            >
+              <input
+                type="radio"
+                name={name || label}
+                id={inputId}
                 value={optionValue}
                 checked={value === optionValue}
-                onClick={() => setValue(optionValue)}
                 readOnly
+                onChange={() => setValue(optionValue)}
               />
               {optionLabel}
-            </Label>
+            </label>
           );
         })}
       </Flex>

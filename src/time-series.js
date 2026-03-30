@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Flex, Box, Text } from 'rebass';
+import { Flex, Box, Text } from './ui';
 import { withFrame } from './';
 
 function getMaxMinDatapoint(

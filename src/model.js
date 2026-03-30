@@ -1,10 +1,15 @@
 import React from 'react';
-import { useThemeUI, ThemeProvider } from 'theme-ui';
-import { system } from '@theme-ui/presets';
 import { Controls } from './';
-import { Flex } from 'rebass';
+import { Flex } from './ui';
 import { hasTimer } from './controls';
-import { forms } from './constants';
+
+const defaultTheme = {
+  colors: {
+    background: '#ffffff',
+    primary: '#07c',
+    gray: '#999'
+  }
+};
 
 const ThemeContext = React.createContext({});
 const FrameContext = React.createContext({});
@@ -61,7 +66,6 @@ export class Model extends React.Component {
     this.initData();
   }
   componentDidUpdate(prevState) {
-    // if the isplaying prop is changed ie by something external to Model
     if (this.props.isPlaying !== prevState.isPlaying) {
       if (this.props.isPlaying) {
         if (this.state.canPlay) {
@@ -73,7 +77,6 @@ export class Model extends React.Component {
         return;
       }
     }
-    // if canPlay changes
     if (this.state.canPlay !== prevState.canPlay) {
       if (!this.state.canPlay && this.props.loop) {
         this.setState(
@@ -117,10 +120,6 @@ export class Model extends React.Component {
   };
 
   play = () => {
-    // the fact that we can have a setState callback is the main
-    // reason why this is not built with hooks. I can't get the
-    // exact same effect with hooks & guarantee that tick will start
-    // when isPlaying is true.
     this.setState(
       () => ({ isPlaying: true }),
       () => {
@@ -140,7 +139,7 @@ export class Model extends React.Component {
         isPlaying: false,
         tick: this.props.minTime || this.props.initialTick
       }),
-      this.initData()
+      () => this.initData()
     );
   };
 
@@ -164,8 +163,6 @@ export class Model extends React.Component {
       if (this.time === null) {
         this.time = timestamp;
       }
-      // if there is a delay specified, we're only going
-      // to update the state if we are passed that delay
       if (timestamp - this.time >= this.state.params.delay) {
         this.time = timestamp;
         this.updateToTick({
@@ -173,8 +170,6 @@ export class Model extends React.Component {
         });
       }
 
-      // and delay or not, if we can continue looping, we
-      // keep on looping
       if (this.state.isPlaying) {
         window.cancelAnimationFrame(this.timer);
         this.timer = window.requestAnimationFrame(this.tick);
@@ -186,33 +181,17 @@ export class Model extends React.Component {
     let data = this.state.data;
     let tick;
 
-    // if we've already computed (and cached) data for a given tick,
-    // we'll just retrieve it.
     if (this.cachedData.hasOwnProperty(target)) {
       data = this.cachedData[target];
       tick = target;
     } else {
-      // else, we're starting from the last tick for which we cached data.
-      // failing that, we start from the current tick.
-
       if (this.cachedData[this.maxTick]) {
         tick = this.maxTick;
       } else {
         tick = this.state.tick;
       }
 
-      // note - if data is not cached, and user wants
-      // to go back in time, before current tick, nothing
-      // will happen
-
       while (tick < target && this.checkCanPlay(tick)) {
-        // then, we're going to advance tick by one and update data.
-        // however, each time we run the updateData, there's a chance
-        // that the simulation completes. In this case, we shouldn't go
-        // further.
-        //
-        // this is what the checkCanPlay method addresses. If false, we
-        // stop updating data and tick.
         tick++;
         data = this.props.updateData({
           cachedData: this.cachedData,
@@ -224,24 +203,16 @@ export class Model extends React.Component {
           pause: this.pause
         });
 
-        // then, we cache the data which is calculated.
-        // it's possible to opt out cache, because if there's no maxTime
-        // and the dataset is large and the simulation can't complete (open ended)
-        // we'll run out of memory eventually.
-
         if (!this.props.noCache) {
           this.maxTick = tick;
           this.cachedData[tick] = data;
         }
       }
     }
-    // if there's a hook on animate let's play it.
-    // TBD what else we need in there
     this.props.onAnimate({
       data,
       tick
     });
-    // finally we update the state. This will refresh frames
 
     this.setState(() => ({
       data,
@@ -287,12 +258,13 @@ export class Model extends React.Component {
     switch (children.length) {
       case 0:
         return null;
-      case 1:
+      case 1: {
         const child = children[0];
         return React.cloneElement(
           child,
           typeof child.type === 'string' ? {} : injectedProps
         );
+      }
       default:
         return children.map((child) => {
           return React.cloneElement(
@@ -384,18 +356,18 @@ export class Model extends React.Component {
       updateTime: this.updateTime
     };
 
+    const theme = this.props.theme || defaultTheme;
+
     return (
-      <ThemeContext.Provider value={{ theme: this.props.theme }}>
-        <ThemeProvider theme={this.props.theme}>
-          <FrameContext.Provider value={frameContext}>
-            <ControlsContext.Provider value={controlsContext}>
-              <Flex flexDirection='column'>
-                <Flex>{this.renderFrame(frameContext)}</Flex>
-                {this.renderControls(controlsContext)}
-              </Flex>
-            </ControlsContext.Provider>
-          </FrameContext.Provider>
-        </ThemeProvider>
+      <ThemeContext.Provider value={{ theme }}>
+        <FrameContext.Provider value={frameContext}>
+          <ControlsContext.Provider value={controlsContext}>
+            <Flex flexDirection="column">
+              <Flex>{this.renderFrame(frameContext)}</Flex>
+              {this.renderControls(controlsContext)}
+            </Flex>
+          </ControlsContext.Provider>
+        </FrameContext.Provider>
       </ThemeContext.Provider>
     );
   }
@@ -459,15 +431,8 @@ export function withControls(Component) {
 }
 
 function ThemedModel(props) {
-  let theme = props.theme || { ...system, forms };
-  try {
-    const context = useThemeUI();
-    theme = context.theme || theme;
-  } catch (err) {
-    console.log('couldnt get theme from context');
-  } finally {
-    return <Model theme={theme} {...props} />;
-  }
+  const theme = props.theme || defaultTheme;
+  return <Model theme={theme} {...props} />;
 }
 
 function getDisplayName(primitive) {
