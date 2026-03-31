@@ -1,5 +1,4 @@
-import { CounterDemo } from '../components/CounterDemo';
-import { WorkerCanvasDemo } from '../components/WorkerCanvasDemo';
+import { Link } from 'react-router-dom';
 
 # Basic blocks
 
@@ -21,11 +20,13 @@ Frames/renderers read from the current engine snapshot (`data`, `tick`, `params`
 
 ## In-thread simulation
 
-<CounterDemo />
+- <Link to="/examples/counter">Counter</Link>
 
 ## Worker-backed simulation
 
-This demo runs tick updates in a Web Worker via comlink, while the main thread only draws to a canvas.
+These examples run ticks (and in some cases canvas rendering) in a Web Worker.
 
-<WorkerCanvasDemo />
+- <Link to="/examples/worker-canvas">Worker canvas</Link>
+- <Link to="/examples/segregation">Segregation</Link>
+- <Link to="/examples/segregation-local">Segregation (local)</Link>
 

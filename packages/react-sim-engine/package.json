@@ -11,7 +11,7 @@
     "comlink": "^4.4.2"
   },
   "scripts": {
-    "build": "tsup src/engine.ts src/types.ts src/worker/engineWorkerHost.ts src/worker/engineWorker.ts --format esm,cjs --dts --clean",
+    "build": "tsup src/engine.ts src/types.ts src/runner/runnerTypes.ts src/runner/moduleTypes.ts src/runner/localRunner.ts src/runner/workerRunner.ts src/worker/engineWorkerHost.ts src/worker/engineWorker.ts src/worker/moduleWorker.ts --format esm,cjs --dts --clean",
     "test": "vitest run"
   },
   "exports": {
@@ -34,6 +34,31 @@
       "types": "./dist/worker/engineWorker.d.ts",
       "import": "./dist/worker/engineWorker.js",
       "require": "./dist/worker/engineWorker.cjs"
+    },
+    "./runner/runner-types": {
+      "types": "./dist/runner/runnerTypes.d.ts",
+      "import": "./dist/runner/runnerTypes.js",
+      "require": "./dist/runner/runnerTypes.cjs"
+    },
+    "./runner/module-types": {
+      "types": "./dist/runner/moduleTypes.d.ts",
+      "import": "./dist/runner/moduleTypes.js",
+      "require": "./dist/runner/moduleTypes.cjs"
+    },
+    "./runner/local": {
+      "types": "./dist/runner/localRunner.d.ts",
+      "import": "./dist/runner/localRunner.js",
+      "require": "./dist/runner/localRunner.cjs"
+    },
+    "./runner/worker": {
+      "types": "./dist/runner/workerRunner.d.ts",
+      "import": "./dist/runner/workerRunner.js",
+      "require": "./dist/runner/workerRunner.cjs"
+    },
+    "./worker/module-worker": {
+      "types": "./dist/worker/moduleWorker.d.ts",
+      "import": "./dist/worker/moduleWorker.js",
+      "require": "./dist/worker/moduleWorker.cjs"
     }
   }
 }

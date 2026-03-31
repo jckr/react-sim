@@ -44,8 +44,8 @@ export function CounterDemo() {
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <p style={{ margin: 0, opacity: 0.85, fontSize: 14 }}>
-          Use <strong>Step</strong> to advance one tick while paused. Change <strong>Step</strong> (amount added per tick)
-          without resetting the run — it does not use <code>resetOnChange</code> (unlike density-style params).
+          Use <strong>Step</strong> to advance one tick while paused. Change <strong>Amount per tick</strong> without
+          resetting the run.
         </p>
         <StandardControls
           maxTime={50}
