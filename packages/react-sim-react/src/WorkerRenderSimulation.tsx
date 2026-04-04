@@ -21,6 +21,11 @@ function unwrapDataOrRenderState<Data, RenderState>(
   return { data: envelope.data };
 }
 
+/**
+ * Hosts a worker-backed engine. The `SimulationContext` `data` field is the **union** of full `Data` and
+ * `RenderState` (see `unwrapDataOrRenderState`). Prefer `useWorkerRenderSimulationContext` from `react-sim-react/hooks`
+ * so TypeScript carries that union.
+ */
 export function WorkerRenderSimulation<Data, Params extends object, RenderState = Data, Result = unknown>(
   props: WorkerRenderSimulationProps<Data, Params, RenderState, Result>
 ) {

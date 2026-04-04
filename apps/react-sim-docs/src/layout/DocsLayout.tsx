@@ -56,8 +56,44 @@ export function DocsLayout() {
           <NavLink to="/examples/counter" style={linkStyle}>
             Counter
           </NavLink>
+          <NavLink to="/examples/fibonacci" style={linkStyle}>
+            Fibonacci
+          </NavLink>
+          <NavLink to="/examples/dice" style={linkStyle}>
+            Dice
+          </NavLink>
+          <NavLink to="/examples/game-of-life" style={linkStyle}>
+            Game of Life
+          </NavLink>
+          <NavLink to="/examples/simple-model" style={linkStyle}>
+            Simple model
+          </NavLink>
+          <NavLink to="/examples/automata-1d" style={linkStyle}>
+            1D automata
+          </NavLink>
           <NavLink to="/examples/worker-canvas" style={linkStyle}>
             Worker canvas
+          </NavLink>
+          <NavLink to="/examples/fibonacci-spiral" style={linkStyle}>
+            Fibonacci spiral
+          </NavLink>
+          <NavLink to="/examples/chaos-game" style={linkStyle}>
+            Chaos game
+          </NavLink>
+          <NavLink to="/examples/langton-ant" style={linkStyle}>
+            Langton's ant
+          </NavLink>
+          <NavLink to="/examples/boids" style={linkStyle}>
+            Boids
+          </NavLink>
+          <NavLink to="/examples/snake" style={linkStyle}>
+            Snake
+          </NavLink>
+          <NavLink to="/examples/mazes" style={linkStyle}>
+            Mazes
+          </NavLink>
+          <NavLink to="/examples/epidemic" style={linkStyle}>
+            Epidemic
           </NavLink>
           <NavLink to="/examples/segregation" style={linkStyle}>
             Segregation

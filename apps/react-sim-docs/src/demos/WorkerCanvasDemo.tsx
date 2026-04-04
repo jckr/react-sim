@@ -1,13 +1,13 @@
 import React from 'react';
 import { WorkerRenderSimulation } from 'react-sim-react/worker-render-simulation';
 import { PlayPauseButton, StepButton, StopButton, TickReadout } from 'react-sim-react/control-primitives';
-import { useSimulationContext } from 'react-sim-react/hooks';
+import { useWorkerRenderSimulationContext } from 'react-sim-react/hooks';
 import type { XorRingData, XorRingParams, XorRingRenderState } from '../sims/xorRingSim';
 
 const moduleUrl = new URL('../sims/xorRingSim.ts', import.meta.url).href;
 
 function XorRingMeta() {
-  const { tick, params } = useSimulationContext<XorRingData, XorRingParams, unknown>();
+  const { tick, params } = useWorkerRenderSimulationContext<XorRingData, XorRingParams, XorRingRenderState, unknown>();
   return (
     <span style={{ fontFamily: 'monospace', opacity: 0.85 }}>
       tick: {tick} · cells: {params.cells}
@@ -15,10 +15,10 @@ function XorRingMeta() {
   );
 }
 
-/** Must render under `<WorkerRenderSimulation>` so `useSimulationContext` has a provider. */
+/** Must render under `<WorkerRenderSimulation>` so the worker context hook has a provider. */
 function XorRingWorkerCanvasInner() {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
-  const { data, tick, params } = useSimulationContext<XorRingData, XorRingParams, unknown>();
+  const { data, tick, params } = useWorkerRenderSimulationContext<XorRingData, XorRingParams, XorRingRenderState, unknown>();
 
   React.useEffect(() => {
     const el = canvasRef.current;

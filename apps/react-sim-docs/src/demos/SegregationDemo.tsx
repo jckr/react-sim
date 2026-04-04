@@ -1,8 +1,8 @@
 import React from 'react';
 import { WorkerRenderSimulation } from 'react-sim-react/worker-render-simulation';
 import { StandardControls } from 'react-sim-react/controls';
-import { useSimulationContext } from 'react-sim-react/hooks';
-import type { SegParams, SegRenderState } from '../sims/segregationSim';
+import { useWorkerRenderSimulationContext } from 'react-sim-react/hooks';
+import type { SegData, SegParams, SegRenderState } from '../sims/segregationSim';
 import { defaultParams } from '../sims/segregationSim';
 import { draw } from '../sims/segregationSim';
 
@@ -58,7 +58,7 @@ export function SegregationDemo() {
         style={{ borderRadius: 8, border: '1px solid rgba(0,0,0,0.12)' }}
       />
 
-      <WorkerRenderSimulation<unknown, SegParams, SegRenderState, unknown>
+      <WorkerRenderSimulation<SegData, SegParams, SegRenderState, unknown>
         module={{ kind: 'url', url: moduleUrl }}
         config={{
           initialParams: defaultParams,
@@ -82,7 +82,7 @@ function SegregationInner(props: {
   series: Point[];
   setSeries: React.Dispatch<React.SetStateAction<Point[]>>;
 }) {
-  const { data, tick, isPlaying, params } = useSimulationContext<SegRenderState, SegParams, unknown>();
+  const { data, tick, isPlaying, params } = useWorkerRenderSimulationContext<SegData, SegParams, SegRenderState, unknown>();
 
   React.useEffect(() => {
     const el = props.canvasRef.current;

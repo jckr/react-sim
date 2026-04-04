@@ -21,6 +21,26 @@ export type SimulationContextValue<Data, Params extends object, Result> = Simula
 };
 
 /**
+ * Snapshot exposed by {@link WorkerRenderSimulation}: `unwrap` yields **full engine `Data`** when the
+ * envelope is `kind: 'data'`, and **`RenderState`** from `selectRenderState` when `kind: 'renderState'`.
+ * The placeholder snapshot uses `initialData` (often `undefined`), so `data` may be `null` before the worker runs.
+ */
+export type WorkerRenderSimulationContextValue<
+  Data,
+  Params extends object,
+  RenderState,
+  Result
+> = SimulationActions<Params> & {
+  data: Data | RenderState | null;
+  tick: number;
+  params: Params;
+  cachedData: Record<number, Data>;
+  results: Result[];
+  isPlaying: boolean;
+  canPlay: boolean;
+};
+
+/**
  * Single concrete shape for `createContext` / `Provider.value`. Generics live on
  * `Simulation` + `useSimulationContext`; the hook maps this to `SimulationContextValue<D,P,R>`.
  *
