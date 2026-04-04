@@ -15,7 +15,7 @@
     "react-sim-engine": "0.1.0"
   },
   "scripts": {
-    "build": "tsup src/Simulation.tsx src/WorkerSimulation.tsx src/hooks.ts src/SimulationControls.tsx src/controlPrimitives.tsx src/SimulationContext.tsx src/stableCallback.ts --format esm,cjs --dts --clean --external react --external react-dom --external react/jsx-runtime --external react-sim-engine",
+    "build": "tsup src/Simulation.tsx src/WorkerSimulation.tsx src/WorkerRenderSimulation.tsx src/hooks.ts src/SimulationControls.tsx src/controlPrimitives.tsx src/SimulationContext.tsx src/stableCallback.ts --format esm,cjs --dts --clean --external react --external react-dom --external react/jsx-runtime --external react-sim-engine",
     "test": "vitest run"
   },
   "exports": {
@@ -53,6 +53,11 @@
       "types": "./dist/WorkerSimulation.d.ts",
       "import": "./dist/WorkerSimulation.js",
       "require": "./dist/WorkerSimulation.cjs"
+    },
+    "./worker-render-simulation": {
+      "types": "./dist/WorkerRenderSimulation.d.ts",
+      "import": "./dist/WorkerRenderSimulation.js",
+      "require": "./dist/WorkerRenderSimulation.cjs"
     }
   }
 }

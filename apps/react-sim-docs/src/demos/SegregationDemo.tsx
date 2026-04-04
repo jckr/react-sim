@@ -1,9 +1,10 @@
 import React from 'react';
-import { WorkerSimulation } from 'react-sim-react/worker-simulation';
+import { WorkerRenderSimulation } from 'react-sim-react/worker-render-simulation';
 import { StandardControls } from 'react-sim-react/controls';
 import { useSimulationContext } from 'react-sim-react/hooks';
-import type { SegData, SegParams } from '../sims/segregationSim';
+import type { SegParams, SegRenderState } from '../sims/segregationSim';
 import { defaultParams } from '../sims/segregationSim';
+import { draw } from '../sims/segregationSim';
 
 const moduleUrl = new URL('../sims/segregationSim.ts', import.meta.url).href;
 
@@ -57,9 +58,8 @@ export function SegregationDemo() {
         style={{ borderRadius: 8, border: '1px solid rgba(0,0,0,0.12)' }}
       />
 
-      <WorkerSimulation<SegData, SegParams, unknown>
+      <WorkerRenderSimulation<unknown, SegParams, SegRenderState, unknown>
         module={{ kind: 'url', url: moduleUrl }}
-        canvasRef={canvasRef}
         config={{
           initialParams: defaultParams,
           minTime: 0,
@@ -71,14 +71,34 @@ export function SegregationDemo() {
           context: null
         }}
       >
-        <SegregationInner series={series} setSeries={setSeries} />
-      </WorkerSimulation>
+        <SegregationInner canvasRef={canvasRef} series={series} setSeries={setSeries} />
+      </WorkerRenderSimulation>
     </div>
   );
 }
 
-function SegregationInner(props: { series: Point[]; setSeries: React.Dispatch<React.SetStateAction<Point[]>> }) {
-  const { data, tick, isPlaying } = useSimulationContext<SegData, SegParams, unknown>();
+function SegregationInner(props: {
+  canvasRef: React.RefObject<HTMLCanvasElement | null>;
+  series: Point[];
+  setSeries: React.Dispatch<React.SetStateAction<Point[]>>;
+}) {
+  const { data, tick, isPlaying, params } = useSimulationContext<SegRenderState, SegParams, unknown>();
+
+  React.useEffect(() => {
+    const el = props.canvasRef.current;
+    if (!el) return;
+    const ctx = el.getContext('2d');
+    if (!ctx) return;
+    if (!data) return;
+
+    draw({
+      ctx,
+      snapshot: {
+        data: { grid: data.grid, happy: 0, happiness: data.happiness, totalMoves: 0 },
+        params
+      }
+    });
+  }, [data, params, props.canvasRef, tick]);
 
   React.useEffect(() => {
     if (tick === 0 && !isPlaying) props.setSeries([]);

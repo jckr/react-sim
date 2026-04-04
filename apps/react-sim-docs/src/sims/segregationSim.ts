@@ -15,6 +15,12 @@ export type SegData = {
   totalMoves: number;
 };
 
+export type SegRenderState = {
+  grid: Cell[][];
+  happiness: number;
+  params: Pick<SegParams, 'rows' | 'cols' | 'height' | 'width' | 'showmoves'>;
+};
+
 export type SegParams = {
   cols: number;
   rows: number;
@@ -243,9 +249,17 @@ export function draw({
   }
 }
 
-export const module: SimulationModule<SegData, SegParams, unknown> = {
+export const module: SimulationModule<SegData, SegParams, SegRenderState, unknown> = {
   initData,
   updateData,
+  selectRenderState: (snapshot) => {
+    const { rows, cols, height, width, showmoves } = snapshot.params;
+    return {
+      grid: snapshot.data.grid,
+      happiness: snapshot.data.happiness,
+      params: { rows, cols, height, width, showmoves }
+    };
+  },
   draw,
   defaultParams
 };

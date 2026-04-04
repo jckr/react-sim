@@ -3,6 +3,8 @@ import type { UpdateResult } from 'react-sim-engine/types';
 
 export type XorRingParams = { cells: number; density: number };
 export type XorRingData = number[];
+/** Mode 2: same as sim data — the ring of 0/1 cells (small payload vs full cached history). */
+export type XorRingRenderState = XorRingData;
 
 export const defaultParams: XorRingParams = { cells: 240, density: 0.35 };
 
@@ -46,9 +48,10 @@ export function draw({
   }
 }
 
-export const module: SimulationModule<XorRingData, XorRingParams, unknown> = {
+export const module: SimulationModule<XorRingData, XorRingParams, XorRingRenderState, unknown> = {
   initData,
   updateData: ({ data, params }) => updateData({ data, params }),
+  selectRenderState: (snapshot) => snapshot.data,
   draw,
   defaultParams
 };
