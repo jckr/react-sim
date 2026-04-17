@@ -1,120 +1,124 @@
 import React from 'react';
-import { WorkerRenderSimulation } from 'react-sim-react/worker-render-simulation';
-import { PlayPauseButton, StepButton, StopButton, TickReadout } from 'react-sim-react/control-primitives';
-import { useWorkerRenderSimulationContext } from 'react-sim-react/hooks';
-import type { MazeData, MazeParams, MazeRenderState } from '../sims/mazeSim';
+import { Simulation } from 'react-sim-react/simulation';
+import { useSimulation } from 'react-sim-react/hooks';
+import { StandardControls } from 'react-sim-react/controls';
+import mazeSim from '../sims/mazeSim';
+import type { MazeGridKind } from '../sims/mazeSim';
 import { drawMazeFrame } from '../sims/mazeCanvas';
 
-const moduleUrl = new URL('../sims/mazeSim.ts', import.meta.url).href;
+const GRID_OPTIONS: { value: MazeGridKind; label: string }[] = [
+  { value: 'square', label: 'Square' },
+  { value: 'hexagonal', label: 'Hexagonal' },
+  { value: 'triangular', label: 'Triangular' },
+  { value: 'circle', label: 'Circle' },
+];
 
-const GRIDS: MazeParams['grid'][] = ['square', 'hexagonal', 'triangular', 'circle'];
+function GridTypeSelector() {
+  const { params, resetWith } = useSimulation<typeof mazeSim>();
 
-function MazeCanvasInner() {
-  const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
-  const didAutoPlayRef = React.useRef(false);
-  const { data, tick, params, play, canPlay } = useWorkerRenderSimulationContext<
-    MazeData,
-    MazeParams,
-    MazeRenderState,
-    unknown
-  >();
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        flexWrap: 'wrap',
+      }}
+    >
+      <span style={{ minWidth: 120, opacity: 0.9, fontSize: 13 }}>
+        Grid type
+      </span>
+      {GRID_OPTIONS.map((opt) => (
+        <label
+          key={opt.value}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            fontSize: 13,
+            cursor: 'pointer',
+          }}
+        >
+          <input
+            type="radio"
+            name="maze-grid-type"
+            value={opt.value}
+            checked={params.grid === opt.value}
+            onChange={() => resetWith({ grid: opt.value })}
+          />
+          {opt.label}
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function MazeCanvas() {
+  const { data, params, tick } = useSimulation<typeof mazeSim>();
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const lastDrawnTickRef = React.useRef(-1);
 
   React.useEffect(() => {
-    if (canPlay && !didAutoPlayRef.current) {
-      didAutoPlayRef.current = true;
-      play();
+    const ctx = canvasRef.current?.getContext('2d');
+    if (!ctx || !data) return;
+
+    if (tick === 0) {
+      // Full redraw on init/reset
+      lastDrawnTickRef.current = -1;
     }
-  }, [canPlay, play]);
 
-  React.useEffect(() => {
-    const el = canvasRef.current;
-    if (!el) return;
-    const ctx = el.getContext('2d');
-    if (!ctx) return;
-    if (!data) return;
-    const w = params.width;
-    const h = params.height;
-    if (el.width !== w) el.width = w;
-    if (el.height !== h) el.height = h;
-    drawMazeFrame({ ctx, pixelWidth: w, pixelHeight: h, tick, params, data });
+    // Draw all links since last render.
+    // drawMazeFrame draws links[tick - ticksPerAnimation .. tick-1],
+    // so we set ticksPerAnimation to cover everything since lastDrawnTick.
+    const gap = tick - lastDrawnTickRef.current;
+    const overrideParams = { ...params, ticksPerAnimation: gap };
+    drawMazeFrame({
+      ctx,
+      pixelWidth: params.width,
+      pixelHeight: params.height,
+      tick,
+      params: overrideParams,
+      data,
+    });
+    lastDrawnTickRef.current = tick;
   }, [data, params, tick]);
 
   return (
     <canvas
       ref={canvasRef}
-      style={{
-        width: 'min(100%, 360px)',
-        height: 'auto',
-        border: '1px solid rgba(0,0,0,0.12)',
-        borderRadius: 8
-      }}
+      width={params.width}
+      height={params.height}
+      style={{ border: '1px solid rgba(0,0,0,0.15)', borderRadius: 6 }}
     />
-  );
-}
-
-function MazeGridControls() {
-  const { params, setParams } = useWorkerRenderSimulationContext<MazeData, MazeParams, MazeRenderState, unknown>();
-  return (
-    <label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, flexWrap: 'wrap' }}>
-      <span style={{ minWidth: 80 }}>Grid</span>
-      <select
-        value={params.grid}
-        onChange={(e) => {
-          const grid = e.target.value as MazeParams['grid'];
-          setParams({ grid }, { reset: true });
-        }}
-        style={{ minWidth: 140, padding: '6px 8px', borderRadius: 6, border: '1px solid rgba(0,0,0,0.2)' }}
-      >
-        {GRIDS.map((g) => (
-          <option key={g} value={g}>
-            {g}
-          </option>
-        ))}
-      </select>
-      <span style={{ fontSize: 12, color: '#666' }}>Changing grid resets the maze.</span>
-    </label>
   );
 }
 
 export function MazeDemo() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <WorkerRenderSimulation<MazeData, MazeParams, MazeRenderState, unknown>
-        module={{ kind: 'url', url: moduleUrl }}
-        config={{
-          initialParams: {
-            drawItem: true,
-            useColor: false,
-            width: 332,
-            height: 332,
-            grid: 'square',
-            cellSize: 10,
-            wallColor: '#000',
-            pathColor: '#0b57d0',
-            ticksPerAnimation: 20
-          },
-          minTime: 0,
-          maxTime: 50_000,
-          delayMs: 0,
-          ticksPerAnimation: 1,
-          loop: false,
-          noCache: true,
-          context: null
-        }}
-      >
-        <p style={{ margin: 0, fontSize: 13, color: '#555' }}>
-          Randomized depth-first maze carving on four tilings (original react-sim demo). Worker ticks; canvas draws walls
-          and carved passages on the main thread.
-        </p>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-          <PlayPauseButton />
-          <StopButton />
-          <StepButton />
-          <TickReadout />
-        </div>
-        <MazeGridControls />
-        <MazeCanvasInner />
-      </WorkerRenderSimulation>
-    </div>
+    <Simulation sim={mazeSim} maxTime={50000} delayMs={10}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <StandardControls
+          maxTime={50000}
+          showStepButton
+          controls={[
+            {
+              type: 'range',
+              param: 'ticksPerAnimation',
+              label: 'Ticks per frame',
+              min: 1,
+              max: 50,
+              step: 1,
+            },
+            {
+              type: 'toggle',
+              param: 'drawItem',
+              label: 'Draw cells',
+            },
+          ]}
+        />
+        <GridTypeSelector />
+        <MazeCanvas />
+      </div>
+    </Simulation>
   );
 }

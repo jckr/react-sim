@@ -1,10 +1,11 @@
 import React from 'react';
 import { Simulation } from 'react-sim-react/simulation';
-import { useSimulationContext } from 'react-sim-react/hooks';
+import { useSimulation } from 'react-sim-react/hooks';
 import { StandardControls } from 'react-sim-react/controls';
+import counterSim from '../sims/counterSim';
 
 function CounterFrame() {
-  const { data, tick } = useSimulationContext<{ value: number }, { step: number; start: number }, unknown>();
+  const { data, tick } = useSimulation<typeof counterSim>();
 
   return (
     <div style={{ padding: 12, border: '1px solid rgba(0,0,0,0.15)', borderRadius: 8 }}>
@@ -15,32 +16,11 @@ function CounterFrame() {
 }
 
 export function CounterDemo() {
-  const initData = (params: { start: number }) => ({ value: params.start });
-
-  const updateData = ({
-    data,
-    params
-  }: {
-    data: { value: number };
-    params: { step: number; start: number };
-    tick: number;
-    cachedData: Record<number, { value: number }>;
-  }) => {
-    return { status: 'continue' as const, data: { value: data.value + params.step } };
-  };
-
   return (
     <Simulation
-      initData={initData}
-      updateData={updateData}
-      config={{
-        initialParams: { start: 0, step: 1 },
-        minTime: 0,
-        maxTime: 50,
-        delayMs: 0,
-        ticksPerAnimation: 1,
-        loop: false
-      }}
+      sim={counterSim}
+      maxTime={50}
+      delayMs={0}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <p style={{ margin: 0, opacity: 0.85, fontSize: 14 }}>
@@ -55,8 +35,8 @@ export function CounterDemo() {
               type: 'range',
               param: 'step',
               label: 'Amount per tick',
-              minValue: 0,
-              maxValue: 10,
+              min: 0,
+              max: 10,
               step: 1
             }
           ]}

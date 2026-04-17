@@ -1,5 +1,4 @@
-import type { SimulationModule } from 'react-sim-engine/runner/module-types';
-import type { UpdateResult } from 'react-sim-engine/types';
+import { defineSim } from 'react-sim-engine/sim';
 import {
   addToGrid,
   getActionGrid,
@@ -39,6 +38,7 @@ export type SnakeData = {
   head: [number, number];
   length: number;
   snakePath: [number, number][];
+  stopped: boolean;
 };
 
 export type SnakeRenderState = SnakeData;
@@ -113,7 +113,7 @@ function initSnake(
   };
 }
 
-export function initSnakeGame(params: SnakeParams, _context?: unknown): SnakeData {
+export function initSnakeGame(params: SnakeParams): SnakeData {
   const random = Math.random;
   const { grid, head, tail, direction, length, snakePath } = initSnake(params, random);
   const fruit = positionFruit(grid, random);
@@ -131,17 +131,15 @@ export function initSnakeGame(params: SnakeParams, _context?: unknown): SnakeDat
     fruit,
     length,
     snakePath,
-    bestPath: false
+    bestPath: false,
+    stopped: false
   };
 }
 
-export function updateSnake(args: {
+export function updateSnake({ data, params }: {
   data: SnakeData;
   params: SnakeParams;
-  tick: number;
-  cachedData: Record<number, SnakeData>;
-}): UpdateResult<SnakeData> {
-  const { data, params } = args;
+}): SnakeData {
   const random = Math.random;
   const { actionGrid, bestPath, grid, direction, head, fruit, length } = data;
   let updatedActionGrid = actionGrid;
@@ -171,25 +169,13 @@ export function updateSnake(args: {
     updatedHead[1] >= height ||
     updatedHead[1] < 0
   ) {
-    return { status: 'complete', data };
+    return { ...data, stopped: true };
   }
 
   updatedGrid[updatedHead[1]]![updatedHead[0]] = 1;
 
   if (updatedGrid.every((row) => row.every((cell) => cell))) {
-    return {
-      status: 'complete',
-      data: {
-        actionGrid: updatedActionGrid,
-        bestPath: updatedBestPath,
-        direction,
-        fruit,
-        grid: updatedGrid,
-        head: updatedHead,
-        length,
-        snakePath: [...(snakePathWork as [number, number][]), updatedHead]
-      }
-    };
+    return { ...data, stopped: true };
   }
 
   let updatedLength = length;
@@ -232,24 +218,19 @@ export function updateSnake(args: {
   const nextSnakePath = [...(snakePathWork as [number, number][]), updatedHead];
 
   return {
-    status: 'continue',
-    data: {
-      actionGrid: updatedActionGrid,
-      bestPath: updatedBestPath,
-      direction: updatedDirection,
-      fruit: updatedFruit,
-      grid: updatedGrid,
-      head: updatedHead,
-      length: updatedLength,
-      snakePath: nextSnakePath
-    }
+    actionGrid: updatedActionGrid,
+    bestPath: updatedBestPath,
+    direction: updatedDirection,
+    fruit: updatedFruit,
+    grid: updatedGrid,
+    head: updatedHead,
+    length: updatedLength,
+    snakePath: nextSnakePath,
+    stopped: false
   };
 }
 
-export const module: SimulationModule<SnakeData, SnakeParams, SnakeRenderState, unknown> = {
-  initData: initSnakeGame,
-  updateData: updateSnake,
-  selectRenderState: (s) => ({ ...s.data }),
+export default defineSim<SnakeData, SnakeParams>({
   defaultParams: {
     cellSize: 16,
     delay: 100,
@@ -267,5 +248,11 @@ export const module: SimulationModule<SnakeData, SnakeParams, SnakeRenderState, 
     xHead: 10,
     yHead: 10,
     directionText: 'right'
-  }
-};
+  },
+
+  init: (params) => initSnakeGame(params),
+
+  step: ({ data, params }) => updateSnake({ data, params }),
+
+  shouldStop: (data) => data.stopped,
+});

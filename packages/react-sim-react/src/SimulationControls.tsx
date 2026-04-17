@@ -5,36 +5,37 @@ import {
   PlayPauseButton,
   StopButton,
   StepButton,
+  ResetButton,
   TickReadout,
-  TickSeekSlider
+  TickSeekSlider,
 } from './controlPrimitives';
 
 export type ParamRangeControl = {
   type?: 'range';
   param: string;
   label?: string;
-  minValue: number;
-  maxValue: number;
+  min: number;
+  max: number;
   step?: number;
-  resetOnChange?: boolean;
 };
 
 export type ParamToggleControl = {
   type: 'toggle';
   param: string;
   label?: string;
-  resetOnChange?: boolean;
 };
 
 export type ParamControl = ParamRangeControl | ParamToggleControl;
 
 export type StandardControlsProps = {
   controls?: ParamControl | ParamControl[] | null;
-  /** If set and finite, shows a tick seek slider */
   maxTime?: number;
   minTime?: number;
-  /** Show advance-one-tick button (composable alternative: import `StepButton`) */
   showStepButton?: boolean;
+  /** Show the stop button. Default false — stop puts the sim in a dead-end state. */
+  showStopButton?: boolean;
+  /** Show the reset button. Default true. */
+  showResetButton?: boolean;
 };
 
 function asArray<T>(maybeArray: T | T[] | null | undefined): T[] {
@@ -48,13 +49,12 @@ const panelStyle: React.CSSProperties = {
   gap: 10,
   padding: 12,
   border: '1px solid rgba(0,0,0,0.15)',
-  borderRadius: 8
+  borderRadius: 8,
 };
 
 /**
- * Batteries-included control strip: play/pause, stop, optional step, tick readout,
- * optional seek slider, and optional param fields from config.
- * For full composition, use `PlayPauseButton`, `StepButton`, etc. from `controlPrimitives`.
+ * Batteries-included control strip: play/pause, stop, optional step/reset,
+ * tick readout, optional seek slider, and optional param fields.
  */
 export function StandardControls(props: StandardControlsProps) {
   const controls = asArray(props.controls);
@@ -63,14 +63,24 @@ export function StandardControls(props: StandardControlsProps) {
 
   return (
     <div style={panelStyle}>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 8,
+          alignItems: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
         <PlayPauseButton />
-        <StopButton />
+        {props.showStopButton ? <StopButton /> : null}
         {props.showStepButton ? <StepButton /> : null}
+        {props.showResetButton !== false ? <ResetButton /> : null}
         <TickReadout />
       </div>
 
-      {canSeek ? <TickSeekSlider minTime={props.minTime} maxTime={maxTime as number} /> : null}
+      {canSeek ? (
+        <TickSeekSlider min={props.minTime} max={maxTime} />
+      ) : null}
 
       {controls.length ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -82,7 +92,6 @@ export function StandardControls(props: StandardControlsProps) {
                   key={key}
                   param={c.param}
                   label={c.label}
-                  resetOnChange={c.resetOnChange}
                 />
               );
             }
@@ -91,10 +100,9 @@ export function StandardControls(props: StandardControlsProps) {
                 key={key}
                 param={c.param}
                 label={c.label}
-                minValue={c.minValue}
-                maxValue={c.maxValue}
+                min={c.min}
+                max={c.max}
                 step={c.step}
-                resetOnChange={c.resetOnChange}
               />
             );
           })}
@@ -103,6 +111,3 @@ export function StandardControls(props: StandardControlsProps) {
     </div>
   );
 }
-
-/** @deprecated Use `StandardControls` */
-export const SimulationControls = StandardControls;

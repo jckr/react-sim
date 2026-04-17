@@ -1,5 +1,4 @@
-import type { SimulationModule } from 'react-sim-engine/runner/module-types';
-import type { UpdateResult } from 'react-sim-engine/types';
+import { defineSim } from 'react-sim-engine/sim';
 
 /** Canvas size in CSS pixels; grid is logical cells scaled to fit. */
 export type LangtonParams = {
@@ -25,63 +24,44 @@ export type LangtonRenderState = LangtonData;
 const DX = [0, 1, 0, -1] as const;
 const DY = [-1, 0, 1, 0] as const;
 
-export function initData(params: LangtonParams): LangtonData {
-  const { gridWidth: gw, gridHeight: gh } = params;
-  const cells = new Uint8Array(gw * gh);
-  return {
-    cells,
-    gridWidth: gw,
-    gridHeight: gh,
-    antX: Math.floor(gw / 2),
-    antY: Math.floor(gh / 2),
-    dir: 0
-  };
-}
+export default defineSim<LangtonData, LangtonParams>({
+  defaultParams: {
+    width: 332,
+    height: 332,
+    gridWidth: 83,
+    gridHeight: 83
+  },
 
-export function updateData(args: {
-  data: LangtonData;
-  params: LangtonParams;
-  tick: number;
-  cachedData: Record<number, LangtonData>;
-}): UpdateResult<LangtonData> {
-  const { data } = args;
-  const { gridWidth: gw, gridHeight: gh } = data;
-  const cells = new Uint8Array(data.cells);
-  let { antX: x, antY: y, dir } = data;
-  const idx = y * gw + x;
-  const onWhite = cells[idx] === 0;
-  cells[idx] = onWhite ? 1 : 0;
-  dir = onWhite ? (dir + 1) % 4 : (dir + 3) % 4;
-  x = (x + DX[dir] + gw) % gw;
-  y = (y + DY[dir] + gh) % gh;
-  return {
-    status: 'continue',
-    data: {
+  init: (params) => {
+    const { gridWidth: gw, gridHeight: gh } = params;
+    const cells = new Uint8Array(gw * gh);
+    return {
+      cells,
+      gridWidth: gw,
+      gridHeight: gh,
+      antX: Math.floor(gw / 2),
+      antY: Math.floor(gh / 2),
+      dir: 0
+    };
+  },
+
+  step: ({ data }) => {
+    const { gridWidth: gw, gridHeight: gh } = data;
+    const cells = new Uint8Array(data.cells);
+    let { antX: x, antY: y, dir } = data;
+    const idx = y * gw + x;
+    const onWhite = cells[idx] === 0;
+    cells[idx] = onWhite ? 1 : 0;
+    dir = onWhite ? (dir + 1) % 4 : (dir + 3) % 4;
+    x = (x + DX[dir] + gw) % gw;
+    y = (y + DY[dir] + gh) % gh;
+    return {
       cells,
       gridWidth: gw,
       gridHeight: gh,
       antX: x,
       antY: y,
       dir
-    }
-  };
-}
-
-export const module: SimulationModule<LangtonData, LangtonParams, LangtonRenderState, unknown> = {
-  initData,
-  updateData,
-  selectRenderState: (snapshot) => ({
-    cells: snapshot.data.cells,
-    gridWidth: snapshot.data.gridWidth,
-    gridHeight: snapshot.data.gridHeight,
-    antX: snapshot.data.antX,
-    antY: snapshot.data.antY,
-    dir: snapshot.data.dir
-  }),
-  defaultParams: {
-    width: 332,
-    height: 332,
-    gridWidth: 83,
-    gridHeight: 83
-  }
-};
+    };
+  },
+});

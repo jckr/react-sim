@@ -1,88 +1,99 @@
 import React from 'react';
-import { WorkerRenderSimulation } from 'react-sim-react/worker-render-simulation';
-import { PlayPauseButton, StepButton, StopButton, TickReadout } from 'react-sim-react/control-primitives';
-import { useWorkerRenderSimulationContext } from 'react-sim-react/hooks';
-import type { XorRingData, XorRingParams, XorRingRenderState } from '../sims/xorRingSim';
+import { Simulation } from 'react-sim-react/simulation';
+import { useSimulation } from 'react-sim-react/hooks';
+import { StandardControls } from 'react-sim-react/controls';
+import xorRingSim from '../sims/xorRingSim';
 
-const moduleUrl = new URL('../sims/xorRingSim.ts', import.meta.url).href;
+const ROW_HEIGHT = 1;
 
-function XorRingMeta() {
-  const { tick, params } = useWorkerRenderSimulationContext<XorRingData, XorRingParams, XorRingRenderState, unknown>();
-  return (
-    <span style={{ fontFamily: 'monospace', opacity: 0.85 }}>
-      tick: {tick} · cells: {params.cells}
-    </span>
-  );
-}
+function XorRingCanvas() {
+  const { data, params, tick } = useSimulation<typeof xorRingSim>();
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const maxRows = 200;
 
-/** Must render under `<WorkerRenderSimulation>` so the worker context hook has a provider. */
-function XorRingWorkerCanvasInner() {
-  const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
-  const { data, tick, params } = useWorkerRenderSimulationContext<XorRingData, XorRingParams, XorRingRenderState, unknown>();
+  // Accumulate history for visual stacking
+  const historyRef = React.useRef<number[][]>([]);
 
   React.useEffect(() => {
-    const el = canvasRef.current;
-    if (!el) return;
-    const ctx = el.getContext('2d');
-    if (!ctx) return;
-
-    const w = params.cells;
-    const h = 56;
-    if (el.width !== w) el.width = w;
-    if (el.height !== h) el.height = h;
-
-    ctx.fillStyle = '#f6f6f6';
-    ctx.fillRect(0, 0, w, h);
-
-    if (Array.isArray(data) && data.length >= w) {
-      ctx.fillStyle = '#111';
-      for (let i = 0; i < w; i++) {
-        if (data[i]) ctx.fillRect(i, 0, 1, h);
+    if (tick === 0) {
+      historyRef.current = [];
+    }
+    if (data) {
+      // Only push if this is a new tick
+      if (historyRef.current.length <= tick) {
+        historyRef.current.push([...data]);
+      }
+      // Keep only the last maxRows
+      if (historyRef.current.length > maxRows) {
+        historyRef.current = historyRef.current.slice(-maxRows);
       }
     }
-  }, [data, params.cells, tick]);
+  }, [tick, data]);
+
+  React.useEffect(() => {
+    const ctx = canvasRef.current?.getContext('2d');
+    if (!ctx || !data) return;
+
+    const { cells } = params;
+    const rows = historyRef.current;
+    const h = rows.length * ROW_HEIGHT;
+
+    ctx.fillStyle = '#f6f6f6';
+    ctx.fillRect(0, 0, cells, maxRows * ROW_HEIGHT);
+
+    ctx.fillStyle = '#111';
+    rows.forEach((row, rowIdx) => {
+      for (let i = 0; i < cells; i++) {
+        if (row[i]) {
+          ctx.fillRect(i, rowIdx * ROW_HEIGHT, 1, ROW_HEIGHT);
+        }
+      }
+    });
+  }, [data, params, tick]);
 
   return (
-    <>
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-        <PlayPauseButton />
-        <StepButton />
-        <StopButton />
-        <TickReadout />
-        <XorRingMeta />
-      </div>
-
-      <canvas
-        ref={canvasRef}
-        style={{
-          width: 'min(100%, 640px)',
-          height: 56,
-          border: '1px solid rgba(0,0,0,0.15)',
-          borderRadius: 8,
-          imageRendering: 'pixelated'
-        }}
-      />
-    </>
+    <canvas
+      ref={canvasRef}
+      width={params.cells}
+      height={maxRows * ROW_HEIGHT}
+      style={{
+        border: '1px solid rgba(0,0,0,0.15)',
+        borderRadius: 6,
+        width: '100%',
+        imageRendering: 'pixelated',
+      }}
+    />
   );
 }
 
 export function WorkerCanvasDemo() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <WorkerRenderSimulation<unknown, XorRingParams, XorRingRenderState, unknown>
-        module={{ kind: 'url', url: moduleUrl }}
-        config={{
-          initialParams: { cells: 240, density: 0.35 },
-          minTime: 0,
-          delayMs: 48,
-          ticksPerAnimation: 1,
-          loop: false,
-          noCache: true,
-          context: null
-        }}
-      >
-        <XorRingWorkerCanvasInner />
-      </WorkerRenderSimulation>
-    </div>
+    <Simulation sim={xorRingSim} maxTime={5000} delayMs={50}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <StandardControls
+          maxTime={5000}
+          showStepButton
+          controls={[
+            {
+              type: 'range',
+              param: 'cells',
+              label: 'Cells',
+              min: 50,
+              max: 500,
+              step: 10,
+            },
+            {
+              type: 'range',
+              param: 'density',
+              label: 'Initial density',
+              min: 0,
+              max: 1,
+              step: 0.05,
+            },
+          ]}
+        />
+        <XorRingCanvas />
+      </div>
+    </Simulation>
   );
 }

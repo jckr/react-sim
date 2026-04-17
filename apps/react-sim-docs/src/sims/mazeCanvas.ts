@@ -28,11 +28,9 @@ export function drawMazeFrame(args: {
     fillCircle(ctx, a.x, a.y, a.r);
   };
 
-  ctx.clearRect(0, 0, pixelWidth, pixelHeight);
-
   if (tick === 0) {
+    ctx.clearRect(0, 0, pixelWidth, pixelHeight);
     if (drawItem) {
-      ctx.clearRect(0, 0, pixelWidth, pixelHeight);
       Object.values(cells).forEach((cell) => {
         drawCell({
           cell,

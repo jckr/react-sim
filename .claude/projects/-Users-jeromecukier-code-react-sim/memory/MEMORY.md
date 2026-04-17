@@ -1,0 +1,1 @@
+- [No "module" variable name](feedback_no_module_variable.md) — avoid `module` as a variable name, use `sim` or descriptive alternatives

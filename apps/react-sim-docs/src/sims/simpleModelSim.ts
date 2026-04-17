@@ -1,17 +1,13 @@
-import type { UpdateResult } from 'react-sim-engine/types';
+import { defineSim } from 'react-sim-engine/sim';
 
 /** No evolving dataset — the view is driven by `tick` only. */
 export type SimpleModelParams = Record<string, never>;
 export type SimpleModelData = Record<string, never>;
 
-export function initData(_params: SimpleModelParams): SimpleModelData {
-  return {};
-}
+export default defineSim<SimpleModelData, SimpleModelParams>({
+  defaultParams: {},
 
-export function updateData(_args: {
-  data: SimpleModelData;
-  params: SimpleModelParams;
-  tick: number;
-}): UpdateResult<SimpleModelData> {
-  return { status: 'continue', data: {} };
-}
+  init: () => ({}),
+
+  step: () => ({}),
+});

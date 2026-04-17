@@ -4,19 +4,18 @@ import { Link } from 'react-router-dom';
 
 At the core of the engine you provide two functions:
 
-- `initData(params)` to create the initial dataset
-- `updateData({ data, params, tick, cachedData })` to compute the next dataset
+- `init(params)` to create the initial dataset
+- `step({ data, params, tick })` to compute the next dataset
 
-Frames/renderers read from the current engine snapshot (`data`, `tick`, `params`) and draw UI or canvas.
+Wrap them in `defineSim` from `react-sim-engine/sim` to create a sim module.
 
 ## React adapter
 
-- Import **`Simulation`** from **`react-sim-react/simulation`**, **`useSimulationContext`** from **`react-sim-react/hooks`**, and **`StandardControls`** from **`react-sim-react/controls`** (no package root barrel).
-- Wrap your frame in `<Simulation initData={…} updateData={…} config={…}>` — engine options (`initialParams`, `minTime`, `maxTime`, `delayMs`, …) live in the single **`config`** object.
-- Engine types: **`import type { … } from 'react-sim-engine/types'`**; runtime engine: **`import { createSimulationEngine } from 'react-sim-engine'`**; worker host: **`import { createEngineWorkerHost } from 'react-sim-engine/worker'`**.
-- Inside the tree, call **`useSimulationContext<Data, Params, Result>()`** for typed state and actions (`play`, `pause`, `stop`, `seek`, **`stepOnce`**, `setParams`).
-- **Composable controls:** import primitives from **`react-sim-react/control-primitives`** (`PlayPauseButton`, `StopButton`, `StepButton`, …).
-- **Batteries included:** **`StandardControls`** (alias `SimulationControls`) bundles transport + optional param fields — same idea as the old config-driven controls, without rebass/theme-ui.
+- Import **`Simulation`** from **`react-sim-react/simulation`**, **`useSimulation`** from **`react-sim-react/hooks`**, and **`StandardControls`** from **`react-sim-react/controls`**.
+- Pass your sim module as `<Simulation sim={mySim}>`. Engine options (`maxTime`, `delayMs`, `ticksPerFrame`) are top-level props.
+- Inside the tree, call **`useSimulation<typeof mySim>()`** for typed state and actions (`play`, `pause`, `stop`, `seek`, `advance`, `setParams`, `resetWith`).
+- **Composable controls:** import primitives from **`react-sim-react/control-primitives`** (`PlayPauseButton`, `StopButton`, `StepButton`, `ResetButton`, …).
+- **Batteries included:** **`StandardControls`** bundles transport + optional param fields.
 
 ## In-thread simulation
 
@@ -29,7 +28,7 @@ Frames/renderers read from the current engine snapshot (`data`, `tick`, `params`
 
 ## Worker-backed simulation
 
-These examples run ticks in a Web Worker; canvas examples still **draw on the main thread** using `WorkerRenderSimulation` and `selectRenderState`.
+These examples run ticks in a Web Worker (worker support in progress).
 
 - <Link to="/examples/worker-canvas">Worker canvas</Link>
 - <Link to="/examples/fibonacci-spiral">Fibonacci spiral</Link>

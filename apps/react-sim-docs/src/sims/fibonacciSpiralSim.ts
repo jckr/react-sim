@@ -1,10 +1,5 @@
-import type { SimulationModule } from 'react-sim-engine/runner/module-types';
-import {
-  initData as initFib,
-  updateData as updateFib,
-  type FibonacciData,
-  type FibonacciParams
-} from './fibonacciSim';
+import { defineSim } from 'react-sim-engine/sim';
+import type { FibonacciData } from './fibonacciSim';
 
 export type FibonacciSpiralParams = { size: number };
 export type FibonacciSpiralRenderState = { size: number };
@@ -74,16 +69,16 @@ export function drawFibonacciSpiral(
   }
 }
 
-const emptyFibParams: FibonacciParams = {};
+export default defineSim<FibonacciData, FibonacciSpiralParams>({
+  defaultParams: { size: 332 },
 
-export const module: SimulationModule<FibonacciData, FibonacciSpiralParams, FibonacciSpiralRenderState, unknown> = {
-  initData: (_params: FibonacciSpiralParams) => initFib(emptyFibParams),
-  updateData: (args) =>
-    updateFib({
-      data: args.data,
-      params: emptyFibParams,
-      tick: args.tick
-    }),
-  selectRenderState: (snapshot) => ({ size: snapshot.params.size }),
-  defaultParams: { size: 332 }
-};
+  init: () => [0],
+
+  step: ({ data, tick }) => {
+    if (tick === 1) {
+      return [0, 1];
+    }
+    const lastNumber = data[tick - 1] + data[tick - 2];
+    return [...data, lastNumber];
+  },
+});

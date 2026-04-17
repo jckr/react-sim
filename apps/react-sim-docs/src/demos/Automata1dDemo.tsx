@@ -1,14 +1,14 @@
 import React from 'react';
 import { Simulation } from 'react-sim-react/simulation';
-import { useSimulationContext } from 'react-sim-react/hooks';
+import { useSimulation } from 'react-sim-react/hooks';
 import { StandardControls } from 'react-sim-react/controls';
+import automata1dSim from '../sims/automata1dSim';
 import type { Automata1dData, Automata1dParams, FirstLineMode } from '../sims/automata1dSim';
-import { initData, updateData } from '../sims/automata1dSim';
 
 const CELL = 8;
 
 function AutomataBitToggle(props: { bit: number }) {
-  const { params, setParams } = useSimulationContext<Automata1dData, Automata1dParams, unknown>();
+  const { params, setParams } = useSimulation<typeof automata1dSim>();
   const increment = 1 << props.bit;
   const set = (increment & params.rule) !== 0;
   const left = (4 & props.bit) !== 0;
@@ -77,23 +77,34 @@ function AutomataBitToggle(props: { bit: number }) {
 }
 
 function Automata1dInner() {
-  const { cachedData, tick, params, setParams } = useSimulationContext<Automata1dData, Automata1dParams, unknown>();
+  const { data, tick, params, setParams } = useSimulation<typeof automata1dSim>();
   const { rows, cols } = params;
-  const nbRows = Math.min(tick, rows);
+
+  // Accumulate row history since cachedData is not available in the new API
+  const historyRef = React.useRef<Map<number, Automata1dData>>(new Map());
+
+  // Reset history when tick goes back to 0 (reset)
+  React.useEffect(() => {
+    if (tick === 0) {
+      historyRef.current = new Map();
+    }
+    historyRef.current.set(tick, data);
+  }, [tick, data]);
+
+  const nbRows = Math.min(tick + 1, rows);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       <StandardControls
         maxTime={500}
-        minTime={0}
         showStepButton
         controls={[
           {
             type: 'range',
             param: 'rule',
             label: 'Rule',
-            minValue: 0,
-            maxValue: 255,
+            min: 0,
+            max: 255,
             step: 1
           }
         ]}
@@ -104,7 +115,7 @@ function Automata1dInner() {
           value={params.firstLine}
           onChange={(e) => {
             const firstLine = e.target.value as FirstLineMode;
-            setParams({ firstLine }, { reset: true });
+            setParams({ firstLine });
           }}
           style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid rgba(0,0,0,0.2)' }}
         >
@@ -126,8 +137,8 @@ function Automata1dInner() {
         }}
       >
         {[...Array(nbRows).keys()].map((rowIndex) => {
-          const ts = tick - nbRows + rowIndex;
-          const row = cachedData[ts] as Automata1dData | undefined;
+          const ts = tick - nbRows + 1 + rowIndex;
+          const row = historyRef.current.get(ts);
           if (!row) return null;
           return (
             <div
@@ -177,23 +188,10 @@ function Automata1dInner() {
 
 export function Automata1dDemo() {
   return (
-    <Simulation<Automata1dData, Automata1dParams, unknown>
-      initData={initData}
-      updateData={updateData}
-      config={{
-        initialParams: {
-          rule: 110,
-          cols: 33,
-          rows: 24,
-          firstLine: 'blank'
-        },
-        minTime: 0,
-        maxTime: 500,
-        delayMs: 40,
-        ticksPerAnimation: 1,
-        loop: false,
-        noCache: false
-      }}
+    <Simulation
+      sim={automata1dSim}
+      maxTime={500}
+      delayMs={40}
     >
       <Automata1dInner />
     </Simulation>

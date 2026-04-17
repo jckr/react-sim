@@ -1,12 +1,11 @@
 import React from 'react';
 import { Simulation } from 'react-sim-react/simulation';
-import { useSimulationContext } from 'react-sim-react/hooks';
+import { useSimulation } from 'react-sim-react/hooks';
 import { StandardControls } from 'react-sim-react/controls';
-import type { FibonacciData, FibonacciParams } from '../sims/fibonacciSim';
-import { initData, updateData } from '../sims/fibonacciSim';
+import fibonacciSim from '../sims/fibonacciSim';
 
 function FibonacciList() {
-  const { data } = useSimulationContext<FibonacciData, FibonacciParams, unknown>();
+  const { data } = useSimulation<typeof fibonacciSim>();
   return (
     <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
       {data.map((n, i) => (
@@ -30,20 +29,13 @@ function FibonacciList() {
 
 export function FibonacciDemo() {
   return (
-    <Simulation<FibonacciData, FibonacciParams, unknown>
-      initData={initData}
-      updateData={updateData}
-      config={{
-        initialParams: {},
-        minTime: 0,
-        maxTime: 20,
-        delayMs: 200,
-        ticksPerAnimation: 1,
-        loop: false
-      }}
+    <Simulation
+      sim={fibonacciSim}
+      maxTime={20}
+      delayMs={200}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <StandardControls maxTime={20} minTime={0} showStepButton />
+        <StandardControls maxTime={20} showStepButton />
         <FibonacciList />
       </div>
     </Simulation>

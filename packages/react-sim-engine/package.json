@@ -1,17 +1,14 @@
 {
   "name": "react-sim-engine",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "engines": {
     "node": ">=22.12.0"
   },
   "files": ["dist"],
-  "dependencies": {
-    "comlink": "^4.4.2"
-  },
   "scripts": {
-    "build": "tsup src/engine.ts src/types.ts src/runner/runnerTypes.ts src/runner/moduleTypes.ts src/runner/localRunner.ts src/runner/workerRunner.ts src/runner/renderStateWorkerRunner.ts src/worker/engineWorkerHost.ts src/worker/engineWorker.ts src/worker/moduleWorker.ts src/worker/renderStateWorker.ts --format esm,cjs --dts --clean",
+    "build": "tsup src/engine.ts src/sim.ts src/worker/workerRunner.ts src/worker/createSimWorker.ts src/worker/protocol.ts src/worker/serialize.ts --format esm,cjs --dts --clean",
     "test": "vitest run"
   },
   "exports": {
@@ -20,55 +17,25 @@
       "import": "./dist/engine.js",
       "require": "./dist/engine.cjs"
     },
-    "./types": {
-      "types": "./dist/types.d.ts",
-      "import": "./dist/types.js",
-      "require": "./dist/types.cjs"
+    "./sim": {
+      "types": "./dist/sim.d.ts",
+      "import": "./dist/sim.js",
+      "require": "./dist/sim.cjs"
     },
-    "./worker": {
-      "types": "./dist/worker/engineWorkerHost.d.ts",
-      "import": "./dist/worker/engineWorkerHost.js",
-      "require": "./dist/worker/engineWorkerHost.cjs"
+    "./worker/runner": {
+      "types": "./dist/worker/workerRunner.d.ts",
+      "import": "./dist/worker/workerRunner.js",
+      "require": "./dist/worker/workerRunner.cjs"
     },
-    "./worker-entry": {
-      "types": "./dist/worker/engineWorker.d.ts",
-      "import": "./dist/worker/engineWorker.js",
-      "require": "./dist/worker/engineWorker.cjs"
+    "./worker/create": {
+      "types": "./dist/worker/createSimWorker.d.ts",
+      "import": "./dist/worker/createSimWorker.js",
+      "require": "./dist/worker/createSimWorker.cjs"
     },
-    "./runner/runner-types": {
-      "types": "./dist/runner/runnerTypes.d.ts",
-      "import": "./dist/runner/runnerTypes.js",
-      "require": "./dist/runner/runnerTypes.cjs"
-    },
-    "./runner/module-types": {
-      "types": "./dist/runner/moduleTypes.d.ts",
-      "import": "./dist/runner/moduleTypes.js",
-      "require": "./dist/runner/moduleTypes.cjs"
-    },
-    "./runner/local": {
-      "types": "./dist/runner/localRunner.d.ts",
-      "import": "./dist/runner/localRunner.js",
-      "require": "./dist/runner/localRunner.cjs"
-    },
-    "./runner/worker": {
-      "types": "./dist/runner/workerRunner.d.ts",
-      "import": "./dist/runner/workerRunner.js",
-      "require": "./dist/runner/workerRunner.cjs"
-    },
-    "./runner/worker-render-state": {
-      "types": "./dist/runner/renderStateWorkerRunner.d.ts",
-      "import": "./dist/runner/renderStateWorkerRunner.js",
-      "require": "./dist/runner/renderStateWorkerRunner.cjs"
-    },
-    "./worker/module-worker": {
-      "types": "./dist/worker/moduleWorker.d.ts",
-      "import": "./dist/worker/moduleWorker.js",
-      "require": "./dist/worker/moduleWorker.cjs"
-    },
-    "./worker/render-state-worker": {
-      "types": "./dist/worker/renderStateWorker.d.ts",
-      "import": "./dist/worker/renderStateWorker.js",
-      "require": "./dist/worker/renderStateWorker.cjs"
+    "./worker/protocol": {
+      "types": "./dist/worker/protocol.d.ts",
+      "import": "./dist/worker/protocol.js",
+      "require": "./dist/worker/protocol.cjs"
     }
   }
 }

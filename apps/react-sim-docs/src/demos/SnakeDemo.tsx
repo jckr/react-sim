@@ -1,109 +1,150 @@
 import React from 'react';
-import { WorkerRenderSimulation } from 'react-sim-react/worker-render-simulation';
-import { PlayPauseButton, StepButton, StopButton, TickReadout } from 'react-sim-react/control-primitives';
-import { useWorkerRenderSimulationContext } from 'react-sim-react/hooks';
-import type { SnakeData, SnakeParams, SnakeRenderState } from '../sims/snakeSim';
+import { Simulation } from 'react-sim-react/simulation';
+import { useSimulation } from 'react-sim-react/hooks';
+import { StandardControls } from 'react-sim-react/controls';
+import snakeSim from '../sims/snakeSim';
 import { drawSnakeFrame } from '../sims/snakeCanvas';
 
-const moduleUrl = new URL('../sims/snakeSim.ts', import.meta.url).href;
+type SpeedSetting = 'normal' | 'fast' | 'very fast';
 
-function SnakeCanvasInner() {
-  const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
-  const didAutoPlayRef = React.useRef(false);
-  const { data, params, play, canPlay } = useWorkerRenderSimulationContext<SnakeData, SnakeParams, SnakeRenderState, unknown>();
+const SPEED_CONFIG: Record<SpeedSetting, { delayMs: number; ticksPerFrame: number }> = {
+  normal: { delayMs: 100, ticksPerFrame: 1 },
+  fast: { delayMs: 0, ticksPerFrame: 1 },
+  'very fast': { delayMs: 0, ticksPerFrame: 20 },
+};
+
+function SnakeCanvas() {
+  const { data, params } = useSimulation<typeof snakeSim>();
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+
+  const pixelWidth = params.width * params.cellSize;
+  const pixelHeight = params.height * params.cellSize;
 
   React.useEffect(() => {
-    if (canPlay && !didAutoPlayRef.current) {
-      didAutoPlayRef.current = true;
-      play();
-    }
-  }, [canPlay, play]);
-
-  React.useEffect(() => {
-    const el = canvasRef.current;
-    if (!el) return;
-    const ctx = el.getContext('2d');
-    if (!ctx) return;
-    if (!data) return;
-
-    const { cellSize, width: cols, height: rows, displayGrid, displayCircuit, displayHead } = params;
-    const pixelWidth = cols * cellSize;
-    const pixelHeight = rows * cellSize;
-    if (el.width !== pixelWidth) el.width = pixelWidth;
-    if (el.height !== pixelHeight) el.height = pixelHeight;
-
+    const ctx = canvasRef.current?.getContext('2d');
+    if (!ctx || !data) return;
     drawSnakeFrame({
       ctx,
       pixelWidth,
       pixelHeight,
-      cellSize,
-      cols,
-      rows,
-      displayGrid,
-      displayCircuit,
-      displayHead,
-      data
+      cellSize: params.cellSize,
+      cols: params.width,
+      rows: params.height,
+      displayGrid: params.displayGrid,
+      displayCircuit: params.displayCircuit,
+      displayHead: params.displayHead,
+      data,
     });
-  }, [data, params]);
+  }, [data, params, pixelWidth, pixelHeight]);
 
   return (
     <canvas
       ref={canvasRef}
-      style={{
-        maxWidth: '100%',
-        height: 'auto',
-        border: '1px solid rgba(0,0,0,0.12)',
-        borderRadius: 8
-      }}
+      width={pixelWidth}
+      height={pixelHeight}
+      style={{ border: '1px solid rgba(0,0,0,0.15)', borderRadius: 6 }}
     />
   );
 }
 
-export function SnakeDemo() {
+function SnakeCustomControls() {
+  const { params, setParams } = useSimulation<typeof snakeSim>();
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <WorkerRenderSimulation<SnakeData, SnakeParams, SnakeRenderState, unknown>
-        module={{ kind: 'url', url: moduleUrl }}
-        config={{
-          initialParams: {
-            cellSize: 4,
-            delay: 100,
-            displayCircuit: true,
-            displayGrid: false,
-            displayHead: true,
-            fruitGrowth: 4,
-            height: 80,
-            width: 80,
-            initialLength: 2,
-            safeMode: false,
-            speed: 'fast',
-            snakePosRandom: true,
-            directionRandom: true,
-            xHead: 10,
-            yHead: 10,
-            directionText: 'right'
-          },
-          minTime: 0,
-          maxTime: 500_000,
-          delayMs: 0,
-          ticksPerAnimation: 1,
-          loop: false,
-          noCache: true,
-          context: null
-        }}
-      >
-        <p style={{ margin: 0, fontSize: 13, color: '#555' }}>
-          AI snake: shortest paths to fruit and Hamiltonian-style circuits (original react-sim demo). Worker ticks; canvas
-          draws on the main thread.
-        </p>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-          <PlayPauseButton />
-          <StopButton />
-          <StepButton />
-          <TickReadout />
-        </div>
-        <SnakeCanvasInner />
-      </WorkerRenderSimulation>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <label style={{ fontWeight: 500 }}>Display</label>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <input
+            type="checkbox"
+            checked={params.displayHead}
+            onChange={(e) => setParams({ displayHead: e.target.checked })}
+          />
+          Show head
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <input
+            type="checkbox"
+            checked={params.displayGrid}
+            onChange={(e) => setParams({ displayGrid: e.target.checked })}
+          />
+          Show grid
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <input
+            type="checkbox"
+            checked={params.displayCircuit}
+            onChange={(e) => setParams({ displayCircuit: e.target.checked })}
+          />
+          Show circuit
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <input
+            type="checkbox"
+            checked={params.safeMode}
+            onChange={(e) => setParams({ safeMode: e.target.checked })}
+          />
+          Safe mode
+        </label>
+      </div>
     </div>
+  );
+}
+
+export function SnakeDemo() {
+  const [speed, setSpeed] = React.useState<SpeedSetting>('normal');
+  const { delayMs, ticksPerFrame } = SPEED_CONFIG[speed];
+
+  return (
+    <Simulation
+      key={speed}
+      sim={snakeSim}
+      maxTime={10000}
+      delayMs={delayMs}
+      ticksPerFrame={ticksPerFrame}
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <StandardControls
+          maxTime={10000}
+          showStepButton
+          controls={[
+            {
+              type: 'range',
+              param: 'width',
+              label: 'Grid width',
+              min: 6,
+              max: 30,
+              step: 1,
+            },
+            {
+              type: 'range',
+              param: 'height',
+              label: 'Grid height',
+              min: 6,
+              max: 30,
+              step: 1,
+            },
+          ]}
+        />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <label style={{ fontWeight: 500 }}>Speed</label>
+          <div style={{ display: 'flex', gap: 12 }}>
+            {(['normal', 'fast', 'very fast'] as SpeedSetting[]).map((s) => (
+              <label key={s} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <input
+                  type="radio"
+                  name="snake-speed"
+                  checked={speed === s}
+                  onChange={() => setSpeed(s)}
+                />
+                {s}
+              </label>
+            ))}
+          </div>
+        </div>
+        <SnakeCustomControls />
+        <SnakeCanvas />
+      </div>
+    </Simulation>
   );
 }

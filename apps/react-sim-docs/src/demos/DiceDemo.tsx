@@ -1,9 +1,9 @@
 import React from 'react';
 import { Simulation } from 'react-sim-react/simulation';
-import { useSimulationContext } from 'react-sim-react/hooks';
+import { useSimulation } from 'react-sim-react/hooks';
 import { StandardControls } from 'react-sim-react/controls';
+import diceSim from '../sims/diceSim';
 import type { DiceData, DiceParams } from '../sims/diceSim';
-import { initData, updateData } from '../sims/diceSim';
 
 function Die(props: { value: number }) {
   const dotStyle: React.CSSProperties = {
@@ -64,12 +64,8 @@ function Bar(props: { label: number; nbRolls: number; max: number; nbValues: num
   );
 }
 
-/**
- * Single child under `<Simulation>` so Fast Refresh / HMR never runs context hooks
- * before the provider (module-level siblings can reorder during hot reload).
- */
 function DiceDemoInner() {
-  const { data, params } = useSimulationContext<DiceData, DiceParams, unknown>();
+  const { data, params } = useSimulation<typeof diceSim>();
   const minValue = Number(params.nbDice);
   const maxValue = minValue * 6;
   const nbValues = maxValue - minValue + 1;
@@ -92,10 +88,9 @@ function DiceDemoInner() {
           type: 'range',
           param: 'nbDice',
           label: 'Dice per roll',
-          minValue: 1,
-          maxValue: 6,
+          min: 1,
+          max: 6,
           step: 1,
-          resetOnChange: true
         }}
       />
       <div
@@ -124,17 +119,10 @@ function DiceDemoInner() {
 
 export function DiceDemo() {
   return (
-    <Simulation<DiceData, DiceParams, unknown>
-      initData={initData}
-      updateData={updateData}
-      config={{
-        initialParams: { nbDice: 5 },
-        minTime: 0,
-        maxTime: 1000,
-        delayMs: 0,
-        ticksPerAnimation: 1,
-        loop: false
-      }}
+    <Simulation
+      sim={diceSim}
+      maxTime={1000}
+      delayMs={0}
     >
       <DiceDemoInner />
     </Simulation>

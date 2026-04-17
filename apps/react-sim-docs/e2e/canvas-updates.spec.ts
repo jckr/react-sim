@@ -29,7 +29,7 @@ async function pauseIfPlaying(page: import('@playwright/test').Page) {
   }
 }
 
-test('Segregation (worker): canvas is non-trivial and changes after one Step', async ({ page }) => {
+test('Segregation: canvas is non-trivial and changes after one Step', async ({ page }) => {
   await page.goto('/examples/segregation');
 
   await pauseIfPlaying(page);
@@ -54,4 +54,17 @@ test('Worker canvas (xor ring): canvas is non-trivial and changes after one Step
   await page.getByRole('button', { name: /^Step/ }).first().click();
 
   await expect.poll(async () => (await canvasScreenshot(page, 'canvas')).digest.hash).not.toBe(before.digest.hash);
+});
+
+test('Game of Life: DOM grid renders and changes after one Step', async ({ page }) => {
+  await page.goto('/examples/game-of-life');
+
+  // Game of Life uses a DOM grid, not canvas. Check the grid renders.
+  await expect(page.locator('[role="img"]')).toBeVisible();
+
+  // Click step and verify tick advances
+  const tickBefore = await page.locator('text=tick:').textContent();
+  await page.getByRole('button', { name: /^Step/ }).first().click();
+  const tickAfter = await page.locator('text=tick:').textContent();
+  expect(tickAfter).not.toBe(tickBefore);
 });

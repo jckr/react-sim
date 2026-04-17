@@ -1,19 +1,18 @@
 import React from 'react';
 import { Simulation } from 'react-sim-react/simulation';
-import { useSimulationContext } from 'react-sim-react/hooks';
+import { useSimulation } from 'react-sim-react/hooks';
 import { StandardControls } from 'react-sim-react/controls';
-import type { SimpleModelData, SimpleModelParams } from '../sims/simpleModelSim';
-import { initData, updateData } from '../sims/simpleModelSim';
+import simpleModelSim from '../sims/simpleModelSim';
 
 const GRID = 10;
 const CELL = 36;
 
 function SimpleModelInner() {
-  const { tick } = useSimulationContext<SimpleModelData, SimpleModelParams, unknown>();
+  const { tick } = useSimulation<typeof simpleModelSim>();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <StandardControls maxTime={100} minTime={0} showStepButton />
+      <StandardControls maxTime={100} showStepButton />
       <div
         style={{
           display: 'grid',
@@ -46,17 +45,10 @@ function SimpleModelInner() {
 
 export function SimpleModelDemo() {
   return (
-    <Simulation<SimpleModelData, SimpleModelParams, unknown>
-      initData={initData}
-      updateData={updateData}
-      config={{
-        initialParams: {},
-        minTime: 0,
-        maxTime: 100,
-        delayMs: 80,
-        ticksPerAnimation: 1,
-        loop: false
-      }}
+    <Simulation
+      sim={simpleModelSim}
+      maxTime={100}
+      delayMs={80}
     >
       <SimpleModelInner />
     </Simulation>

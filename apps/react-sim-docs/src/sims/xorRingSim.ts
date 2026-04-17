@@ -1,5 +1,4 @@
-import type { SimulationModule } from 'react-sim-engine/runner/module-types';
-import type { UpdateResult } from 'react-sim-engine/types';
+import { defineSim } from 'react-sim-engine/sim';
 
 export type XorRingParams = { cells: number; density: number };
 export type XorRingData = number[];
@@ -7,21 +6,6 @@ export type XorRingData = number[];
 export type XorRingRenderState = XorRingData;
 
 export const defaultParams: XorRingParams = { cells: 240, density: 0.35 };
-
-export function initData(params: XorRingParams): XorRingData {
-  return Array.from({ length: params.cells }, () => (Math.random() < params.density ? 1 : 0));
-}
-
-export function updateData({ data, params }: { data: XorRingData; params: XorRingParams }): UpdateResult<XorRingData> {
-  const n = params.cells;
-  const next = new Array<number>(n);
-  for (let i = 0; i < n; i++) {
-    const left = data[(i - 1 + n) % n];
-    const right = data[(i + 1) % n];
-    next[i] = left ^ right;
-  }
-  return { status: 'continue', data: next };
-}
 
 export function draw({
   ctx,
@@ -48,10 +32,20 @@ export function draw({
   }
 }
 
-export const module: SimulationModule<XorRingData, XorRingParams, XorRingRenderState, unknown> = {
-  initData,
-  updateData: ({ data, params }) => updateData({ data, params }),
-  selectRenderState: (snapshot) => snapshot.data,
-  draw,
-  defaultParams
-};
+export default defineSim<XorRingData, XorRingParams>({
+  defaultParams,
+
+  init: (params) =>
+    Array.from({ length: params.cells }, () => (Math.random() < params.density ? 1 : 0)),
+
+  step: ({ data, params }) => {
+    const n = params.cells;
+    const next = new Array<number>(n);
+    for (let i = 0; i < n; i++) {
+      const left = data[(i - 1 + n) % n];
+      const right = data[(i + 1) % n];
+      next[i] = left ^ right;
+    }
+    return next;
+  },
+});

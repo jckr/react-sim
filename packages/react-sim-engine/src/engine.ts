@@ -1,285 +1,225 @@
-import type {
-  EngineConfig,
-  EngineSnapshot,
-  Tick,
-  UpdateResult
-} from './types';
+import type { StepArgs } from './sim';
 
-function isFiniteTick(tick: unknown): tick is number {
-  return typeof tick === 'number' && Number.isFinite(tick);
-}
+export type SimulationStatus = 'idle' | 'playing' | 'paused' | 'stopped';
 
-export function createSimulationEngine<
-  Data,
-  Params extends object,
-  EngineResult = unknown
->(config: EngineConfig<Data, Params, EngineResult>) {
-  const delayMs = config.delayMs ?? 0;
-  const ticksPerAnimation = config.ticksPerAnimation ?? 1;
-  const loop = config.loop ?? false;
-  const noCache = config.noCache ?? false;
+export type EngineConfig<Data, Params> = {
+  init: (params: Params) => Data;
+  step: (args: StepArgs<Data, Params>) => Data;
+  shouldStop?: (data: Data, params: Params) => boolean;
+  initialParams: Params;
+  maxTime?: number;
+  delayMs?: number;
+  ticksPerFrame?: number;
+};
 
-  const minTime: Tick = config.minTime ?? config.initialTick ?? 0;
-  const maxTime: Tick | undefined = config.maxTime;
+export type EngineSnapshot<Data, Params> = {
+  data: Data;
+  params: Params;
+  tick: number;
+  status: SimulationStatus;
+};
 
-  let params: Params = { ...config.initialParams };
-  let data: Data | undefined = config.initialData;
-  let tick: Tick = minTime;
-  let results: EngineResult[] = [];
+export class SimulationEngine<Data, Params> {
+  private data: Data;
+  private params: Params;
+  private tick: number = 0;
+  private status: SimulationStatus = 'idle';
+  private lastUpdateMs: number | null = null;
 
-  // In the original implementation, "canPlay" goes false when:
-  // - the simulation hits maxTime, or
-  // - the user calls `complete(...)`.
-  let canPlay = true;
-  let isPlaying = false;
+  private readonly initFn: (params: Params) => Data;
+  private readonly stepFn: (args: StepArgs<Data, Params>) => Data;
+  private readonly shouldStopFn?: (data: Data, params: Params) => boolean;
+  private readonly maxTime?: number;
+  private readonly delayMs: number;
+  private readonly ticksPerFrame: number;
 
-  let lastUpdateMs: number | null = null;
+  private readonly listeners = new Set<
+    (snapshot: EngineSnapshot<Data, Params>) => void
+  >();
+  private readonly historyListeners = new Set<
+    (entry: { tick: number; data: Data }) => void
+  >();
 
-  // Cache of computed ticks -> data.
-  let cachedData: Record<Tick, Data> = {};
+  constructor(config: EngineConfig<Data, Params>) {
+    this.initFn = config.init;
+    this.stepFn = config.step;
+    this.shouldStopFn = config.shouldStop;
+    this.maxTime = config.maxTime;
+    this.delayMs = config.delayMs ?? 0;
+    this.ticksPerFrame = config.ticksPerFrame ?? 1;
 
-  let didInit = false;
+    this.params = { ...config.initialParams };
+    this.data = this.initFn(this.params);
+  }
 
-  const listeners = new Set<(snapshot: EngineSnapshot<Data, Params, EngineResult>) => void>();
-
-  const updateData = config.updateData;
-
-  function snapshot(): EngineSnapshot<Data, Params, EngineResult> {
-    if (data === undefined) {
-      throw new Error('Simulation engine snapshot requested before data was initialized');
-    }
+  getSnapshot(): EngineSnapshot<Data, Params> {
     return {
-      data,
-      params,
-      tick,
-      results: [...results],
-      isPlaying,
-      canPlay
+      data: this.data,
+      params: this.params,
+      tick: this.tick,
+      status: this.status,
     };
   }
 
-  function emit() {
-    const snap = snapshot();
-    listeners.forEach((l) => l(snap));
-    config.onSnapshot?.(snap);
+  getStatus(): SimulationStatus {
+    return this.status;
   }
 
-  function init({ clearResults }: { clearResults: boolean }) {
-    params = { ...params };
-    tick = minTime;
-    data = config.initialData ?? config.initData(params, config.context);
+  subscribe(
+    listener: (snapshot: EngineSnapshot<Data, Params>) => void
+  ): () => void {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
 
-    if (!noCache) {
-      cachedData = { [tick]: data };
-    } else {
-      cachedData = {};
+  subscribeHistory(
+    listener: (entry: { tick: number; data: Data }) => void
+  ): () => void {
+    this.historyListeners.add(listener);
+    return () => {
+      this.historyListeners.delete(listener);
+    };
+  }
+
+  play(): void {
+    if (this.status === 'stopped') return;
+    if (this.status === 'playing') return;
+    this.status = 'playing';
+    this.lastUpdateMs = null;
+    this.emit();
+  }
+
+  pause(): void {
+    if (this.status !== 'playing') return;
+    this.status = 'paused';
+    this.emit();
+  }
+
+  stop(): void {
+    if (this.status === 'idle' || this.status === 'stopped') return;
+    this.status = 'stopped';
+    this.emit();
+  }
+
+  seek(targetTick: number): void {
+    if (this.status === 'stopped') return;
+    if (targetTick <= this.tick) {
+      // Backward seek is a no-op for data, but still transitions to paused
+      if (this.status !== 'paused') {
+        this.status = 'paused';
+        this.emit();
+      }
+      return;
+    }
+    this.status = 'paused';
+    this.lastUpdateMs = null;
+    this.advanceTicks(targetTick - this.tick);
+    if (this.status === 'paused') {
+      this.emit();
+    }
+  }
+
+  advance(count: number = 1): void {
+    if (this.status === 'stopped') return;
+    if (this.status === 'playing' || this.status === 'idle') {
+      this.status = 'paused';
+    }
+    this.lastUpdateMs = null;
+    this.advanceTicks(count);
+    if (this.status === 'paused') {
+      this.emit();
+    }
+  }
+
+  setParams(patch: Partial<Params>): void {
+    this.params = { ...this.params, ...patch };
+    this.emit();
+  }
+
+  resetWith(patch?: Partial<Params>): void {
+    if (patch) {
+      this.params = { ...this.params, ...patch };
+    }
+    this.data = this.initFn(this.params);
+    this.tick = 0;
+    this.status = 'idle';
+    this.lastUpdateMs = null;
+    this.emit();
+  }
+
+  handleAnimationFrame(nowMs: number): void {
+    if (this.status !== 'playing') return;
+
+    if (this.lastUpdateMs === null) {
+      this.lastUpdateMs = nowMs;
+      return;
     }
 
-    canPlay = true;
-    lastUpdateMs = null;
-    if (clearResults) results = [];
+    if (this.delayMs > 0 && nowMs - this.lastUpdateMs < this.delayMs) return;
+
+    this.lastUpdateMs = nowMs;
+    this.advanceTicks(this.ticksPerFrame);
+    if (this.status === 'playing') {
+      this.emit();
+    }
   }
 
-  function checkCanPlay(tickBeforeUpdate: Tick): boolean {
-    if (!canPlay) return false;
-    if (maxTime !== undefined && tickBeforeUpdate >= maxTime) {
-      canPlay = false;
-      isPlaying = false;
-      return false;
+  destroy(): void {
+    this.listeners.clear();
+    this.historyListeners.clear();
+  }
+
+  /**
+   * Run step up to `count` ticks. Returns true if all ticks completed
+   * without termination, false if stopped early.
+   */
+  private advanceTicks(count: number): boolean {
+    for (let i = 0; i < count; i++) {
+      if (this.maxTime !== undefined && this.tick >= this.maxTime) {
+        this.status = 'stopped';
+        this.emit();
+        return false;
+      }
+
+      this.tick += 1;
+      this.data = this.stepFn({ data: this.data, params: this.params, tick: this.tick });
+      this.emitHistory();
+
+      if (this.shouldStopFn?.(this.data, this.params)) {
+        this.status = 'stopped';
+        this.emit();
+        return false;
+      }
+
+      if (this.maxTime !== undefined && this.tick >= this.maxTime) {
+        this.status = 'stopped';
+        this.emit();
+        return false;
+      }
     }
     return true;
   }
 
-  function maybeLoop() {
-    if (!loop) return;
-    if (canPlay) return;
-
-    // Mirror the original React `Model`: whenever `canPlay` drops to false,
-    // we re-init and immediately set `isPlaying` back to true.
-    init({ clearResults: false });
-    isPlaying = true;
-    emit();
-  }
-
-  function restartFromStop() {
-    // Mirror original `stop()`:
-    // - cancel animation (handled externally)
-    // - isPlaying -> false
-    // - tick -> minTime
-    // - re-run initData
-    isPlaying = false;
-    init({ clearResults: false });
-    emit();
-  }
-
-  function applyUpdateResult(res: UpdateResult<Data, EngineResult>): {
-    continueLoop: boolean;
-  } {
-    data = res.data;
-
-    switch (res.status) {
-      case 'continue':
-        return { continueLoop: true };
-      case 'pause':
-        isPlaying = false;
-        return { continueLoop: false };
-      case 'stop':
-        restartFromStop();
-        return { continueLoop: false };
-      case 'complete':
-        canPlay = false;
-        isPlaying = false;
-        results = [...results, ...(res.result === undefined ? ([] as EngineResult[]) : [res.result])];
-        config.onComplete?.([...results]);
-        return { continueLoop: false };
-      default: {
-        // Exhaustiveness fallback for TS
-        isPlaying = false;
-        return { continueLoop: false };
-      }
+  private emit(): void {
+    const snap = this.getSnapshot();
+    for (const l of this.listeners) {
+      l(snap);
     }
   }
 
-  function advanceToTick(targetTick: Tick) {
-    if (!didInit) return;
-    if (targetTick <= tick) return;
-
-    while (tick < targetTick && checkCanPlay(tick)) {
-      // This mirrors the original: checkCanPlay(currentTick) before incrementing.
-      const nextTick = tick + 1;
-      tick = nextTick;
-
-      const res = updateData({
-        data: data as Data,
-        params,
-        tick,
-        cachedData: noCache ? ({} as Record<Tick, Data>) : cachedData,
-        context: config.context
-      });
-
-      // Update cached tick data.
-      if (!noCache) {
-        cachedData[tick] = res.data;
-      }
-
-      const { continueLoop } = applyUpdateResult(res);
-      emit();
-
-      if (!continueLoop) break;
+  private emitHistory(): void {
+    if (this.historyListeners.size === 0) return;
+    const entry = { tick: this.tick, data: this.data };
+    for (const l of this.historyListeners) {
+      l(entry);
     }
-
-    maybeLoop();
   }
-
-  function handleAnimationFrame(nowMs: number) {
-    if (!didInit) return;
-    if (!isPlaying) return;
-    if (!checkCanPlay(tick)) return;
-
-    if (lastUpdateMs === null) {
-      lastUpdateMs = nowMs;
-      return;
-    }
-
-    if (delayMs > 0 && nowMs - lastUpdateMs < delayMs) return;
-
-    lastUpdateMs = nowMs;
-    advanceToTick(tick + ticksPerAnimation);
-  }
-
-  const engine = {
-    init() {
-      init({ clearResults: true });
-      didInit = true;
-      emit();
-    },
-
-    getSnapshot() {
-      if (!didInit) {
-        throw new Error('Simulation engine not initialized. Call engine.init() first.');
-      }
-      return snapshot();
-    },
-
-    getCachedData() {
-      // Expose cached tick data to adapters/frames.
-      return noCache ? ({} as Record<Tick, Data>) : cachedData;
-    },
-
-    subscribe(listener: (snapshot: EngineSnapshot<Data, Params, EngineResult>) => void) {
-      listeners.add(listener);
-      return () => {
-        listeners.delete(listener);
-      };
-    },
-
-    play() {
-      if (!didInit) this.init();
-      if (!canPlay && loop) {
-        init({ clearResults: false });
-      }
-      if (!canPlay) return;
-      isPlaying = true;
-      lastUpdateMs = null;
-      emit();
-    },
-
-    pause() {
-      if (!didInit) this.init();
-      isPlaying = false;
-      emit();
-    },
-
-    stop() {
-      if (!didInit) this.init();
-      restartFromStop();
-    },
-
-    seek(targetTick: Tick) {
-      if (!isFiniteTick(targetTick)) {
-        throw new Error(`seek(tick) expects a finite number; got: ${String(targetTick)}`);
-      }
-      if (!didInit) this.init();
-      isPlaying = false;
-      lastUpdateMs = null;
-      advanceToTick(targetTick);
-      emit();
-    },
-
-    /**
-     * Advance the simulation by `count` ticks while paused (does not start playback).
-     * Default `count` is 1 (one discrete step), regardless of `ticksPerAnimation`.
-     */
-    stepOnce(count: number = 1) {
-      if (!didInit) this.init();
-      if (!isFiniteTick(count) || count < 1) {
-        throw new Error(`stepOnce(count) expects a positive finite number; got: ${String(count)}`);
-      }
-      isPlaying = false;
-      lastUpdateMs = null;
-      advanceToTick(tick + count);
-      emit();
-    },
-
-    setParams(nextParams: Partial<Params>, opts?: { reset?: boolean }) {
-      if (!didInit) this.init();
-      params = { ...params, ...nextParams };
-
-      if (opts?.reset) {
-        init({ clearResults: false });
-        if (isPlaying && canPlay) {
-          lastUpdateMs = null;
-        }
-      } else {
-        emit();
-      }
-    },
-
-    handleAnimationFrame
-  };
-
-  // Initialize eagerly so adapters can read initial snapshot.
-  engine.init();
-  return engine;
 }
 
+export function createEngine<Data, Params>(
+  config: EngineConfig<Data, Params>
+): SimulationEngine<Data, Params> {
+  return new SimulationEngine(config);
+}

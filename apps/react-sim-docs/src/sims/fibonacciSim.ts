@@ -1,22 +1,19 @@
-import type { UpdateResult } from 'react-sim-engine/types';
+import { defineSim } from 'react-sim-engine/sim';
 
 export type FibonacciParams = Record<string, never>;
 
 export type FibonacciData = number[];
 
-export function initData(_params: FibonacciParams): FibonacciData {
-  return [0];
-}
+export default defineSim<FibonacciData, FibonacciParams>({
+  defaultParams: {},
 
-export function updateData(args: {
-  data: FibonacciData;
-  params: FibonacciParams;
-  tick: number;
-}): UpdateResult<FibonacciData> {
-  const { data, tick } = args;
-  if (tick === 1) {
-    return { status: 'continue', data: [0, 1] };
-  }
-  const lastNumber = data[tick - 1] + data[tick - 2];
-  return { status: 'continue', data: [...data, lastNumber] };
-}
+  init: () => [0],
+
+  step: ({ data, tick }) => {
+    if (tick === 1) {
+      return [0, 1];
+    }
+    const lastNumber = data[tick - 1] + data[tick - 2];
+    return [...data, lastNumber];
+  },
+});

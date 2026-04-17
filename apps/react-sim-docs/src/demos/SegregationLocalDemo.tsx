@@ -1,12 +1,13 @@
 import React from 'react';
 import { Simulation } from 'react-sim-react/simulation';
 import { StandardControls } from 'react-sim-react/controls';
-import { useSimulationContext } from 'react-sim-react/hooks';
+import { useSimulation } from 'react-sim-react/hooks';
+import segregationSim from '../sims/segregationSim';
 import type { SegData, SegParams } from '../sims/segregationSim';
-import { defaultParams, draw, initData, updateData } from '../sims/segregationSim';
+import { defaultParams, draw } from '../sims/segregationSim';
 
 function SegregationLocalFrame(props: { canvasRef: React.RefObject<HTMLCanvasElement | null> }) {
-  const { data, params, tick } = useSimulationContext<SegData, SegParams, unknown>();
+  const { data, params, tick } = useSimulation<typeof segregationSim>();
 
   React.useEffect(() => {
     const canvas = props.canvasRef.current;
@@ -31,30 +32,20 @@ export function SegregationLocalDemo() {
         style={{ borderRadius: 8, border: '1px solid rgba(0,0,0,0.12)' }}
       />
 
-      <Simulation<SegData, SegParams, unknown>
-        config={{
-          initialParams: defaultParams,
-          minTime: 0,
-          maxTime: 50,
-          delayMs: 100,
-          ticksPerAnimation: 1,
-          loop: false,
-          noCache: true,
-          context: null
-        }}
-        initData={initData}
-        updateData={({ data, params, tick, cachedData }) => updateData({ data, params, tick, cachedData })}
+      <Simulation
+        sim={segregationSim}
+        maxTime={50}
+        delayMs={100}
       >
         <SegregationLocalFrame canvasRef={canvasRef} />
         <StandardControls
           maxTime={50}
-          minTime={0}
           showStepButton
           controls={[
-            { type: 'range', param: 'tolerance', label: 'Tolerance', minValue: 0, maxValue: 100, step: 1 },
-            { type: 'range', param: 'proportion', label: 'Proportion', minValue: 0, maxValue: 100, step: 1, resetOnChange: true },
-            { type: 'range', param: 'threshold', label: 'Threshold', minValue: 0, maxValue: 100, step: 1 },
-            { type: 'toggle', param: 'showmoves', label: 'Show moves', resetOnChange: false }
+            { type: 'range', param: 'tolerance', label: 'Tolerance', min: 0, max: 100, step: 1 },
+            { type: 'range', param: 'proportion', label: 'Proportion', min: 0, max: 100, step: 1 },
+            { type: 'range', param: 'threshold', label: 'Threshold', min: 0, max: 100, step: 1 },
+            { type: 'toggle', param: 'showmoves', label: 'Show moves' }
           ]}
         />
       </Simulation>

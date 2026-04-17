@@ -1,5 +1,4 @@
-import type { SimulationModule } from 'react-sim-engine/runner/module-types';
-import type { UpdateResult } from 'react-sim-engine/types';
+import { defineSim } from 'react-sim-engine/sim';
 
 export type Cell = {
   community: number;
@@ -96,79 +95,6 @@ function countHappiness(grid: Cell[][], tolerance: number): number {
   );
 }
 
-export function initData(params: SegParams): SegData {
-  const { cols, rows, proportion, tolerance } = params;
-  const grid: Cell[][] = Array(rows)
-    .fill(0)
-    .map(() =>
-      Array(cols)
-        .fill(0)
-        .map(() => ({ community: 100 * Math.random() > proportion ? 1 : 0 }))
-    );
-  grid.forEach((row, y) =>
-    row.forEach((_cell, x) => {
-      grid[y][x].isHappy = isHappy(grid, x, y, tolerance) ? 1 : 0;
-    })
-  );
-  const happy = countHappiness(grid, tolerance);
-  return { grid, happy, happiness: happy / (cols * rows), totalMoves: 0 };
-}
-
-export function updateData(_args: {
-  data: SegData;
-  params: SegParams;
-  tick: number;
-  cachedData: Record<number, SegData>;
-}): UpdateResult<SegData> {
-  const { data, params } = _args;
-  const { cols, threshold, tolerance } = params;
-  let movers: [number, number][] = [];
-  let happy = 0;
-  let updatedTotalMoves = data.totalMoves;
-  const updatedGrid: Cell[][] = JSON.parse(JSON.stringify(data.grid)) as Cell[][];
-
-  updatedGrid.forEach((row, y) =>
-    row.forEach((cell, x) => {
-      cell.prevX = x;
-      cell.prevY = y;
-      if (isHappy(updatedGrid, x, y, tolerance)) {
-        happy++;
-        cell.isHappy = 1;
-      } else {
-        cell.isHappy = 0;
-        movers.push([x, y]);
-      }
-    })
-  );
-
-  const next: SegData = {
-    grid: updatedGrid,
-    totalMoves: updatedTotalMoves,
-    happy,
-    happiness: happy / (cols * params.rows)
-  };
-
-  if (happy > (cols * params.rows * threshold) / 100) {
-    return { status: 'complete', data: next };
-  }
-
-  while (movers.length > 1) {
-    const first = movers.shift()!;
-    const idx = Math.floor(Math.random() * movers.length);
-    const second = movers[idx];
-
-    const tmp = { ...updatedGrid[first[1]][first[0]] };
-    updatedGrid[first[1]][first[0]] = { ...updatedGrid[second[1]][second[0]] };
-    updatedGrid[second[1]][second[0]] = tmp;
-
-    updatedTotalMoves += 2;
-    movers = movers.slice(0, idx).concat(movers.slice(idx + 1));
-  }
-
-  next.totalMoves = updatedTotalMoves;
-  return { status: 'continue', data: next };
-}
-
 function circle(
   ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D,
   args: { x: number; y: number; r: number }
@@ -249,17 +175,78 @@ export function draw({
   }
 }
 
-export const module: SimulationModule<SegData, SegParams, SegRenderState, unknown> = {
-  initData,
-  updateData,
-  selectRenderState: (snapshot) => {
-    const { rows, cols, height, width, showmoves } = snapshot.params;
+export default defineSim<SegData, SegParams>({
+  defaultParams,
+
+  init: (params) => {
+    const { cols, rows, proportion, tolerance } = params;
+    const grid: Cell[][] = Array(rows)
+      .fill(0)
+      .map(() =>
+        Array(cols)
+          .fill(0)
+          .map(() => ({ community: 100 * Math.random() > proportion ? 1 : 0 }))
+      );
+    grid.forEach((row, y) =>
+      row.forEach((_cell, x) => {
+        grid[y][x].isHappy = isHappy(grid, x, y, tolerance) ? 1 : 0;
+      })
+    );
+    const happy = countHappiness(grid, tolerance);
+    return { grid, happy, happiness: happy / (cols * rows), totalMoves: 0 };
+  },
+
+  step: ({ data, params }) => {
+    const { cols, threshold, tolerance } = params;
+    let movers: [number, number][] = [];
+    let happy = 0;
+    let updatedTotalMoves = data.totalMoves;
+    const updatedGrid: Cell[][] = JSON.parse(JSON.stringify(data.grid)) as Cell[][];
+
+    updatedGrid.forEach((row, y) =>
+      row.forEach((cell, x) => {
+        cell.prevX = x;
+        cell.prevY = y;
+        if (isHappy(updatedGrid, x, y, tolerance)) {
+          happy++;
+          cell.isHappy = 1;
+        } else {
+          cell.isHappy = 0;
+          movers.push([x, y]);
+        }
+      })
+    );
+
+    if (happy > (cols * params.rows * threshold) / 100) {
+      return {
+        grid: updatedGrid,
+        totalMoves: updatedTotalMoves,
+        happy,
+        happiness: happy / (cols * params.rows)
+      };
+    }
+
+    while (movers.length > 1) {
+      const first = movers.shift()!;
+      const idx = Math.floor(Math.random() * movers.length);
+      const second = movers[idx];
+
+      const tmp = { ...updatedGrid[first[1]][first[0]] };
+      updatedGrid[first[1]][first[0]] = { ...updatedGrid[second[1]][second[0]] };
+      updatedGrid[second[1]][second[0]] = tmp;
+
+      updatedTotalMoves += 2;
+      movers = movers.slice(0, idx).concat(movers.slice(idx + 1));
+    }
+
     return {
-      grid: snapshot.data.grid,
-      happiness: snapshot.data.happiness,
-      params: { rows, cols, height, width, showmoves }
+      grid: updatedGrid,
+      totalMoves: updatedTotalMoves,
+      happy,
+      happiness: happy / (cols * params.rows)
     };
   },
-  draw,
-  defaultParams
-};
+
+  shouldStop: (data, params) =>
+    data.happy > (params.cols * params.rows * params.threshold) / 100,
+});
