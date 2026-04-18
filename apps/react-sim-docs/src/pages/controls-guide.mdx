@@ -1,0 +1,113 @@
+# Controls
+
+react-sim provides ready-made control components so you don't have to build play/pause buttons, parameter sliders, or tick displays from scratch.
+
+## StandardControls
+
+The fastest way to add controls — drop it inside `<Simulation>` and it works:
+
+```tsx
+import { StandardControls } from 'react-sim-react/controls';
+
+<Simulation sim={mySim}>
+  <StandardControls />
+  <MyRenderer />
+</Simulation>
+```
+
+This renders a play/pause button, a reset button, and a tick readout.
+
+### Adding parameter controls
+
+Pass a `controls` array to add sliders and toggles for simulation parameters:
+
+```tsx
+<StandardControls
+  controls={[
+    { type: 'range', param: 'speed', label: 'Speed', min: 1, max: 10, step: 1 },
+    { type: 'range', param: 'density', label: 'Density', min: 0, max: 1, step: 0.01 },
+    { type: 'toggle', param: 'wrap', label: 'Wrap edges' },
+  ]}
+/>
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `controls` | `ParamControl[]` | — | Parameter controls (range sliders, toggles). |
+| `maxTime` | `number` | — | If set, shows a tick seek slider. |
+| `minTime` | `number` | `0` | Minimum value for the seek slider. |
+| `showStepButton` | `boolean` | `false` | Show a button to advance one tick. |
+| `showStopButton` | `boolean` | `false` | Show a stop button (hidden by default — stop is a terminal state). |
+| `showResetButton` | `boolean` | `true` | Show a reset button. |
+
+## Individual primitives
+
+For custom layouts, import individual control components:
+
+```tsx
+import {
+  PlayPauseButton,
+  StopButton,
+  StepButton,
+  ResetButton,
+  TickReadout,
+  TickSeekSlider,
+  ParamRangeField,
+  ParamToggleField,
+} from 'react-sim-react/control-primitives';
+```
+
+Each primitive reads from the simulation context automatically — no wiring needed:
+
+```tsx
+<div style={{ display: 'flex', gap: 8 }}>
+  <PlayPauseButton />
+  <StepButton />
+  <ResetButton />
+  <TickReadout />
+</div>
+<ParamRangeField param="density" label="Density" min={0} max={1} step={0.01} />
+```
+
+### Status-aware disabled states
+
+Controls automatically disable based on simulation status:
+
+| Control | idle | playing | paused | stopped |
+|---------|------|---------|--------|---------|
+| Play/Pause | Play | Pause | Play | disabled |
+| Stop | disabled | enabled | enabled | disabled |
+| Step | enabled | disabled | enabled | disabled |
+| Reset | enabled | enabled | enabled | enabled |
+| Seek slider | enabled | enabled | enabled | disabled |
+
+## Custom controls
+
+For controls beyond what the primitives offer, use `useSimulation` directly:
+
+```tsx
+function SpeedRadio() {
+  const { params, setParams } = useSimulation<typeof mySim>();
+  return (
+    <div>
+      {['slow', 'normal', 'fast'].map((speed) => (
+        <label key={speed}>
+          <input
+            type="radio"
+            checked={params.speed === speed}
+            onChange={() => setParams({ speed })}
+          />
+          {speed}
+        </label>
+      ))}
+    </div>
+  );
+}
+```
+
+### `setParams` vs `resetWith`
+
+- **`setParams(patch)`** — merges patch with current params. No re-init. The next tick sees updated values. Good for live sliders.
+- **`resetWith(patch?)`** — merges optional patch, calls `init()` again, resets tick to 0. Good for params that affect the initial state (like grid size or density).

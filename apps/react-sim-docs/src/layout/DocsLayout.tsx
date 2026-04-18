@@ -48,8 +48,20 @@ export function DocsLayout() {
 
         <nav style={{ marginTop: 8 }}>
           <div style={sectionTitle}>Guide</div>
-          <NavLink to="/guide/basic-blocks" style={linkStyle}>
-            Basic blocks
+          <NavLink to="/guide/getting-started" style={linkStyle}>
+            Getting started
+          </NavLink>
+          <NavLink to="/guide/defining-a-sim" style={linkStyle}>
+            Defining a simulation
+          </NavLink>
+          <NavLink to="/guide/simulation-component" style={linkStyle}>
+            Simulation component
+          </NavLink>
+          <NavLink to="/guide/using-the-hook" style={linkStyle}>
+            Using the hook
+          </NavLink>
+          <NavLink to="/guide/controls" style={linkStyle}>
+            Controls
           </NavLink>
 
           <div style={sectionTitle}>Examples</div>
@@ -58,6 +70,9 @@ export function DocsLayout() {
           </NavLink>
           <NavLink to="/examples/fibonacci" style={linkStyle}>
             Fibonacci
+          </NavLink>
+          <NavLink to="/examples/fibonacci-spiral" style={linkStyle}>
+            Fibonacci spiral
           </NavLink>
           <NavLink to="/examples/dice" style={linkStyle}>
             Dice
@@ -71,17 +86,20 @@ export function DocsLayout() {
           <NavLink to="/examples/automata-1d" style={linkStyle}>
             1D automata
           </NavLink>
-          <NavLink to="/examples/worker-canvas" style={linkStyle}>
-            Worker canvas
+          <NavLink to="/examples/percolation" style={linkStyle}>
+            Percolation
           </NavLink>
-          <NavLink to="/examples/fibonacci-spiral" style={linkStyle}>
-            Fibonacci spiral
+          <NavLink to="/examples/activators" style={linkStyle}>
+            Activators
+          </NavLink>
+          <NavLink to="/examples/worker-canvas" style={linkStyle}>
+            XOR ring
           </NavLink>
           <NavLink to="/examples/chaos-game" style={linkStyle}>
             Chaos game
           </NavLink>
           <NavLink to="/examples/langton-ant" style={linkStyle}>
-            Langton's ant
+            {"Langton's ant"}
           </NavLink>
           <NavLink to="/examples/boids" style={linkStyle}>
             Boids

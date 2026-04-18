@@ -6,7 +6,10 @@ export function DicePage() {
     <div>
       <h1 style={{ marginTop: 0 }}>Dice</h1>
       <p style={{ opacity: 0.85, lineHeight: 1.55, maxWidth: 720 }}>
-        Roll several dice each tick and watch the running distribution — main-thread <code>Simulation</code>.
+        This simulation throws dice and tallies the result over time. For one die, we expect
+        roughly equal rolls for each value. For several dice, the bars follow a bell curve
+        &mdash; but the actual shape can be quite different from the theoretical distribution.
+        Random functions are not perfect.
       </p>
       <DiceDemo />
     </div>

@@ -1,0 +1,69 @@
+# Getting started
+
+## Installation
+
+```bash
+npm install react-sim-engine react-sim-react
+```
+
+Both packages are required: `react-sim-engine` provides the simulation engine and `react-sim-react` provides React components and hooks.
+
+## Your first simulation
+
+A react-sim simulation has three parts:
+
+1. **A sim module** — pure business logic: how to initialize state and how to advance it.
+2. **A `<Simulation>` component** — mounts the engine and provides state to children.
+3. **A render component** — reads state via `useSimulation()` and draws the UI.
+
+Here's a complete counter simulation:
+
+```tsx
+// counterSim.ts
+import { defineSim } from 'react-sim-engine/sim';
+
+export default defineSim<{ count: number }, { increment: number }>({
+  defaultParams: { increment: 1 },
+  init: (params) => ({ count: 0 }),
+  step: ({ data, params }) => ({ count: data.count + params.increment }),
+});
+```
+
+```tsx
+// CounterPage.tsx
+import { Simulation } from 'react-sim-react/simulation';
+import { useSimulation } from 'react-sim-react/hooks';
+import { StandardControls } from 'react-sim-react/controls';
+import counterSim from './counterSim';
+
+function Display() {
+  const { data, tick } = useSimulation<typeof counterSim>();
+  return <div>Tick {tick}: count is {data.count}</div>;
+}
+
+export default function CounterPage() {
+  return (
+    <Simulation sim={counterSim}>
+      <Display />
+      <StandardControls />
+    </Simulation>
+  );
+}
+```
+
+That's it. The library handles the animation loop, play/pause/stop state, timing, and controls. You only wrote the business logic (`init` and `step`) and the render function.
+
+## What you provide vs. what the library handles
+
+**You provide:**
+- `init(params)` — create initial state
+- `step({ data, params, tick })` — advance state by one tick
+- A React component that renders the current `data`
+- Optionally: `shouldStop`, custom controls, params
+
+**The library handles:**
+- Animation loop (`requestAnimationFrame`)
+- Play / pause / stop / seek / reset state machine
+- Timing and delay between ticks
+- Control UI (play button, step button, parameter sliders)
+- Re-rendering only when state changes

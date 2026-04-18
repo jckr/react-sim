@@ -1,0 +1,99 @@
+# Defining a simulation
+
+A sim module is a plain object with four fields, wrapped in `defineSim` for type inference.
+
+```ts
+import { defineSim } from 'react-sim-engine/sim';
+
+export default defineSim<Data, Params>({
+  defaultParams,
+  init,
+  step,
+  shouldStop, // optional
+});
+```
+
+## `init(params): Data`
+
+Creates the initial simulation state. Called once when the engine is created and again on every `resetWith()`.
+
+```ts
+init: (params) => ({
+  grid: Array.from({ length: params.height }, () =>
+    Array.from({ length: params.width }, () => 0)
+  ),
+}),
+```
+
+`params` is the full `Params` object — either `defaultParams` or merged with overrides.
+
+## `step({ data, params, tick }): Data`
+
+Advances the simulation by one tick. Returns the next state. Must be **pure** and **synchronous**.
+
+```ts
+step: ({ data, params, tick }) => ({
+  ...data,
+  position: data.position + params.speed,
+}),
+```
+
+- `data` — current state (the return value of the previous `step`, or `init` for the first tick)
+- `params` — current parameters (may change between ticks via `setParams`)
+- `tick` — the tick number (starts at 1, increments by 1 each step)
+
+`step` returns `Data` directly — no status envelopes, no tagged unions. It only answers "what's next?"
+
+## `shouldStop(data, params): boolean` (optional)
+
+A separate predicate checked after each step. If it returns `true`, the simulation stops.
+
+```ts
+shouldStop: (data) => data.changes === 0,
+```
+
+This keeps `step` clean — it doesn't need to know about termination. Most simulations don't need `shouldStop` at all.
+
+## `defaultParams`
+
+Default parameter values used when no `params` prop is provided on the `<Simulation>` component.
+
+```ts
+defaultParams: {
+  width: 40,
+  height: 40,
+  density: 0.3,
+},
+```
+
+## Type inference
+
+`defineSim` infers `Data` and `Params` from the object you pass. Inside `init` and `step`, types are fully resolved — you don't need to annotate anything:
+
+```ts
+// TypeScript knows params is { width: number, height: number }
+// and data is { grid: number[][] }
+export default defineSim({
+  defaultParams: { width: 40, height: 40 },
+  init: (params) => ({
+    grid: Array.from({ length: params.height }, () =>
+      Array.from({ length: params.width }, () => 0)
+    ),
+  }),
+  step: ({ data }) => ({ grid: data.grid }), // data.grid is number[][]
+});
+```
+
+If you want to be explicit, provide type parameters:
+
+```ts
+export default defineSim<{ grid: number[][] }, { width: number; height: number }>({
+  // ...
+});
+```
+
+## Tips
+
+- **Keep `step` pure.** No side effects, no DOM access, no randomness stored outside `data`. If you need randomness, put the seed in `data` or use `Math.random()` (accepting non-reproducibility).
+- **Put everything in `data`.** If the render component needs it, it should be in `data`. Don't use external variables to communicate between `step` and the renderer.
+- **`step` is synchronous.** If your computation is expensive, use the `worker` prop on `<Simulation>` to run it off the main thread.

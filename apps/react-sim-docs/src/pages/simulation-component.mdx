@@ -1,0 +1,61 @@
+# The Simulation component
+
+`<Simulation>` is the single entry point for mounting a simulation. It creates the engine, manages the animation loop, and provides state to child components via context.
+
+## Basic usage
+
+```tsx
+import { Simulation } from 'react-sim-react/simulation';
+import mySim from './mySim';
+
+<Simulation sim={mySim}>
+  <MyRenderer />
+  <StandardControls />
+</Simulation>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `sim` | `SimModule<Data, Params>` | — | Sim module for main-thread execution. |
+| `worker` | `() => Promise<{ default: SimModule }>` | — | Dynamic import loader for async execution. Mutually exclusive with `sim`. |
+| `params` | `Partial<Params>` | — | Override default params. Live-applied on change. |
+| `maxTime` | `number` | — | Stop the simulation when tick reaches this value. |
+| `delayMs` | `number` | `0` | Minimum milliseconds between tick advances. |
+| `ticksPerFrame` | `number` | `1` | How many ticks to advance per animation frame. |
+| `autoplay` | `boolean` | `false` | Start playing immediately on mount. |
+
+## `sim` vs `worker`
+
+These props are mutually exclusive. Use one or the other:
+
+```tsx
+// Main-thread: engine created synchronously, RAF-driven
+<Simulation sim={mySim}>
+
+// Async loading: module loaded dynamically, setTimeout-driven tick loop
+<Simulation worker={() => import('./mySim')}>
+```
+
+The `worker` prop loads the sim module asynchronously and runs a `setTimeout`-based tick loop decoupled from the browser's animation frame. The component renders `null` until the module is loaded.
+
+Both modes expose the same context — child components don't need to know which mode is active.
+
+## Lifecycle
+
+- **`sim`/`worker` and `defaultParams` are captured at mount.** To change the sim module, change the component's `key`.
+- **When the `params` prop changes**, the component calls `setParams(nextParams)` — a live update, not a re-init. The next tick sees the updated params.
+- **To reset the simulation**, call `resetWith()` from the `useSimulation` hook, or change the component's `key` for a full remount.
+
+```tsx
+// Force a new simulation when gridSize changes:
+<Simulation key={gridSize} sim={mySim} params={{ gridSize }}>
+```
+
+## Timing
+
+- `delayMs={0}` (default): ticks run as fast as the animation loop allows (~60fps).
+- `delayMs={100}`: at least 100ms between tick batches — good for visual simulations.
+- `ticksPerFrame={10}`: advance 10 ticks per animation frame — good for fast-forwarding.
+- `maxTime={500}`: automatically stop at tick 500.

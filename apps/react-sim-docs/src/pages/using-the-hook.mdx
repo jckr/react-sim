@@ -1,0 +1,92 @@
+# Using the hook
+
+`useSimulation` is the only hook you need. It returns the current simulation state and all actions.
+
+## Basic usage
+
+```tsx
+import { useSimulation } from 'react-sim-react/hooks';
+import mySim from './mySim';
+
+function MyRenderer() {
+  const { data, params, tick, status } = useSimulation<typeof mySim>();
+  return <div>{data.count} at tick {tick}</div>;
+}
+```
+
+The type parameter `<typeof mySim>` infers `Data` and `Params` from the sim module, so `data` and `params` are fully typed without annotations.
+
+## Return value
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data` | `Data` | Current simulation state. |
+| `params` | `Params` | Current parameters. |
+| `tick` | `number` | Current tick number (starts at 0). |
+| `status` | `SimulationStatus` | One of `'idle'`, `'playing'`, `'paused'`, `'stopped'`. |
+| `play()` | `() => void` | Start or resume playback. |
+| `pause()` | `() => void` | Pause playback. |
+| `stop()` | `() => void` | Stop the simulation (terminal state). |
+| `seek(tick)` | `(tick: number) => void` | Jump to a specific tick. Forward only; always pauses. |
+| `advance(n?)` | `(count?: number) => void` | Advance by n ticks while paused (default 1). |
+| `setParams(patch)` | `(patch: Partial<Params>) => void` | Update params without resetting. Next tick sees new values. |
+| `resetWith(patch?)` | `(patch?: Partial<Params>) => void` | Reset: merge optional patch with current params, re-run `init`, tick back to 0. |
+
+## Status
+
+The `status` field is a single discriminant replacing the old `isPlaying` / `canPlay` flags:
+
+- **`idle`** — engine created, `init` has run, nothing has played yet. `play()` starts it.
+- **`playing`** — actively advancing ticks each animation frame.
+- **`paused`** — was playing, now stopped. State preserved. `play()` resumes.
+- **`stopped`** — terminated (via `shouldStop`, `maxTime`, or manual `stop()`). Only `resetWith()` can restart.
+
+## Common patterns
+
+### Conditional rendering based on status
+
+```tsx
+function StatusBadge() {
+  const { status } = useSimulation();
+  if (status === 'stopped') return <span>Finished!</span>;
+  if (status === 'playing') return <span>Running...</span>;
+  return null;
+}
+```
+
+### Updating params from a custom control
+
+```tsx
+function SpeedSlider() {
+  const { params, setParams } = useSimulation<typeof mySim>();
+  return (
+    <input
+      type="range"
+      min={1} max={10}
+      value={params.speed}
+      onChange={(e) => setParams({ speed: Number(e.target.value) })}
+    />
+  );
+}
+```
+
+### Resetting with new params
+
+```tsx
+function ResetButton() {
+  const { resetWith } = useSimulation();
+  return <button onClick={() => resetWith({ density: 0.5 })}>Reset (50% density)</button>;
+}
+```
+
+## Type inference
+
+Two ways to provide types:
+
+```tsx
+// Infer from sim module (preferred):
+const { data } = useSimulation<typeof mySim>();
+
+// Explicit type parameters:
+const { data } = useSimulation<{ count: number }, { increment: number }>();
+```

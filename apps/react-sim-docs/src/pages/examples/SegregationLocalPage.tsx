@@ -8,6 +8,9 @@ export function SegregationLocalPage() {
       <p style={{ opacity: 0.85, lineHeight: 1.55, maxWidth: 720 }}>
         Same business logic module as the worker version, but rendered and stepped on the main thread.
       </p>
+      <p style={{ opacity: 0.85, lineHeight: 1.55, maxWidth: 720 }}>
+        A local variant of Schelling&apos;s segregation model, running on the main thread.
+      </p>
       <SegregationLocalDemo />
     </div>
   );

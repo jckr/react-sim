@@ -6,7 +6,13 @@ export function EpidemicPage() {
     <div>
       <h1 style={{ marginTop: 0 }}>Epidemic</h1>
       <p style={{ opacity: 0.85, lineHeight: 1.55, maxWidth: 720 }}>
-        Agents bounce in a box with infection dynamics — ticks in a worker, canvas and counts on the main thread.
+        <strong>Caveat:</strong> this model is just to show how simulations work. It has no
+        scientific value.
+      </p>
+      <p style={{ opacity: 0.85, lineHeight: 1.55, maxWidth: 720 }}>
+        Inspired by Harry Stevens{"'"} work at the Washington Post, this epidemic simulator shows
+        agents moving in a small space. When they collide, sick agents may contaminate healthy
+        agents, and sick agents may die or recover.
       </p>
       <EpidemicDemo />
     </div>

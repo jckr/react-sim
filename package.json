@@ -1,14 +1,11 @@
 {
   "name": "react-sim",
   "private": true,
-  "version": "0.0.8",
-  "description": "Boilerplate components to create a model simulation with React",
+  "version": "0.2.0",
+  "description": "A library for building tick-based simulations in React",
   "author": "jckr",
   "license": "MIT",
   "repository": "jckr/react-sim",
-  "main": "dist/index.js",
-  "module": "dist/index.modern.js",
-  "source": "src/index.js",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -17,44 +14,27 @@
     "apps/*"
   ],
   "scripts": {
-    "build": "microbundle-crl --no-compress --format modern,cjs",
-    "start": "microbundle-crl watch --no-compress --format modern,cjs",
-    "prepublish": "run-s build",
     "build:packages": "npm run build -w react-sim-engine && npm run build -w react-sim-react",
-    "test": "run-s test:unit test:lint test:build",
-    "test:build": "run-s build",
+    "test": "run-s test:unit test:lint",
     "test:lint": "eslint .",
-    "test:unit": "vitest run --config vitest.config.mts",
+    "test:unit": "vitest run --config packages/react-sim-engine/vitest.config.ts",
     "test:e2e": "playwright test",
     "test:engine": "npm test -w react-sim-engine",
-    "test:unit:new": "npm run test:engine",
-    "test:watch": "vitest --config vitest.config.mts",
-    "gatsby-build": "cd gatsby && yarn install && cd node_modules/react && yarn link && cd ../react-dom && yarn link && cd ../../.. && yarn install && yarn link react && yarn link react-dom && yarn build && cd gatsby && yarn build",
-    "gatsby-test": "yarn gatsby-build && cd gatsby && yarn test"
-  },
-  "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "test:watch": "vitest --config packages/react-sim-engine/vitest.config.ts",
+    "dev": "npm run dev -w react-sim-docs"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@rolldown/binding-darwin-arm64": "^1.0.0-rc.10",
-    "cross-env": "^7.0.2",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "microbundle-crl": "^0.13.8",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "@playwright/test": "^1.55.0",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0"
-  },
-  "files": [
-    "dist"
-  ]
+  }
 }
