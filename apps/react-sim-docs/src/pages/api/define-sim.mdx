@@ -1,0 +1,56 @@
+# defineSim
+
+```ts
+import { defineSim } from 'react-sim-engine/sim';
+```
+
+Identity function that returns a `SimModule` with full type inference for `Data` and `Params`.
+
+```ts
+function defineSim<Data, Params>(sim: SimModule<Data, Params>): SimModule<Data, Params>
+```
+
+---
+
+## SimModule&lt;Data, Params&gt;
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `init` | `(params: Params) => Data` | Yes | Creates initial state from params. Called on engine creation and on `resetWith()`. |
+| `step` | `(args: StepArgs<Data, Params>) => Data` | Yes | Advances simulation by one tick. Must be pure and synchronous. |
+| `shouldStop` | `(data: Data, params: Params) => boolean` | No | Termination predicate checked after each step. Return `true` to stop. |
+| `defaultParams` | `Params` | Yes | Default parameter values used at engine creation if no override is provided. |
+
+---
+
+## StepArgs&lt;Data, Params&gt;
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data` | `Data` | Current simulation state. |
+| `params` | `Params` | Current parameters. |
+| `tick` | `number` | Current tick number (1-based, incremented before `step` is called). |
+
+---
+
+## Utility types
+
+| Type | Description |
+|------|-------------|
+| `SimData<M>` | Extracts the `Data` type from a `SimModule`. |
+| `SimParams<M>` | Extracts the `Params` type from a `SimModule`. |
+
+---
+
+## Example
+
+```ts
+import { defineSim } from 'react-sim-engine/sim';
+
+export default defineSim({
+  defaultParams: { increment: 1 },
+  init: () => ({ count: 0 }),
+  step: ({ data, params }) => ({ count: data.count + params.increment }),
+  shouldStop: (data) => data.count >= 100,
+});
+```

@@ -1,0 +1,91 @@
+# createEngine
+
+```ts
+import { createEngine } from 'react-sim-engine';
+```
+
+Factory that instantiates a `SimulationEngine`.
+
+```ts
+function createEngine<Data, Params>(config: EngineConfig<Data, Params>): SimulationEngine<Data, Params>
+```
+
+---
+
+## EngineConfig&lt;Data, Params&gt;
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `init` | `(params: Params) => Data` | -- | Creates initial simulation state. |
+| `step` | `(args: StepArgs<Data, Params>) => Data` | -- | Advances state by one tick. |
+| `shouldStop` | `(data: Data, params: Params) => boolean` | `undefined` | Termination predicate, checked after each step. |
+| `initialParams` | `Params` | -- | Starting parameter values. |
+| `maxTime` | `number` | `undefined` | Tick limit. Engine stops when `tick >= maxTime`. |
+| `delayMs` | `number` | `0` | Minimum ms between animation-frame advances. |
+| `ticksPerFrame` | `number` | `1` | Number of ticks computed per animation frame. |
+
+---
+
+## SimulationEngine&lt;Data, Params&gt; -- public methods
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `getSnapshot` | `() => EngineSnapshot<Data, Params>` | Returns current `{ data, params, tick, status }`. |
+| `getStatus` | `() => SimulationStatus` | Returns current status string. |
+| `subscribe` | `(listener: (snap: EngineSnapshot<Data, Params>) => void) => () => void` | Registers a snapshot listener. Returns an unsubscribe function. |
+| `subscribeHistory` | `(listener: (entry: { tick: number; data: Data }) => void) => () => void` | Registers a per-tick history listener. Returns an unsubscribe function. |
+| `play` | `() => void` | Transitions to `playing`. No-op if already playing or stopped. |
+| `pause` | `() => void` | Transitions to `paused`. No-op if not playing. |
+| `stop` | `() => void` | Transitions to `stopped`. No-op if idle or already stopped. |
+| `seek` | `(targetTick: number) => void` | Fast-forwards to `targetTick` (pauses). Backward seek is a no-op for data. Ignored if stopped. |
+| `advance` | `(count?: number) => void` | Steps forward `count` ticks (default `1`). Pauses if playing or idle. Ignored if stopped. |
+| `setParams` | `(patch: Partial<Params>) => void` | Merges a partial update into params. |
+| `resetWith` | `(patch?: Partial<Params>) => void` | Re-runs `init()`, resets tick to `0`, status to `idle`. Optionally merges a param patch first. |
+| `handleAnimationFrame` | `(nowMs: number) => void` | Called from a `requestAnimationFrame` loop. Advances ticks when playing and `delayMs` has elapsed. |
+| `destroy` | `() => void` | Removes all listeners. |
+
+---
+
+## EngineSnapshot&lt;Data, Params&gt;
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data` | `Data` | Current simulation state. |
+| `params` | `Params` | Current parameters. |
+| `tick` | `number` | Current tick number. |
+| `status` | `SimulationStatus` | `'idle' \| 'playing' \| 'paused' \| 'stopped'` |
+
+---
+
+## State machine transitions
+
+Current status in rows, action in columns. Cell shows the resulting status. `--` means no-op.
+
+| | `play()` | `pause()` | `stop()` | `seek(t)` | `advance(n)` | `setParams(p)` | `resetWith(p?)` |
+|---|---|---|---|---|---|---|---|
+| **idle** | playing | -- | -- | paused | paused | idle | idle |
+| **playing** | -- | paused | stopped | paused | paused | playing | idle |
+| **paused** | playing | -- | stopped | paused | paused | paused | idle |
+| **stopped** | -- | -- | -- | -- | -- | stopped | idle |
+
+---
+
+## Example
+
+```ts
+import { createEngine } from 'react-sim-engine';
+
+const engine = createEngine({
+  initialParams: { increment: 1 },
+  init: () => ({ count: 0 }),
+  step: ({ data, params }) => ({ count: data.count + params.increment }),
+  maxTime: 100,
+});
+
+const unsub = engine.subscribe((snap) => {
+  console.log(`tick ${snap.tick}: count = ${snap.data.count}`);
+});
+
+engine.play();
+// drive with requestAnimationFrame or engine.advance()
+```

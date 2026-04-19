@@ -1,0 +1,238 @@
+# Tutorial: Game of Life
+
+In this tutorial you'll build Conway's Game of Life from scratch using react-sim. By the end you'll have a working simulation with a random starting grid, animated stepping, automatic stop detection, and parameter controls — all in about 80 lines of code.
+
+We'll build it up piece by piece, starting with the data model and adding features one section at a time.
+
+## Setup
+
+Install both packages:
+
+```bash
+npm install react-sim-engine react-sim-react
+```
+
+`react-sim-engine` contains the simulation engine (pure logic, no React dependency). `react-sim-react` provides the React components and hooks that connect the engine to your UI.
+
+Create two files in your project:
+
+- `gameOfLifeSim.ts` — the simulation module (data and rules)
+- `GameOfLife.tsx` — the React component (rendering and controls)
+
+## Defining the simulation
+
+A react-sim simulation starts with a **sim module**: a plain object that describes your simulation's initial state and how it evolves over time. You create one with `defineSim`.
+
+Open `gameOfLifeSim.ts` and start with the basics:
+
+```tsx
+import { defineSim } from 'react-sim-engine/sim';
+
+export default defineSim({
+  defaultParams: {
+    width: 40,
+    height: 40,
+    density: 0.3,
+  },
+
+  init: (params) => {
+    const grid = Array.from({ length: params.height }, () =>
+      Array.from({ length: params.width }, () =>
+        Math.random() < params.density ? 1 : 0
+      )
+    );
+    return { grid, changes: 0 };
+  },
+
+  step: ({ data }) => data, // placeholder — we'll fill this in soon
+});
+```
+
+Three things are happening here:
+
+- **`defaultParams`** defines the knobs for the simulation. Width and height set the grid size; density controls how many cells start alive.
+- **`init`** receives the current params and returns the initial state. We build a 2D array of 1s (alive) and 0s (dead), with each cell having a `density` chance of being alive.
+- **`step`** is a placeholder that just returns the current data unchanged. We'll add the Game of Life rules shortly.
+
+The `changes` field in our data will be useful later for detecting when the simulation has stabilized.
+
+## Rendering the grid
+
+Now let's display the grid. Open `GameOfLife.tsx`:
+
+```tsx
+import React from 'react';
+import { Simulation } from 'react-sim-react/simulation';
+import { useSimulation } from 'react-sim-react/hooks';
+import gameOfLifeSim from './gameOfLifeSim';
+
+function Display() {
+  const { data, params } = useSimulation<typeof gameOfLifeSim>();
+
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${params.width}, 12px)`,
+        gap: 1,
+      }}
+    >
+      {data.grid.flat().map((cell, i) => (
+        <div
+          key={i}
+          style={{
+            width: 12,
+            height: 12,
+            backgroundColor: cell ? '#333' : '#eee',
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+export default function GameOfLife() {
+  return (
+    <Simulation sim={gameOfLifeSim}>
+      <Display />
+    </Simulation>
+  );
+}
+```
+
+The key ideas:
+
+- **`useSimulation<typeof gameOfLifeSim>()`** gives you the current `data` and `params`, fully typed. TypeScript knows `data.grid` is `number[][]` and `params.width` is `number` without any manual annotations.
+- **`<Simulation sim={gameOfLifeSim}>`** creates the engine and provides state to all children via context. Any component inside it can call `useSimulation()`.
+- We render the grid using CSS Grid, flattening the 2D array into a list of divs. Alive cells are dark, dead cells are light.
+
+At this point you should see a static random grid. It won't animate yet because our `step` function doesn't do anything.
+
+## Updating data
+
+Time to implement the actual Game of Life rules. The rules are simple:
+
+1. A live cell with 2 or 3 neighbors survives.
+2. A dead cell with exactly 3 neighbors becomes alive.
+3. All other cells die (or stay dead).
+
+First, a helper to count neighbors. Add this above `defineSim` in `gameOfLifeSim.ts`:
+
+```tsx
+function countNeighbors(grid: number[][], row: number, col: number): number {
+  const rows = grid.length;
+  const cols = grid[0].length;
+  let count = 0;
+  for (let dr = -1; dr <= 1; dr++) {
+    for (let dc = -1; dc <= 1; dc++) {
+      if (dr === 0 && dc === 0) continue;
+      const r = row + dr;
+      const c = col + dc;
+      if (r >= 0 && r < rows && c >= 0 && c < cols) {
+        count += grid[r][c];
+      }
+    }
+  }
+  return count;
+}
+```
+
+This checks all eight neighbors, skipping out-of-bounds cells (cells at the edge of the grid have fewer neighbors).
+
+Now replace the placeholder `step`:
+
+```tsx
+step: ({ data }) => {
+  let changes = 0;
+  const grid = data.grid.map((row, r) =>
+    row.map((cell, c) => {
+      const neighbors = countNeighbors(data.grid, r, c);
+      const next = cell
+        ? (neighbors === 2 || neighbors === 3 ? 1 : 0)
+        : (neighbors === 3 ? 1 : 0);
+      if (next !== cell) changes++;
+      return next;
+    })
+  );
+  return { grid, changes };
+},
+```
+
+Each tick, we build a new grid by applying the rules to every cell. We also count how many cells changed — this will be useful in the next section.
+
+Save and reload. The simulation should now animate, with cells living and dying according to the rules.
+
+## Stopping when stable
+
+Game of Life patterns often settle into a static state or a cycle. When no cells change between ticks, the grid is stable and there's no point continuing.
+
+We already track `changes` in our `step` function. Now add `shouldStop` to the sim module:
+
+```tsx
+shouldStop: (data) => data.changes === 0,
+```
+
+That's it. After each tick, the engine calls `shouldStop` with the latest data. When it returns `true`, the simulation stops automatically.
+
+`shouldStop` is deliberately separate from `step`. The step function only answers "what's next?" — it doesn't need to know about lifecycle. This keeps the logic clean and easy to test.
+
+## Adding controls
+
+Right now the simulation starts with `density: 0.3` and there's no way to change it. Let's add a slider.
+
+Import `StandardControls` and add it inside the `<Simulation>`:
+
+```tsx
+import { StandardControls } from 'react-sim-react/controls';
+```
+
+```tsx
+<Simulation sim={gameOfLifeSim}>
+  <Display />
+  <StandardControls
+    controls={[
+      { type: 'range', param: 'density', label: 'Density', min: 0, max: 1, step: 0.05 },
+    ]}
+  />
+</Simulation>
+```
+
+`StandardControls` gives you play/pause and reset buttons automatically. The `controls` array adds parameter-specific UI — here, a range slider for density.
+
+There's a subtlety: density only matters at initialization. Moving the slider while the simulation is running changes `params.density`, but that doesn't affect the existing grid. The user needs to click **Reset** to reinitialize the grid with the new density. This is the expected pattern for params that feed into `init` rather than `step`.
+
+## Slowing it down
+
+By default, react-sim advances one tick per animation frame — roughly 60 ticks per second. Game of Life patterns are easier to follow at a slower pace. Add `delayMs` to the `<Simulation>` component:
+
+```tsx
+<Simulation sim={gameOfLifeSim} delayMs={100}>
+  <Display />
+  <StandardControls
+    controls={[
+      { type: 'range', param: 'density', label: 'Density', min: 0, max: 1, step: 0.05 },
+    ]}
+  />
+</Simulation>
+```
+
+`delayMs={100}` means at least 100 milliseconds between ticks — about 10 frames per second. Slow enough to watch patterns emerge, fast enough to not feel sluggish.
+
+If you ever need the opposite — running a simulation fast to reach an interesting state — use `ticksPerFrame`. Setting `ticksPerFrame={10}` advances 10 ticks per animation frame, useful for simulations where individual ticks aren't visually interesting.
+
+## Wrapping up
+
+Here's what you built:
+
+- A **sim module** (`gameOfLifeSim.ts`) with `init`, `step`, and `shouldStop` — pure functions that define the Game of Life rules.
+- A **React component** (`GameOfLife.tsx`) that renders the grid using `useSimulation` and provides controls with `StandardControls`.
+- **Automatic stop detection** when the grid stabilizes.
+- **Parameter controls** for density, with reset to reinitialize.
+
+The react-sim pattern is always the same: define your logic in a sim module, render it with `useSimulation`, and wrap everything in `<Simulation>`. The library handles the animation loop, play/pause state, timing, and controls.
+
+From here, you might want to explore:
+
+- The [Simulation component](/simulation-component) docs for more props like `autoplay`, `maxTime`, and `worker` mode.
+- The [Controls guide](/controls-guide) for building custom control layouts.
+- The [examples](/examples) for more complex simulations: Langton's Ant, Boids, maze generation, and more.

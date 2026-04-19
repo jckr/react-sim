@@ -1,11 +1,12 @@
 # The Simulation component
 
-`<Simulation>` is the single entry point for mounting a simulation. It creates the engine, manages the animation loop, and provides state to child components via context.
+`<Simulation>` is the single entry point for mounting a simulation. It creates the engine, manages the animation loop, and provides state to child components via React context.
 
 ## Basic usage
 
 ```tsx
 import { Simulation } from 'react-sim-react/simulation';
+import { StandardControls } from 'react-sim-react/controls';
 import mySim from './mySim';
 
 <Simulation sim={mySim}>
@@ -14,33 +15,93 @@ import mySim from './mySim';
 </Simulation>
 ```
 
-## Props
+Children call `useSimulation()` to read state and actions. See [Using the hook](/guide/using-the-hook) for details.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `sim` | `SimModule<Data, Params>` | — | Sim module for main-thread execution. |
-| `worker` | `() => Promise<{ default: SimModule }>` | — | Dynamic import loader for async execution. Mutually exclusive with `sim`. |
-| `params` | `Partial<Params>` | — | Override default params. Live-applied on change. |
-| `maxTime` | `number` | — | Stop the simulation when tick reaches this value. |
-| `delayMs` | `number` | `0` | Minimum milliseconds between tick advances. |
-| `ticksPerFrame` | `number` | `1` | How many ticks to advance per animation frame. |
-| `autoplay` | `boolean` | `false` | Start playing immediately on mount. |
+## Main-thread vs Worker mode
 
-## `sim` vs `worker`
+The `<Simulation>` component supports two execution modes. The same sim module works in both — switching is a one-prop change.
 
-These props are mutually exclusive. Use one or the other:
+### Main-thread (`sim` prop)
 
 ```tsx
-// Main-thread: engine created synchronously, RAF-driven
 <Simulation sim={mySim}>
+```
 
-// Async loading: module loaded dynamically, setTimeout-driven tick loop
+The simulation runs on the browser's main thread, driven by `requestAnimationFrame`. The engine is created synchronously on mount and ticks are computed inline with the render cycle.
+
+**Use this when:** the computation per tick is cheap (grid updates, counters, simple models). Most simulations fall here — if you're not sure, start with `sim`.
+
+### Worker mode (`worker` prop)
+
+```tsx
 <Simulation worker={() => import('./mySim')}>
 ```
 
-The `worker` prop loads the sim module asynchronously and runs a `setTimeout`-based tick loop decoupled from the browser's animation frame. The component renders `null` until the module is loaded.
+The sim module is loaded asynchronously. Computation runs in a `setTimeout`-based tick loop decoupled from the browser's animation frame. The component renders `null` until the module is loaded, then subscribes to snapshot updates.
 
-Both modes expose the same context — child components don't need to know which mode is active.
+**Use this when:** the computation per tick is expensive enough to block the UI (pathfinding, physics, large grids). The main thread stays responsive for rendering and user interaction.
+
+Both modes expose the same context — child components don't know and don't care which mode is active.
+
+**Note:** when using the `worker` prop, `useSimulation` cannot infer types from the module (it's loaded dynamically). Provide explicit type parameters:
+
+```tsx
+const { data } = useSimulation<MyData, MyParams>();
+```
+
+## Rendering patterns
+
+Children of `<Simulation>` consume data via `useSimulation()`. There are two common rendering approaches:
+
+### DOM rendering (React)
+
+Children render normal JSX. This is standard React — the hook provides `data`, the component returns elements.
+
+```tsx
+function LifeGrid() {
+  const { data, params } = useSimulation<typeof gameOfLifeSim>();
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${params.width}, 11px)` }}>
+      {data.grid.map((row, y) =>
+        row.map((cell, x) => (
+          <div key={`${x}-${y}`} style={{ width: 11, height: 11, background: cell ? '#1a1a1a' : '#f3f3f3' }} />
+        ))
+      )}
+    </div>
+  );
+}
+```
+
+Good for: grids with moderate cell counts, lists, text displays, SVG.
+
+### Canvas rendering
+
+Children use a `<canvas>` ref and draw imperatively in a `useEffect` keyed on `data`.
+
+```tsx
+function BoidsCanvas() {
+  const { data, params } = useSimulation<typeof boidsSim>();
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+
+  React.useEffect(() => {
+    const ctx = canvasRef.current?.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, params.width, params.height);
+    data.forEach((boid) => {
+      ctx.fillStyle = '#1a1a1a';
+      ctx.beginPath();
+      ctx.arc(boid.x, boid.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }, [data, params]);
+
+  return <canvas ref={canvasRef} width={params.width} height={params.height} />;
+}
+```
+
+The library doesn't own the canvas — your component does. This is the right pattern for high-performance visualizations with many elements.
+
+Good for: large grids, particle systems, continuous 2D simulations, anything where DOM nodes would be too slow.
 
 ## Lifecycle
 
@@ -55,7 +116,11 @@ Both modes expose the same context — child components don't need to know which
 
 ## Timing
 
-- `delayMs={0}` (default): ticks run as fast as the animation loop allows (~60fps).
-- `delayMs={100}`: at least 100ms between tick batches — good for visual simulations.
-- `ticksPerFrame={10}`: advance 10 ticks per animation frame — good for fast-forwarding.
-- `maxTime={500}`: automatically stop at tick 500.
+These props control how fast the simulation runs:
+
+- **`delayMs={0}`** (default): ticks run as fast as the animation loop allows (~60fps on main thread).
+- **`delayMs={100}`**: at least 100ms between tick batches. Good for visual simulations where you want to see each step.
+- **`ticksPerFrame={10}`**: advance 10 ticks per frame. Good for fast-forwarding or cheap simulations that need to accumulate quickly.
+- **`maxTime={500}`**: automatically stop when tick reaches 500.
+
+`delayMs` and `ticksPerFrame` combine: with `delayMs={50}` and `ticksPerFrame={5}`, the simulation advances 5 ticks every 50ms (100 ticks/sec).

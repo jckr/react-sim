@@ -1,0 +1,61 @@
+# Simulation
+
+```ts
+import { Simulation } from 'react-sim-react';
+```
+
+Provider component that creates an engine (or worker-backed runner) and exposes simulation state via context.
+
+```tsx
+<Simulation sim={mySim} params={{ speed: 2 }} autoplay>
+  {children}
+</Simulation>
+```
+
+Pass **either** `sim` (main-thread) **or** `worker` (worker mode) -- never both.
+
+---
+
+## Props (main-thread mode)
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `sim` | `SimModule<Data, Params>` | -- | The simulation module to run. |
+| `params` | `Partial<Params>` | `undefined` | Overrides for `defaultParams`. Live-applied on change. |
+| `maxTime` | `number` | `undefined` | Tick limit. Engine stops when `tick >= maxTime`. |
+| `delayMs` | `number` | `0` | Minimum ms between animation frames. |
+| `ticksPerFrame` | `number` | `1` | Ticks computed per animation frame. |
+| `autoplay` | `boolean` | `false` | Start playing on mount. |
+| `children` | `React.ReactNode` | `undefined` | Child elements that consume simulation context. |
+
+---
+
+## Props (worker mode)
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `worker` | `() => Promise<{ default: SimModule<Data, Params> }>` | -- | Dynamic import returning the sim module. |
+| `params` | `Partial<Params>` | `undefined` | Overrides for `defaultParams`. Live-applied on change. |
+| `maxTime` | `number` | `undefined` | Tick limit. |
+| `delayMs` | `number` | `0` | Minimum ms between ticks. |
+| `ticksPerFrame` | `number` | `1` | Ticks per iteration of the worker tick loop. |
+| `snapshotIntervalMs` | `number` | `undefined` | Interval for snapshot emission (worker mode only). |
+| `autoplay` | `boolean` | `false` | Start playing when the worker backend is ready. |
+| `children` | `React.ReactNode` | `undefined` | Child elements that consume simulation context. |
+
+---
+
+## Example
+
+```tsx
+import { Simulation } from 'react-sim-react';
+import counterSim from './counter-sim';
+
+function App() {
+  return (
+    <Simulation sim={counterSim} autoplay>
+      <CounterDisplay />
+    </Simulation>
+  );
+}
+```

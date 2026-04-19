@@ -66,6 +66,17 @@ defaultParams: {
 },
 ```
 
+## Data vs Params
+
+These two type parameters serve different roles:
+
+- **`Data`** is the simulation's runtime state. It changes every tick. `init` creates it, `step` transforms it, the render component reads it. Examples: a grid of cells, a list of agent positions, a counter value.
+- **`Params`** is configuration that the user can adjust. It doesn't change unless someone calls `setParams()` or `resetWith()`. Examples: grid dimensions, speed, density, display toggles.
+
+If something changes every tick, it belongs in `Data`. If the user controls it via a slider or toggle, it belongs in `Params`.
+
+`setParams(patch)` updates params without resetting — the next tick sees the new values. `resetWith(patch)` updates params *and* re-runs `init` — use this for params that affect the initial state (like grid size or density).
+
 ## Type inference
 
 `defineSim` infers `Data` and `Params` from the object you pass. Inside `init` and `step`, types are fully resolved — you don't need to annotate anything:

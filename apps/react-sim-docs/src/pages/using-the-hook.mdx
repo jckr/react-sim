@@ -41,6 +41,22 @@ The `status` field is a single discriminant replacing the old `isPlaying` / `can
 - **`paused`** — was playing, now stopped. State preserved. `play()` resumes.
 - **`stopped`** — terminated (via `shouldStop`, `maxTime`, or manual `stop()`). Only `resetWith()` can restart.
 
+### Transition table
+
+Not every action is valid from every state. Here's what each action does:
+
+| From | `play()` | `pause()` | `stop()` | `seek(n)` | `advance(n)` | `resetWith()` |
+|------|----------|-----------|----------|-----------|---------------|----------------|
+| **idle** | &rarr; playing | no-op | no-op | &rarr; paused | &rarr; paused | &rarr; idle |
+| **playing** | no-op | &rarr; paused | &rarr; stopped | &rarr; paused | &rarr; paused | &rarr; idle |
+| **paused** | &rarr; playing | no-op | &rarr; stopped | stays paused | stays paused | &rarr; idle |
+| **stopped** | no-op | no-op | no-op | no-op | no-op | &rarr; idle |
+
+Key points:
+- **`stopped` is a terminal state.** The only way out is `resetWith()`, which re-runs `init` and resets tick to 0.
+- **`seek()` always pauses**, even if the simulation was playing.
+- **`setParams()` never changes status.** It just merges the patch; the next tick sees the updated values.
+
 ## Common patterns
 
 ### Conditional rendering based on status

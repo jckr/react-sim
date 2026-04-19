@@ -1,0 +1,72 @@
+# useSimulation
+
+```ts
+import { useSimulation } from 'react-sim-react';
+```
+
+Hook that reads simulation state and actions from the nearest `<Simulation>` provider. Throws if used outside a `<Simulation>`.
+
+```ts
+function useSimulation<T = unknown, FallbackParams = unknown>(): SimulationContextValue<...>
+```
+
+**Type inference:** pass `typeof mySim` as the first type parameter to infer `Data` and `Params`, or provide them explicitly.
+
+---
+
+## Return value
+
+### State
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data` | `Data` | Current simulation state. |
+| `params` | `Params` | Current parameters. |
+| `tick` | `number` | Current tick number. |
+| `status` | `SimulationStatus` | Current engine status. |
+
+### Actions
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `play` | `() => void` | Start or resume the simulation. |
+| `pause` | `() => void` | Pause a playing simulation. |
+| `stop` | `() => void` | Permanently stop the simulation. |
+| `seek` | `(tick: number) => void` | Jump forward to a target tick (pauses the sim). |
+| `advance` | `(count?: number) => void` | Step forward by `count` ticks (default `1`). Pauses if playing. |
+| `setParams` | `(patch: Partial<Params>) => void` | Merge a partial update into current params. |
+| `resetWith` | `(patch?: Partial<Params>) => void` | Re-initialize state from `init()`. Optionally merge a param patch first. Resets tick to `0` and status to `idle`. |
+
+---
+
+## SimulationStatus
+
+| Value | Description |
+|-------|-------------|
+| `'idle'` | Engine created but never played, or just reset. |
+| `'playing'` | Actively ticking. |
+| `'paused'` | Paused mid-run. Can resume or step. |
+| `'stopped'` | Terminated (by `shouldStop`, `maxTime`, or manual `stop()`). Cannot resume. |
+
+---
+
+## Example
+
+```tsx
+import { useSimulation } from 'react-sim-react';
+import type counterSim from './counter-sim';
+
+function CounterDisplay() {
+  const { data, tick, status, play, pause } = useSimulation<typeof counterSim>();
+
+  return (
+    <div>
+      <p>Tick {tick}: count = {data.count}</p>
+      <p>Status: {status}</p>
+      <button onClick={status === 'playing' ? pause : play}>
+        {status === 'playing' ? 'Pause' : 'Play'}
+      </button>
+    </div>
+  );
+}
+```

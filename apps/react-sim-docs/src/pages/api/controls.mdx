@@ -1,0 +1,126 @@
+# Controls
+
+```ts
+import { StandardControls } from 'react-sim-react';
+import {
+  PlayPauseButton, StopButton, StepButton, ResetButton,
+  TickReadout, TickSeekSlider, ParamRangeField, ParamToggleField,
+} from 'react-sim-react';
+```
+
+---
+
+## StandardControls
+
+Batteries-included control strip with play/pause, optional stop/step/reset, tick readout, optional seek slider, and param fields.
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `controls` | `ParamControl \| ParamControl[] \| null` | `undefined` | Parameter controls to render. |
+| `maxTime` | `number` | `undefined` | If finite, renders a `TickSeekSlider`. |
+| `minTime` | `number` | `undefined` | Minimum value for the seek slider. |
+| `showStepButton` | `boolean` | `false` | Show a step-forward button. |
+| `showStopButton` | `boolean` | `false` | Show a stop button. |
+| `showResetButton` | `boolean` | `true` | Show a reset button. |
+
+### ParamControl union
+
+| Type | Fields |
+|------|--------|
+| `ParamRangeControl` | `type?: 'range'`, `param: string`, `label?: string`, `min: number`, `max: number`, `step?: number` |
+| `ParamToggleControl` | `type: 'toggle'`, `param: string`, `label?: string` |
+
+---
+
+## PlayPauseButton
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `playingLabel` | `string` | `'Pause'` | Label shown while playing. |
+| `pausedLabel` | `string` | `'Play'` | Label shown while paused/idle. |
+| `disabled` | `boolean` | auto | Override the disabled state. |
+
+---
+
+## StopButton
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `'Stop'` | Button label. |
+| `disabled` | `boolean` | auto | Override the disabled state. |
+
+---
+
+## StepButton
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `ticks` | `number` | `1` | Number of ticks to advance per click. |
+| `label` | `string` | `'Step'` / `'Step (N)'` | Button label. |
+| `disabled` | `boolean` | auto | Override the disabled state. |
+
+---
+
+## ResetButton
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `'Reset'` | Button label. |
+
+---
+
+## TickReadout
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `prefix` | `string` | `''` | Text prepended before `tick: N`. |
+
+---
+
+## TickSeekSlider
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `min` | `number` | `0` | Minimum slider value. |
+| `max` | `number` | -- | Maximum slider value. Required. Returns `null` if not finite. |
+
+---
+
+## ParamRangeField
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `param` | `keyof Params` | -- | Parameter key to bind. |
+| `label` | `string` | value of `param` | Display label. |
+| `min` | `number` | -- | Minimum slider value. |
+| `max` | `number` | -- | Maximum slider value. |
+| `step` | `number` | `1` | Slider step size. |
+
+---
+
+## ParamToggleField
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `param` | `keyof Params` | -- | Parameter key to bind. |
+| `label` | `string` | value of `param` | Display label. |
+
+---
+
+## Example
+
+```tsx
+<Simulation sim={mySim}>
+  <StandardControls
+    showStepButton
+    maxTime={200}
+    controls={[
+      { param: 'speed', min: 1, max: 10 },
+      { type: 'toggle', param: 'wrap' },
+    ]}
+  />
+  <MyRenderer />
+</Simulation>
+```
